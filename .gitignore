@@ -335,8 +335,11 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
-twoflow_MHD\output
+
 # BeatPulse healthcheck temp database
+
+
 healthchecksdb
 
 /twoflow_MHD/output/world.csv
+/twoflow_MHD/output/

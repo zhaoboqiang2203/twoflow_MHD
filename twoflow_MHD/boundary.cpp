@@ -110,6 +110,6 @@ int initial()
 		}
 	}
 
-	matrix_to_csv((float**)world, ZMAX + 1, RMAX + 1, RMAX + 1, (char*)(".\\output\\world.csv"));
+	matrix_to_csv((float**)world, ZMAX + 1, RMAX + 1, RMAX + 1, (char*)(".\\output\\world1.csv"));
 	return 0;
 }

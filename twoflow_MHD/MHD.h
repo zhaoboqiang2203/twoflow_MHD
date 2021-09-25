@@ -3,12 +3,17 @@
 #include <memory.h>
 #include <fstream>
 #include <iostream>
+
+#include <string> 
+#include <queue>
+
+
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)
 
 
-#define RMAX 100
-#define ZMAX 100
+#define RMAX 101
+#define ZMAX 101
 
 #define R_DIR 0
 #define Z_DIR 1
@@ -60,6 +65,9 @@ struct Boundary
 };
 
 extern Boundary boundary_array[BND_NUM];
+extern int nr, nz;
+
 
 int initial();
 void matrix_to_csv(float** a, int N, int M, int array_size, char* filename);
+int fill_plasma(int tr, int tz, int fill_n);

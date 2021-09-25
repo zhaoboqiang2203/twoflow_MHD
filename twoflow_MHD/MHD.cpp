@@ -2,8 +2,13 @@
 
 using namespace std;
 
+int nr;
+int nz;
+
 int main()
 {
+	nr = RMAX;
+	nz = ZMAX;
 	initial();
 	return 0;
 }

@@ -1,7 +1,8 @@
 #include "MHD.h"
 
+using namespace std;
 
-int world[RMAX][ZMAX];
+float world[RMAX][ZMAX];
 Boundary boundary_array[BND_NUM];
 
 int initial()
@@ -110,6 +111,40 @@ int initial()
 		}
 	}
 
-	matrix_to_csv((float**)world, ZMAX + 1, RMAX + 1, RMAX + 1, (char*)(".\\output\\world1.csv"));
+	fill_plasma(4, 2, 1);
+
+	matrix_to_csv((float**)world, ZMAX, RMAX, RMAX, (char*)(".\\output\\world1.csv"));
 	return 0;
+}
+
+int fill_plasma(int tr, int tz, int fill_n)
+{
+	queue<int> quer, quez;
+	int tnr, tnz;
+	quer.push(tr);
+	quez.push(tz);
+	while (!quer.empty() && !quez.empty())
+	{
+		tnr = quer.front();
+		tnz = quez.front();
+		quer.pop();
+		quez.pop();
+		if (tnr >= 0 && tnr < nr && tnz >= 0 && tnz < nz && world[tnz][tnr] == 0)
+		{
+			world[tnz][tnr] = fill_n;
+
+			quer.push(tnr - 1);
+			quez.push(tnz);
+
+			quer.push(tnr + 1);
+			quez.push(tnz);
+
+			quer.push(tnr);
+			quez.push(tnz - 1);
+
+			quer.push(tnr);
+			quez.push(tnz + 1);
+		}
+	}
+	return 1;
 }

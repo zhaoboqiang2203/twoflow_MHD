@@ -64,6 +64,37 @@ struct Boundary
 	int boundary_type;
 };
 
+struct U
+{
+	float roe;
+	float vz;
+	float vr;
+	float vtheta;
+
+};
+
+struct  node
+{
+	float ne;
+	float ni;
+	float ver;
+	float vez;
+	float vetheta;
+	float vir;
+	float viz;
+	float vitheta;
+	float br;
+	float bz;
+	float btheta;
+	float pe;
+	float pi;
+	float ee;
+	float ei;
+};
+
+
+
+
 extern Boundary boundary_array[BND_NUM];
 extern int nr, nz;
 
@@ -71,3 +102,5 @@ extern int nr, nz;
 int initial();
 void matrix_to_csv(float** a, int N, int M, int array_size, char* filename);
 int fill_plasma(int tr, int tz, int fill_n);
+
+void output();

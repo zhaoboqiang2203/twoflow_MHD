@@ -21,9 +21,21 @@
     <ClCompile Include="boundary.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="fluid.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="testcode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MHD.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="fluid.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="testcode.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

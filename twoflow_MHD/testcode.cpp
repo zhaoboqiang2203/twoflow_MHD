@@ -9,7 +9,9 @@ void test_potential()
 	for(int i=0;i<RMAX;i++)
 		for (int j = 0; j < ZMAX; j++)
 		{
-			res[i][j] = 
+			res[i][j] = 1;
 		}
-	f = cos();
+	//f = cos();
+
+	
 }

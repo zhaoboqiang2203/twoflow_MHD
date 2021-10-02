@@ -27,6 +27,9 @@
     <ClCompile Include="testcode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="dadi.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MHD.h">

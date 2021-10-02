@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="boundary.cpp" />
+    <ClCompile Include="dadi.cpp" />
     <ClCompile Include="fluid.cpp" />
     <ClCompile Include="MHD.cpp" />
     <ClCompile Include="testcode.cpp" />

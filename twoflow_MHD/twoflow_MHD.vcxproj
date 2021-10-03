@@ -146,6 +146,7 @@
     <ClCompile Include="testcode.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dadi.h" />
     <ClInclude Include="fluid.h" />
     <ClInclude Include="MHD.h" />
     <ClInclude Include="testcode.h" />

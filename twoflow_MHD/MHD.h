@@ -11,6 +11,12 @@
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)
 
+//	macros
+#define MIN(a,b)			((a<b) ? (a) : (b))
+#define MAX(a,b)			((a>b) ? (a) : (b))
+#define sqr(a)	      ((a)*(a))
+#define cube(a)       ((a)*(a)*(a))
+
 
 #define RMAX 101
 #define ZMAX 101
@@ -103,6 +109,7 @@ struct  node
 extern Boundary boundary_array[BND_NUM];
 extern int nr, nz;
 
+extern float world[RMAX][ZMAX];
 
 int initial();
 void matrix_to_csv(float** a, int N, int M, int array_size, char* filename);

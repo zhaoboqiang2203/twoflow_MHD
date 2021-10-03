@@ -4,6 +4,7 @@ using namespace std;
 
 int nr;
 int nz;
+float phi[RMAX][ZMAX];
 
 struct node MPDT[RMAX][ZMAX];
 
@@ -51,16 +52,93 @@ void matrix_to_csv(float** a, int N, int M, int array_size, char* filename)
 
 void output()
 {
+	float res_out[RMAX][ZMAX];
 	//todo 输出电子密度
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].ne;
+		}
+	}
 
-	//todo 输出电子速度
+	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\electron density.csv"));
+	//输出电子速度
 
-	//todo 输出离子密度
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].ver;
+		}
+	}
 
+	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\electron ver.csv"));
+
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].vez;
+		}
+	}
+
+	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\electron vez.csv"));
+
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].vetheta;
+		}
+	}
+
+	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\electron vetheta.csv"));
+
+	//输出离子密度
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].ni;
+		}
+	}
+
+	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\ion density.csv"));
 	//todo 输出离子速度
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].vir;
+		}
+	}
+
+	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\electron vir.csv"));
+
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].viz;
+		}
+	}
+
+	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\electron viz.csv"));
+
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].vitheta;
+		}
+	}
+
+	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\electron vitheta.csv"));
 
 	//todo 输出电势分布
 
+	matrix_to_csv((float**)phi, ZMAX, RMAX, RMAX, (char*)(".\\output\\electron vetheta.csv"));
 	//todo 输出磁场分布
 
 	//todo 输出电子温度分布

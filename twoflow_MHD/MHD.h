@@ -70,7 +70,12 @@ struct U
 	float vz;
 	float vr;
 	float vtheta;
-
+	float br;
+	float bz;
+	float bphi;
+	float p;
+	float ee;
+	float ei;
 };
 
 struct  node

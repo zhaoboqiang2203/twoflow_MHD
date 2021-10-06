@@ -108,7 +108,7 @@ struct  node
 
 extern Boundary boundary_array[BND_NUM];
 extern int nr, nz;
-
+extern float dr,dz;
 extern float world[RMAX][ZMAX];
 
 int initial();

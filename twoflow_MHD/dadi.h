@@ -20,7 +20,6 @@ float del_t0;
 /*  epsilon at the grid locations */
 float** epsi;
 /*  The size of the system */
-int nc1, nc2, ng1, ng2;
 
 
 void tridag(float* a, float* b, float* c, float* r, float* utri, float* gam, int n);

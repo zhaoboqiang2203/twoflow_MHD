@@ -82,7 +82,7 @@ Revision/Programmer/Date
 
   /******************************************************/
 
-void adi(float** uadi, float** s, float del_t)
+void adi(float uadi[RMAX][ZMAX], float s[RMAX][ZMAX], float del_t)
 {
 	register int i, j;
 	float dth;
@@ -109,7 +109,7 @@ void adi(float** uadi, float** s, float del_t)
 				r_x1[i] = uadi[i][j] + dth * (-s[i][j]
 					+ ((j > 0) ? a_x2geom[i][j] * uadi[i][j - 1] : 0)
 					+ b_x2geom[i][j] * uadi[i][j]
-					+ ((j < nc2) ? c_x2geom[i][j] * uadi[i][j + 1] : 0));
+					+ ((j < ZMAX) ? c_x2geom[i][j] * uadi[i][j + 1] : 0));
 			else
 				r_x1[i] = uadi[i][j];  // metal sets the potential here.
 
@@ -141,7 +141,7 @@ void adi(float** uadi, float** s, float del_t)
 				r_x2[j] = ustar[i][j] + dth * (-s[i][j]
 					+ ((i > 0) ? a_x1geom[i][j] * ustar[i - 1][j] : 0)
 					+ b_x1geom[i][j] * ustar[i][j]
-					+ ((i < nc1) ? c_x1geom[i][j] * ustar[i + 1][j] : 0));
+					+ ((i < RMAX) ? c_x1geom[i][j] * ustar[i + 1][j] : 0));
 			else
 				r_x2[j] = ustar[i][j];  // metal sets the potential here.
 
@@ -154,7 +154,7 @@ void adi(float** uadi, float** s, float del_t)
 	}
 
 	/*****************************************************/
-	/* Dirchlet boundary conditions for i=0 and i=nc1. */
+	/* Dirchlet boundary conditions for i=0 and i=RMAX. */
 
 }
 void init_solve()
@@ -165,9 +165,13 @@ void init_solve()
 		{
 			if (world[i][j] == 1)
 			{
-				a_x1geom[i][j] = a;
-				c_x1geom[i][j] = e1b / (dxb * dxave);
+				a_x1geom[i][j] = 1 / (dr * dr) + 1 / (2 * i * dr * dr);
+				c_x1geom[i][j] = 1 / (dr * dr) - 1 / (2 * i * dr * dr);
 				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
+
+				a_x2geom[i][j] = 1 / (dz * dz);
+				b_x2geom[i][j] = 1 / (dz * dz);
+				c_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
 			}
 			else
 			{
@@ -306,7 +310,7 @@ int itermax;
 float tol_test;
 float **u_in, **s, *u_x0, *u_xlx, *u_y0, *u_yly;
 */
-int solve(float** u_in, float** s, int itermax, float tol_test)
+int solve(float u_in[RMAX][ZMAX], float s[RMAX][ZMAX], int itermax, float tol_test)
 {
 	register int i, j;
 	int iter, ndiscard;
@@ -330,7 +334,7 @@ int solve(float** u_in, float** s, int itermax, float tol_test)
 		   than the stored maximum absolute error, record new maximum
 		   absolute error and location.  */
 
-			if (i > 0 && j > 0 && i < nc1 && j < nc2) {
+			if (i > 0 && j > 0 && i < RMAX && j < ZMAX) {
 				dxdxutrm = a_x1geom[i][j] * u_in[i - 1][j] + b_x1geom[i][j] * u_in[i][j] + c_x1geom[i][j] * u_in[i + 1][j];
 				dydyutrm = a_x2geom[i][j] * u_in[i][j - 1] + b_x2geom[i][j] * u_in[i][j] + c_x2geom[i][j] * u_in[i][j + 1];
 			}
@@ -350,11 +354,11 @@ int solve(float** u_in, float** s, int itermax, float tol_test)
 		{
 			rnorm += sqr(((i > 0 && b_x2geom[i - 1][j] != 0) ? c_x1geom[i - 1][j] * u[i][j] : 0));
 			// check right
-			rnorm += sqr(((i < nc1&& b_x2geom[i + 1][j] != 0) ? a_x1geom[i + 1][j] * u[i][j] : 0));
+			rnorm += sqr(((i < RMAX&& b_x2geom[i + 1][j] != 0) ? a_x1geom[i + 1][j] * u[i][j] : 0));
 			// check up
 			rnorm += sqr(((j > 0 && b_x2geom[i][j - 1] != 0) ? c_x2geom[i][j - 1] * u[i][j] : 0));
 			// check right
-			rnorm += sqr(((j < nc2&& b_x2geom[i][j + 1] != 0) ? c_x2geom[i][j + 1] * u[i][j] : 0));
+			rnorm += sqr(((j < ZMAX&& b_x2geom[i][j + 1] != 0) ? c_x2geom[i][j + 1] * u[i][j] : 0));
 
 		}
 
@@ -406,8 +410,8 @@ int solve(float** u_in, float** s, int itermax, float tol_test)
 
 		tptop = tpbot = rsum = 0.0;
 
-		for (i = 1; i < nc1; i++)
-			for (j = 1; j < nc2; j++)
+		for (i = 1; i < RMAX; i++)
+			for (j = 1; j < ZMAX; j++)
 			{
 				/* Test paramter sums. */
 				tptop += (u[i][j] - uwork[i][j]) * (u[i][j] - uwork[i][j]);

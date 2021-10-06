@@ -4,6 +4,7 @@ using namespace std;
 
 int nr;
 int nz;
+float dr, dz;
 float phi[RMAX][ZMAX];
 
 struct node MPDT[RMAX][ZMAX];
@@ -12,6 +13,8 @@ int main()
 {
 	nr = RMAX;
 	nz = ZMAX;
+
+	dr = 0.001, dz=0.001;
 	initial();
 	
 	for(int it = 0;it < 1000; it++)
@@ -20,7 +23,7 @@ int main()
 		ion_flow();
 
 		//todo 电势求解
-
+		solve();
 		output();
 	}
 

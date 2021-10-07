@@ -1,5 +1,6 @@
 #include "MHD.h"
 #include "fluid.h"
+#include "dadi.h"
 using namespace std;
 
 int nr;

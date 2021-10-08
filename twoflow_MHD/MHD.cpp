@@ -1,6 +1,7 @@
 #include "MHD.h"
 #include "fluid.h"
 #include "dadi.h"
+#include "testcode.h"
 using namespace std;
 
 int nr;
@@ -17,16 +18,16 @@ int main()
 
 	dr = 0.001, dz=0.001;
 	initial();
-	
-	for(int it = 0;it < 1000; it++)
-	{
-		electron_flow();
-		ion_flow();
+	test_potential();
+	//for(int it = 0;it < 1000; it++)
+	//{
+	//	electron_flow();
+	//	ion_flow();
 
-		//todo 电势求解
-		solve();
-		output();
-	}
+	//	//todo 电势求解
+	//	
+	//	output();
+	//}
 
 	return 0;
 }

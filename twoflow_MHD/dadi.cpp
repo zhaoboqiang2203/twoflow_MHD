@@ -47,6 +47,24 @@ Revision/Programmer/Date
 #include <math.h>
 
 
+float a_x1geom[RMAX][ZMAX], b_x1geom[RMAX][ZMAX], c_x1geom[RMAX][ZMAX];
+float a_x2geom[RMAX][ZMAX], b_x2geom[RMAX][ZMAX], c_x2geom[RMAX][ZMAX];
+
+/*  The arrays used internal to DADI which contain the coefficients
+	  for each tridiagonal matrix solution */
+float a_x1[1000], b_x1[1000], c_x1[1000];
+float a_x2[1000], b_x2[1000], c_x2[1000];
+/*  Various copies of the 'answer' we're working toward */
+float u[RMAX][ZMAX];
+float uwork[RMAX][ZMAX], ustor[RMAX][ZMAX], ustar[RMAX][ZMAX];
+float r_x1[1000], v_x1[1000], gam_x1[1000];
+float r_x2[1000], v_x2[1000], gam_x2[1000];
+/*  Our fictitious time step */
+float del_t0;
+/*  epsilon at the grid locations */
+//float** epsi;
+/*  The size of the system */
+
 #ifndef MAX
 #define MAX(x, y)       (((x) > (y)) ? (x) : (y))
 #endif
@@ -184,6 +202,13 @@ void init_solve()
 			}
 		}
 	}
+
+	matrix_to_csv((float**)a_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\a_x1geom.csv"));
+	matrix_to_csv((float**)b_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\b_x1geom.csv"));
+	matrix_to_csv((float**)c_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\c_x1geom.csv"));
+	matrix_to_csv((float**)a_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\a_x2geom.csv"));
+	matrix_to_csv((float**)b_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\b_x2geom.csv"));
+	matrix_to_csv((float**)c_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\c_x2geom.csv"));
 }
 
 //void set_coefficient(int i, int j, PTypes type)
@@ -317,6 +342,8 @@ int solve(float u_in[RMAX][ZMAX], float s[RMAX][ZMAX], int itermax, float tol_te
 	static float del_t = 0.0;
 	float del_td = 0, tptop = 0, tpbot = 0, ratio = 0;
 	float rnorm = 0, rsum = 0, res = 0, errchk = 0, dxdxutrm = 0, dydyutrm = 0;
+
+	init_solve();
 
 	rnorm = rsum = 0.0;
 	for (i = 0; i < RMAX; i++)

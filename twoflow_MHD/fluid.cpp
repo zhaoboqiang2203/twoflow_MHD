@@ -12,7 +12,7 @@ void ion_flow()
 }
 
 
-void cal_u(int i, int j);
+void cal_u(int i, int j)
 {
-	;
+
 }

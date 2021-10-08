@@ -7,6 +7,7 @@
 #include <string> 
 #include <queue>
 
+#define DADI_DEBUG
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)

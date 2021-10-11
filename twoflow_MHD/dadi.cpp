@@ -177,6 +177,8 @@ void adi(float uadi[RMAX][ZMAX], float s[RMAX][ZMAX], float del_t)
 }
 void init_solve()
 {
+
+	del_t0 = 0.1* ((dr * dr) + (dz * dz));
 	for (int i = 0; i < RMAX; i++)
 	{
 		for (int j = 0; j < ZMAX; j++)

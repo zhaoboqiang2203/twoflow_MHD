@@ -16,10 +16,10 @@ void test_potential()
 	for (int i = 60; i < 70; i++)
 		for (int j = 60; j < 70; j++)
 		{
-			test_s[i][j] = 1e-16;
+			test_s[i][j] = 1;
 		}
 	//f = cos();
 	matrix_to_csv((float**)test_s, ZMAX, RMAX, RMAX, (char*)(".\\output\\test_s.csv"));
-	solve(res, test_s, 1000, 1e-5);
+	solve(res, test_s, 1000, 0.1);
 	matrix_to_csv((float**)res, ZMAX, RMAX, RMAX, (char*)(".\\output\\testphi.csv"));
 }

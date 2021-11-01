@@ -30,6 +30,15 @@
     <ClCompile Include="dadi.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="move.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PotentialSolver.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="sortestcode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MHD.h">

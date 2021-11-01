@@ -52,13 +52,13 @@ float a_x2geom[RMAX][ZMAX], b_x2geom[RMAX][ZMAX], c_x2geom[RMAX][ZMAX];
 
 /*  The arrays used internal to DADI which contain the coefficients
 	  for each tridiagonal matrix solution */
-float a_x1[1000], b_x1[1000], c_x1[1000];
-float a_x2[1000], b_x2[1000], c_x2[1000];
+float a_x1[ZMAX], b_x1[ZMAX], c_x1[ZMAX];
+float a_x2[ZMAX], b_x2[ZMAX], c_x2[ZMAX];
 /*  Various copies of the 'answer' we're working toward */
 float u[RMAX][ZMAX];
 float uwork[RMAX][ZMAX], ustor[RMAX][ZMAX], ustar[RMAX][ZMAX];
-float r_x1[1000], v_x1[1000], gam_x1[1000];
-float r_x2[1000], v_x2[1000], gam_x2[1000];
+float r_x1[ZMAX], v_x1[ZMAX], gam_x1[ZMAX];
+float r_x2[ZMAX], v_x2[ZMAX], gam_x2[ZMAX];
 /*  Our fictitious time step */
 float del_t0;
 /*  epsilon at the grid locations */
@@ -77,6 +77,8 @@ float del_t0;
 #define DBL_MIN         1E-200
 #endif
 
+float Er[RMAX][ZMAX];
+float Ez[RMAX][ZMAX];
 
 /**********************************************************************
   Single Peaceman Rachford Douglas pass with Direchlet 0 c boundary
@@ -178,7 +180,7 @@ void adi(float uadi[RMAX][ZMAX], float s[RMAX][ZMAX], float del_t)
 void init_solve()
 {
 
-	del_t0 = 0.1* ((dr * dr) + (dz * dz));
+	del_t0 = 0.1 * ((dr * dr) + (dz * dz));
 	for (int i = 0; i < RMAX; i++)
 	{
 		for (int j = 0; j < ZMAX; j++)
@@ -190,8 +192,8 @@ void init_solve()
 				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
 
 				a_x2geom[i][j] = 1 / (dz * dz);
-				b_x2geom[i][j] = 1 / (dz * dz);
-				c_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				c_x2geom[i][j] = 1 / (dz * dz);
+				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
 			}
 			else
 			{
@@ -379,7 +381,7 @@ int solve(float u_in[RMAX][ZMAX], float s[RMAX][ZMAX], int itermax, float tol_te
 	if (rnorm == 0.0) {
 
 		// check dirichlet conditions
-		for (i = 0; i < RMAX; i++) for (j = 0; j < ZMAX; j++) 
+		for (i = 0; i < RMAX; i++) for (j = 0; j < ZMAX; j++)
 		{
 			rnorm += sqr(((i > 0 && b_x2geom[i - 1][j] != 0) ? c_x1geom[i - 1][j] * u[i][j] : 0));
 			// check right
@@ -574,4 +576,81 @@ void tridag(float* a, float* b, float* c, float* r, float* utri, float* gam, int
 	/**********************/
 	/* Back substitution. */
 	for (i = n - 2; i >= 0; i--) utri[i] -= gam[i + 1] * utri[i + 1];
+}
+
+
+void electric_field()
+{
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			if (btype[i][j] == 1)
+			{
+				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dr);
+				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dz);
+			}
+			else if (btype[i][j] == LEFT)
+			{
+				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
+			}
+			else if (btype[i][j] == RIGHT)
+			{
+				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
+				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
+			}
+			else if (btype[i][j] == DOWN)
+			{
+				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
+				Er[i][j] = -(-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+			}
+			else if (btype[i][j] == UP)
+			{
+				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
+				Er[i][j] = -(phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+			}
+			else if (btype[i][j] == (LEFT + UP))
+			{
+				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+				Er[i][j] = -(phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+			}
+			else if (btype[i][j] == (LEFT + DOWN))
+			{
+				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+				Er[i][j] = -(-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+			}
+			else if (btype[i][j] == (RIGHT + DOWN))
+			{
+				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
+				Er[i][j] = -(-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+			}
+			else if (btype[i][j] == (RIGHT + UP))
+			{
+				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
+				Er[i][j] = -(phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+
+			}
+			else if (btype[i][j] == 0)
+			{
+				Ez[i][j] = 0;
+				Er[i][j] = 0;
+
+			}
+
+		}
+	}
+}
+
+void potential_solve()
+{
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			rho[i][j] = (MPDT[i][j].ni - MPDT[i][j].ne) * QE;
+		}
+	}
+	solve(phi, rho, 50, 0.01);
+	electric_field();
 }

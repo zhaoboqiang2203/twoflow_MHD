@@ -143,6 +143,9 @@
     <ClCompile Include="dadi.cpp" />
     <ClCompile Include="fluid.cpp" />
     <ClCompile Include="MHD.cpp" />
+    <ClCompile Include="move.cpp" />
+    <ClCompile Include="PotentialSolver.cpp" />
+    <ClCompile Include="sortestcode.cpp" />
     <ClCompile Include="testcode.cpp" />
   </ItemGroup>
   <ItemGroup>

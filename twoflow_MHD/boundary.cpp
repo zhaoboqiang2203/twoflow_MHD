@@ -2,9 +2,9 @@
 
 using namespace std;
 
-float world[RMAX][ZMAX];
-float btype[RMAX][ZMAX];
-float tb[RMAX][ZMAX];
+double world[RMAX][ZMAX];
+double btype[RMAX][ZMAX];
+double tb[RMAX][ZMAX];
 Boundary boundary_array[BND_NUM];
 
 int initial()
@@ -126,14 +126,14 @@ int initial()
 			}
 		}
 	}
-	matrix_to_csv((float**)world, ZMAX, RMAX, RMAX, (char*)(".\\output\\world.csv"));
-	matrix_to_csv((float**)btype, ZMAX, RMAX, RMAX, (char*)(".\\output\\btype.csv"));
+	matrix_to_csv((double**)world, ZMAX, RMAX, RMAX, (char*)(".\\output\\world.csv"));
+	matrix_to_csv((double**)btype, ZMAX, RMAX, RMAX, (char*)(".\\output\\btype.csv"));
 	for (int i = 0; i < nr; i++)
 	{
 		for (int j = 0; j < nz; j++)
 		{
-			MPDT[i][j].ne = 6.02e10;
-			MPDT[i][j].ni = 6.02e10;
+			MPDT[i][j].ne = 6.02e10 / scale;
+			MPDT[i][j].ni = 6.02e10 / scale;
 			MPDT[i][j].ver = 0;
 			MPDT[i][j].vez = 0;
 			MPDT[i][j].vetheta = 0;
@@ -145,8 +145,12 @@ int initial()
 			MPDT[i][j].btheta = 0;
 			MPDT[i][j].pe = 0;
 			MPDT[i][j].pi = 0;
-			MPDT[i][j].ee = 0;
-			MPDT[i][j].ei = 0;
+			//MPDT[i][j].ee = 0;
+			//MPDT[i][j].ei = 0;
+
+			MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) + 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+			MPDT[i][j].ei = MPDT[i][j].pi / (gamma - 1) + 0.5 * MPDT[i][j].ni * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
+
 		}
 	}
 
@@ -198,7 +202,7 @@ void  boundary_condition()
 				i = boundary_array[k].start.z;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
-					MPDT[i + 1][j].ne += 7.4e17;
+					MPDT[i + 1][j].ne += 7.4e17 / scale;
 				}
 			}
 			else if (boundary_array[k].bnd_dir == Z_DIR)
@@ -206,7 +210,7 @@ void  boundary_condition()
 				j = boundary_array[k].start.r;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
-					MPDT[i][j + 1].ne += 7.4e17;
+					MPDT[i][j + 1].ne += 7.4e17 / scale;
 				}
 			}
 		}
@@ -284,8 +288,8 @@ void  boundary_condition()
 				i = boundary_array[k].start.z;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
-					MPDT[i + 1][j].ne += 6.02e12;
-					MPDT[i + 1][j].ni += 6.02e12;
+					MPDT[i + 1][j].ne += 6.02e12 / scale;
+					MPDT[i + 1][j].ni += 6.02e12 / scale;
 				}
 			}
 			else if (boundary_array[k].bnd_dir == Z_DIR)
@@ -293,8 +297,8 @@ void  boundary_condition()
 				j = boundary_array[k].start.r;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
-					MPDT[i][j + 1].ne += 6.02e12;
-					MPDT[i][j + 1].ni += 6.02e12;
+					MPDT[i][j + 1].ne += 6.02e12 / scale;
+					MPDT[i][j + 1].ni += 6.02e12 / scale;
 				}
 			}
 		}

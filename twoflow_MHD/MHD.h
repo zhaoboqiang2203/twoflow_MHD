@@ -55,8 +55,8 @@ enum PTypes {
 
 struct Point
 {
-	float r;
-	float z;
+	double r;
+	double z;
 };
 
 struct Boundary
@@ -73,58 +73,56 @@ struct Boundary
 struct _U
 {
 	int r, z;
-	float gradne;
-	float gradni;
-	float u1;
-	float u2;
-	float u3;
-	float u4;
-	float u5;
-	float u6;
-	float u7;
-	float u8;
-	float u9;
-	float u10;
-	float u11;
-	float u12;
-	float u13;
+	double u1;
+	double u2;
+	double u3;
+	double u4;
+	double u5;
+	double u6;
+	double u7;
+	double u8;
+	double u9;
+	double u10;
+	double u11;
+	double u12;
+	double u13;
 };
 
 struct _F
 {
 	int r, z;
-	float f1;
-	float f2;
-	float f3;
-	float f4;
-	float f5;
-	float f6;
-	float f7;
-	float f8;
-	float f9;
-	float f10;
-	float f11;
-	float f12;
-	float f13;
+	double f1;
+	double f2;
+	double f3;
+	double f4;
+	double f5;
+	double f6;
+	double f7;
+	double f8;
+	double f9;
+	double f10;
+	double f11;
+	double f12;
+	double f13;
 };
 
 struct  node
 {
-	float ne;
-	float ni;
-	float ver;
-	float vez;
-	float vetheta;
-	float vir;
-	float viz;
-	float vitheta;
-	float br;
-	float bz;
-	float btheta;
-	float pe;
-	float pi;
-	float ee;
-	float ei;
+	double ne;
+	double ni;
+	double ver;
+	double vez;
+	double vetheta;
+	double vir;
+	double viz;
+	double vitheta;
+	double br;
+	double bz;
+	double btheta;
+	double pe;
+	double pi;
+	double ee;
+	double ei;
 };
 
 
@@ -132,16 +130,16 @@ struct  node
 
 extern Boundary boundary_array[BND_NUM];
 extern int nr, nz;
-extern float dr, dz;
-extern float dt;
+extern double dr, dz;
+extern double dt;
 extern int scale;
 
-extern float world[RMAX][ZMAX];
-extern float btype[RMAX][ZMAX];
-extern float tb[RMAX][ZMAX];
+extern double world[RMAX][ZMAX];
+extern double btype[RMAX][ZMAX];
+extern double tb[RMAX][ZMAX];
 int initial();
 void  boundary_condition();
-void matrix_to_csv(float** a, int N, int M, int array_size, char* filename);
+void matrix_to_csv(double** a, int N, int M, int array_size, char* filename);
 int fill_plasma(int tr, int tz, int fill_n);
 void output();
 
@@ -153,23 +151,23 @@ const double MI = 40 * AMU;		// kg, electron mass
 const double K = 1.380648e-23;			// J/K, Boltzmann constant
 const double PI = 3.141592653;			// pi
 const double EvToK = QE / K;				// 1eV in K ~ 11604
-const double gamma = 1;
+const double gamma = 1.4;
 const double MU_0 = 4 * PI * 1e-7;
-extern float phi[RMAX][ZMAX];
+extern double phi[RMAX][ZMAX];
 
-extern float rho[RMAX][ZMAX];
-extern float Er[RMAX][ZMAX];
-extern float Ez[RMAX][ZMAX];
+extern double rho[RMAX][ZMAX];
+extern double Er[RMAX][ZMAX];
+extern double Ez[RMAX][ZMAX];
 
-extern float ne[RMAX][ZMAX];
-extern float ni[RMAX][ZMAX];
+extern double ne[RMAX][ZMAX];
+extern double ni[RMAX][ZMAX];
 
 extern struct node MPDT[RMAX][ZMAX];
 extern struct _U U[RMAX][ZMAX], U_bar[RMAX][ZMAX], U_bar2[RMAX][ZMAX];
 extern struct _F Fr[RMAX][ZMAX], Fr_bar[RMAX][ZMAX], Fr_bar2[RMAX][ZMAX];
 extern struct _F Fz[RMAX][ZMAX], Fz_bar[RMAX][ZMAX], Fz_bar2[RMAX][ZMAX];
 extern struct _F s[RMAX][ZMAX], s_bar[RMAX][ZMAX], s_bar2[RMAX][ZMAX];
-extern float bapp;
+extern double bapp;
 
 void move();
 

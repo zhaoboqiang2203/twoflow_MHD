@@ -2,8 +2,8 @@
 
 void test_potential()
 {
-	float res[RMAX][ZMAX];
-	float test_s[RMAX][ZMAX];
+	double res[RMAX][ZMAX];
+	double test_s[RMAX][ZMAX];
 	//f = cos()
 
 	for(int i=0;i<RMAX;i++)
@@ -19,7 +19,7 @@ void test_potential()
 			test_s[i][j] = 1;
 		}
 	//f = cos();
-	matrix_to_csv((float**)test_s, ZMAX, RMAX, RMAX, (char*)(".\\output\\test_s.csv"));
+	matrix_to_csv((double**)test_s, ZMAX, RMAX, RMAX, (char*)(".\\output\\test_s.csv"));
 	solve(res, test_s, 1000, 0.1);
-	matrix_to_csv((float**)res, ZMAX, RMAX, RMAX, (char*)(".\\output\\testphi.csv"));
+	matrix_to_csv((double**)res, ZMAX, RMAX, RMAX, (char*)(".\\output\\testphi.csv"));
 }

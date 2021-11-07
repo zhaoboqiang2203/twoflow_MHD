@@ -47,22 +47,22 @@ Revision/Programmer/Date
 #include <math.h>
 
 
-float a_x1geom[RMAX][ZMAX], b_x1geom[RMAX][ZMAX], c_x1geom[RMAX][ZMAX];
-float a_x2geom[RMAX][ZMAX], b_x2geom[RMAX][ZMAX], c_x2geom[RMAX][ZMAX];
+double a_x1geom[RMAX][ZMAX], b_x1geom[RMAX][ZMAX], c_x1geom[RMAX][ZMAX];
+double a_x2geom[RMAX][ZMAX], b_x2geom[RMAX][ZMAX], c_x2geom[RMAX][ZMAX];
 
 /*  The arrays used internal to DADI which contain the coefficients
 	  for each tridiagonal matrix solution */
-float a_x1[ZMAX], b_x1[ZMAX], c_x1[ZMAX];
-float a_x2[ZMAX], b_x2[ZMAX], c_x2[ZMAX];
+double a_x1[ZMAX], b_x1[ZMAX], c_x1[ZMAX];
+double a_x2[ZMAX], b_x2[ZMAX], c_x2[ZMAX];
 /*  Various copies of the 'answer' we're working toward */
-float u[RMAX][ZMAX];
-float uwork[RMAX][ZMAX], ustor[RMAX][ZMAX], ustar[RMAX][ZMAX];
-float r_x1[ZMAX], v_x1[ZMAX], gam_x1[ZMAX];
-float r_x2[ZMAX], v_x2[ZMAX], gam_x2[ZMAX];
+double u[RMAX][ZMAX];
+double uwork[RMAX][ZMAX], ustor[RMAX][ZMAX], ustar[RMAX][ZMAX];
+double r_x1[ZMAX], v_x1[ZMAX], gam_x1[ZMAX];
+double r_x2[ZMAX], v_x2[ZMAX], gam_x2[ZMAX];
 /*  Our fictitious time step */
-float del_t0;
+double del_t0;
 /*  epsilon at the grid locations */
-//float** epsi;
+//double** epsi;
 /*  The size of the system */
 
 #ifndef MAX
@@ -77,8 +77,8 @@ float del_t0;
 #define DBL_MIN         1E-200
 #endif
 
-float Er[RMAX][ZMAX];
-float Ez[RMAX][ZMAX];
+double Er[RMAX][ZMAX];
+double Ez[RMAX][ZMAX];
 
 /**********************************************************************
   Single Peaceman Rachford Douglas pass with Direchlet 0 c boundary
@@ -102,10 +102,10 @@ float Ez[RMAX][ZMAX];
 
   /******************************************************/
 
-void adi(float uadi[RMAX][ZMAX], float s[RMAX][ZMAX], float del_t)
+void adi(double uadi[RMAX][ZMAX], double s[RMAX][ZMAX], double del_t)
 {
 	register int i, j;
-	float dth;
+	double dth;
 
 
 	dth = .5 * del_t;
@@ -187,8 +187,8 @@ void init_solve()
 		{
 			if (world[i][j] == 1)
 			{
-				a_x1geom[i][j] = 1 / (dr * dr) + 1 / (2 * i * dr * dr);
-				c_x1geom[i][j] = 1 / (dr * dr) - 1 / (2 * i * dr * dr);
+				a_x1geom[i][j] = 1 / (dr * dr) + 1 / (2 * j * dr * dr);
+				c_x1geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
 				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
 
 				a_x2geom[i][j] = 1 / (dz * dz);
@@ -207,12 +207,12 @@ void init_solve()
 		}
 	}
 
-	matrix_to_csv((float**)a_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\a_x1geom.csv"));
-	matrix_to_csv((float**)b_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\b_x1geom.csv"));
-	matrix_to_csv((float**)c_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\c_x1geom.csv"));
-	matrix_to_csv((float**)a_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\a_x2geom.csv"));
-	matrix_to_csv((float**)b_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\b_x2geom.csv"));
-	matrix_to_csv((float**)c_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\c_x2geom.csv"));
+	matrix_to_csv((double**)a_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\a_x1geom.csv"));
+	matrix_to_csv((double**)b_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\b_x1geom.csv"));
+	matrix_to_csv((double**)c_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\c_x1geom.csv"));
+	matrix_to_csv((double**)a_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\a_x2geom.csv"));
+	matrix_to_csv((double**)b_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\b_x2geom.csv"));
+	matrix_to_csv((double**)c_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\c_x2geom.csv"));
 }
 
 //void set_coefficient(int i, int j, PTypes type)
@@ -336,16 +336,16 @@ void init_solve()
 
 /*dadi(u_in, s, itermax, tol_test, u_x0, u_xlx, u_y0, u_yly)
 int itermax;
-float tol_test;
-float **u_in, **s, *u_x0, *u_xlx, *u_y0, *u_yly;
+double tol_test;
+double **u_in, **s, *u_x0, *u_xlx, *u_y0, *u_yly;
 */
-int solve(float u_in[RMAX][ZMAX], float s[RMAX][ZMAX], int itermax, float tol_test)
+int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol_test)
 {
 	register int i, j;
 	int iter, ndiscard;
-	static float del_t = 0.0;
-	float del_td = 0, tptop = 0, tpbot = 0, ratio = 0;
-	float rnorm = 0, rsum = 0, res = 0, errchk = 0, dxdxutrm = 0, dydyutrm = 0;
+	static double del_t = 0.0;
+	double del_td = 0, tptop = 0, tpbot = 0, ratio = 0;
+	double rnorm = 0, rsum = 0, res = 0, errchk = 0, dxdxutrm = 0, dydyutrm = 0;
 
 	init_solve();
 
@@ -358,7 +358,7 @@ int solve(float u_in[RMAX][ZMAX], float s[RMAX][ZMAX], int itermax, float tol_te
 			rnorm += ((b_x2geom[i][j] == 0) ? 0 : s[i][j] * s[i][j]);
 
 			/*  copy u_in to u for working purposes.  */
-			u[i][j] = (float)u_in[i][j];
+			u[i][j] = (double)u_in[i][j];
 
 			//calculate an initial estimate of the residual
 		/* Use the residual as the absolute error and if it is bigger
@@ -477,7 +477,7 @@ int solve(float u_in[RMAX][ZMAX], float s[RMAX][ZMAX], int itermax, float tol_te
 #endif// DADI_DEBUG
 			for (i = 0; i < RMAX; i++)
 				for (j = 0; j < ZMAX; j++)
-					u_in[i][j] = (float)u[i][j];
+					u_in[i][j] = (double)u[i][j];
 
 			return(0);
 		}
@@ -499,7 +499,7 @@ int solve(float u_in[RMAX][ZMAX], float s[RMAX][ZMAX], int itermax, float tol_te
 		if (ratio >= 0.40 && ratio < 0.60) del_t *= 0.25;
 		for (i = 0; i < RMAX; i++)
 			for (j = 0; j < ZMAX; j++)
-				u_in[i][j] = (float)u[i][j];
+				u_in[i][j] = (double)u[i][j];
 #endif   
 
 		/* Ratio is too large. */
@@ -517,7 +517,7 @@ int solve(float u_in[RMAX][ZMAX], float s[RMAX][ZMAX], int itermax, float tol_te
 			{
 				for (i = 0; i < RMAX; i++)
 					for (j = 0; j < ZMAX; j++)
-						u_in[i][j] = (float)u[i][j];
+						u_in[i][j] = (double)u[i][j];
 				del_t = del_t0;
 				//		  if(solve(u_in,s,itermax,tol_test))
 				printf("Poisson solve FAILURE: dadi: iter= %d, ndiscard>20\n", iter);
@@ -539,7 +539,7 @@ int solve(float u_in[RMAX][ZMAX], float s[RMAX][ZMAX], int itermax, float tol_te
 
 	for (i = 0; i < RMAX; i++)
 		for (j = 0; j < ZMAX; j++)
-			u_in[i][j] = (float)u[i][j];
+			u_in[i][j] = (double)u[i][j];
 
 	return(2);
 }
@@ -555,10 +555,10 @@ int solve(float u_in[RMAX][ZMAX], float s[RMAX][ZMAX], int itermax, float tol_te
 
   **********************************************************************/
 
-void tridag(float* a, float* b, float* c, float* r, float* utri, float* gam, int n)
+void tridag(double* a, double* b, double* c, double* r, double* utri, double* gam, int n)
 {
 	register int i;
-	float bet;
+	double bet;
 
 	/*******************************************/
 	/* Decomposition and forward substitution. */

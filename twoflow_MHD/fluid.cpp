@@ -39,7 +39,7 @@ void electron_flow()
 				U_bar[i][j].u13 = U[i][j].u13 - dt / dr * (Fr[i][j + 1].f13 - Fr[i][j].f13) - dt / dz * (Fz[i + 1][j].f13 - Fz[i][j].f13) + dt * s[i][j].f13;
 
 
-				if (i == 21 && j == 3)
+				if (i == 10 && j == 4)
 				{
 					printf("U[i][j].u1 = %.5e\n", U[i][j].u1);
 					printf("Fr[i][j + 1].f1 = %.5e\n", Fr[i][j + 1].f1);
@@ -246,7 +246,7 @@ void electron_flow()
 				U_bar2[i][j].u12 = 0.5 * (U[i][j].u12 + U_bar[i][j].u12 - dt / dr * (Fr_bar[i][j].f12 - Fr_bar[i][j - 1].f12) - dt / dz * (Fz_bar[i][j].f12 - Fz_bar[i - 1][j].f12) + dt * s_bar[i][j].f12);
 				U_bar2[i][j].u13 = 0.5 * (U[i][j].u13 + U_bar[i][j].u13 - dt / dr * (Fr_bar[i][j].f13 - Fr_bar[i][j - 1].f13) - dt / dz * (Fz_bar[i][j].f13 - Fz_bar[i - 1][j].f13) + dt * s_bar[i][j].f13);
 				
-				if (i == 21 && j == 3)
+				if (i == 10 && j == 4)
 				{
 					printf("U[i][j].u1 = %.5e\n", U[i][j].u1);
 					printf("Fr_bar[i][j].f1 = %.5e\n", Fr_bar[i][j].f1);
@@ -469,7 +469,7 @@ void electron_flow()
 				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 2 * (U_bar2[i + 1][j].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i - 1][j].u13) + Qz / 2 * (U_bar2[i + 1][j].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i - 1][j].u13);
 				
 
-				if (i == 21 && j == 3)
+				if (i == 10 && j == 4)
 				{
 					//cout << "final U[i][j].u1 = " << U[i][j].u1 << endl;
 					printf("final U[i][j].u1 = %.5e\n", U[i][j].u1);

@@ -6,8 +6,8 @@ using namespace std;
 
 int nr;
 int nz;
-float dr, dz;
-float dt;
+double dr, dz;
+double dt;
 
 int index;
 
@@ -16,21 +16,21 @@ struct _U U[RMAX][ZMAX], U_bar[RMAX][ZMAX], U_bar2[RMAX][ZMAX];
 struct _F Fr[RMAX][ZMAX], Fr_bar[RMAX][ZMAX], Fr_bar2[RMAX][ZMAX];
 struct _F Fz[RMAX][ZMAX], Fz_bar[RMAX][ZMAX], Fz_bar2[RMAX][ZMAX];
 struct _F s[RMAX][ZMAX], s_bar[RMAX][ZMAX], s_bar2[RMAX][ZMAX];
-float phi[RMAX][ZMAX];
-float rho[RMAX][ZMAX];
+double phi[RMAX][ZMAX];
+double rho[RMAX][ZMAX];
 
 int scale;
 
-float vez[RMAX][ZMAX];
-float ver[RMAX][ZMAX];
-float vethera[RMAX][ZMAX];
+double vez[RMAX][ZMAX];
+double ver[RMAX][ZMAX];
+double vethera[RMAX][ZMAX];
 
-float viz[RMAX][ZMAX];
-float vir[RMAX][ZMAX];
-float vithera[RMAX][ZMAX];
+double viz[RMAX][ZMAX];
+double vir[RMAX][ZMAX];
+double vithera[RMAX][ZMAX];
 
-float bapp;
-float denJ[RMAX][ZMAX];
+double bapp;
+double denJ[RMAX][ZMAX];
 
 int main()
 {
@@ -40,7 +40,7 @@ int main()
 
 	scale = RMAX / 100;
 
-	dr = 0.001, dz = 0.001;
+	dr = 0.001 / scale, dz = 0.001 / scale;
 	dt = 0.1 * ((dr * dr) + (dz * dz));
 	printf("dt = %lf\n", dt);
 	initial();
@@ -58,11 +58,11 @@ int main()
 		output();
 	}
 
-	scanf_s("%c", &a);
+	//scanf_s("%c", &a);
 	return 0;
 }
 
-void matrix_to_csv(float** a, int N, int M, int array_size, char* filename)
+void matrix_to_csv(double** a, int N, int M, int array_size, char* filename)
 {
 	//fstream myfile(".\\output\\test_data.csv", ios::out);
 	//fstream myfile(filename, ios::app);
@@ -76,8 +76,8 @@ void matrix_to_csv(float** a, int N, int M, int array_size, char* filename)
 	{
 		for (int j = 0; j < M; j++)
 		{
-			//cout << *((float*)a + (array_size * i + j)) << endl;
-			myfile << *((float*)a + (array_size * i + j)) << ",";
+			//cout << *((double*)a + (array_size * i + j)) << endl;
+			myfile << *((double*)a + (array_size * i + j)) << ",";
 		}
 		myfile << endl;
 	}
@@ -86,7 +86,7 @@ void matrix_to_csv(float** a, int N, int M, int array_size, char* filename)
 
 void output()
 {
-	float res_out[RMAX][ZMAX];
+	double res_out[RMAX][ZMAX];
 	//todo 输出电子密度
 	char fname[100];
 	for (int i = 0; i < RMAX; i++)
@@ -97,7 +97,7 @@ void output()
 		}
 	}
 	sprintf_s(fname, (".\\output\\electron density\\electron_density_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 	//输出电子速度
 
 	for (int i = 0; i < RMAX; i++)
@@ -108,7 +108,7 @@ void output()
 		}
 	}
 	sprintf_s(fname, (".\\output\\electron ver\\electron_ver_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -118,7 +118,7 @@ void output()
 		}
 	}
 	sprintf_s(fname, (".\\output\\electron vez\\electron_vez_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -129,7 +129,7 @@ void output()
 	}
 
 	sprintf_s(fname, (".\\output\\electron vetheta\\electron_vetheta_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 
 	//输出离子密度
@@ -141,7 +141,7 @@ void output()
 		}
 	}
 	sprintf_s(fname, (".\\output\\ion density\\ion_density_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 	//todo 输出离子速度
 	for (int i = 0; i < RMAX; i++)
@@ -153,7 +153,7 @@ void output()
 	}
 
 	sprintf_s(fname, (".\\output\\ion vir\\ion_vir_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 
 	for (int i = 0; i < RMAX; i++)
@@ -165,7 +165,7 @@ void output()
 	}
 
 	sprintf_s(fname, (".\\output\\ion viz\\ion_viz_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -176,16 +176,16 @@ void output()
 	}
 
 	sprintf_s(fname, (".\\output\\ion vitheta\\ion_vitheta_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 	//todo 输出电势分布
 
 	sprintf_s(fname, (".\\output\\phi\\phi_%d.csv"), index);
-	matrix_to_csv((float**)phi, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)phi, ZMAX, RMAX, RMAX, fname);
 
 
 	sprintf_s(fname, (".\\output\\rho\\rho_%d.csv"), index);
-	matrix_to_csv((float**)rho, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)rho, ZMAX, RMAX, RMAX, fname);
 	//todo 输出磁场分布
 
 	//输出电子压强分布
@@ -198,7 +198,7 @@ void output()
 	}
 
 	sprintf_s(fname, (".\\output\\electron pe\\electron_pe_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 	//输出离子压强分布
 	for (int i = 0; i < RMAX; i++)
@@ -210,7 +210,7 @@ void output()
 	}
 
 	sprintf_s(fname, (".\\output\\ion pi\\ion_pi_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 	//todo 输出电子能量分布
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -221,7 +221,7 @@ void output()
 	}
 
 	sprintf_s(fname, (".\\output\\electron ee\\electron_ee_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 	//todo 输出离子能量分布
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -232,14 +232,14 @@ void output()
 	}
 
 	sprintf_s(fname, (".\\output\\ion ei\\ion_ei_%d.csv"), index);
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 }
 
 
 void output_u(int n)
 {
-	float res_out[RMAX][ZMAX];
+	double res_out[RMAX][ZMAX];
 
 	if (n == 1)
 	{
@@ -373,12 +373,12 @@ void output_u(int n)
 	}
 
 
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\test U.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\test U.csv"));
 }
 
 void output_u_all()
 {
-	float res_out[RMAX][ZMAX];
+	double res_out[RMAX][ZMAX];
 
 
 	for (int i = 0; i < RMAX; i++)
@@ -388,7 +388,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u1;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U1.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U1.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -397,7 +397,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u2;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U2.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U2.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -406,7 +406,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u3;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U3.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U3.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -415,7 +415,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u4;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U4.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U4.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -424,7 +424,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u5;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U5.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U5.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -433,7 +433,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u6;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U6.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U6.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -442,7 +442,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u7;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U7.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U7.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -451,7 +451,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u8;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U8.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U8.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -460,7 +460,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u9;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U9.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U9.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -469,7 +469,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u10;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U10.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U10.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -478,7 +478,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u11;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U11.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U11.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -487,7 +487,7 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u12;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U12.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U12.csv"));
 
 	for (int i = 0; i < RMAX; i++)
 	{
@@ -496,5 +496,5 @@ void output_u_all()
 			res_out[i][j] = U[i][j].u13;
 		}
 	}
-	matrix_to_csv((float**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U13.csv"));
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U13.csv"));
 }

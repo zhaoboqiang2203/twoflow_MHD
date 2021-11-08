@@ -648,7 +648,7 @@ void potential_solve()
 	{
 		for (int j = 0; j < ZMAX; j++)
 		{
-			rho[i][j] = (MPDT[i][j].ni - MPDT[i][j].ne) * QE;
+			rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE;
 		}
 	}
 	solve(phi, rho, 50, 0.01);

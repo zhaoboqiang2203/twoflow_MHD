@@ -132,8 +132,16 @@ int initial()
 	{
 		for (int j = 0; j < nz; j++)
 		{
-			MPDT[i][j].ne = 6.02e10 / scale;
-			MPDT[i][j].ni = 6.02e10 / scale;
+			if (btype[i][j] != 0)
+			{
+				MPDT[i][j].ne = 6.02e10 / scale;
+				MPDT[i][j].ni = 6.02e10 / scale;
+			}
+			else
+			{
+				MPDT[i][j].ne = 0;
+				MPDT[i][j].ni = 0;
+			}
 			MPDT[i][j].ver = 0;
 			MPDT[i][j].vez = 0;
 			MPDT[i][j].vetheta = 0;
@@ -202,7 +210,9 @@ void  boundary_condition()
 				i = boundary_array[k].start.z;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
+					if (btype[i][j + 1] != 1) continue;
 					MPDT[i + 1][j].ne += 7.4e17 / scale;
+					MPDT[i + 1][j].ver = 0;
 				}
 			}
 			else if (boundary_array[k].bnd_dir == Z_DIR)
@@ -210,7 +220,9 @@ void  boundary_condition()
 				j = boundary_array[k].start.r;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
+					if (btype[i][j + 1] != 1) continue;
 					MPDT[i][j + 1].ne += 7.4e17 / scale;
+					MPDT[i][j + 1].vez = 0;
 				}
 			}
 		}
@@ -222,6 +234,7 @@ void  boundary_condition()
 				i = boundary_array[k].start.z;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
+					if (btype[i - 1][j] != 1) continue;
 					MPDT[i - 1][j].ne /= 2;
 					MPDT[i - 1][j].ni /= 2;
 				}
@@ -231,6 +244,7 @@ void  boundary_condition()
 				j = boundary_array[k].start.r;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
+					if (btype[i][j - 1] != 1) continue;
 					MPDT[i][j - 1].ne /= 2;
 					MPDT[i][j - 1].ni /= 2;
 				}
@@ -267,6 +281,7 @@ void  boundary_condition()
 				i = boundary_array[k].start.z;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
+					if (btype[i + 1][j] != 1) continue;
 					MPDT[i + 1][j].ne /= 1000;
 
 				}
@@ -276,6 +291,7 @@ void  boundary_condition()
 				j = boundary_array[k].start.r;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
+					if (btype[i][j - 1] != 1) continue;
 					MPDT[i][j - 1].ne /= 1000;
 				}
 			}
@@ -288,8 +304,11 @@ void  boundary_condition()
 				i = boundary_array[k].start.z;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
+					if (btype[i + 1][j] != 1) continue;
 					MPDT[i + 1][j].ne += 6.02e12 / scale;
 					MPDT[i + 1][j].ni += 6.02e12 / scale;
+					MPDT[i + 1][j].vez = 0;
+					MPDT[i + 1][j].viz = 0;
 				}
 			}
 			else if (boundary_array[k].bnd_dir == Z_DIR)
@@ -297,8 +316,11 @@ void  boundary_condition()
 				j = boundary_array[k].start.r;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
+					if (btype[i][j + 1] != 1) continue;
 					MPDT[i][j + 1].ne += 6.02e12 / scale;
 					MPDT[i][j + 1].ni += 6.02e12 / scale;
+					MPDT[i][j + 1].vez = 0;
+					MPDT[i][j + 1].viz = 0;
 				}
 			}
 		}

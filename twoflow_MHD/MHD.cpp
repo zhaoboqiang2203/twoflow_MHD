@@ -31,7 +31,7 @@ double vithera[RMAX][ZMAX];
 
 double bapp;
 double denJ[RMAX][ZMAX];
-
+double res_out[RMAX][ZMAX];
 int main()
 {
 	char a;
@@ -86,7 +86,6 @@ void matrix_to_csv(double** a, int N, int M, int array_size, char* filename)
 
 void output()
 {
-	double res_out[RMAX][ZMAX];
 	//todo 输出电子密度
 	char fname[100];
 	for (int i = 0; i < RMAX; i++)
@@ -239,7 +238,6 @@ void output()
 
 void output_u(int n)
 {
-	double res_out[RMAX][ZMAX];
 
 	if (n == 1)
 	{
@@ -378,7 +376,7 @@ void output_u(int n)
 
 void output_u_all()
 {
-	double res_out[RMAX][ZMAX];
+	
 
 
 	for (int i = 0; i < RMAX; i++)

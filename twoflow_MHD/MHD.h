@@ -19,8 +19,8 @@
 #define cube(a)       ((a)*(a)*(a))
 
 
-#define RMAX 501
-#define ZMAX 501
+#define RMAX 101
+#define ZMAX 101
 
 #define R_DIR 0
 #define Z_DIR 1

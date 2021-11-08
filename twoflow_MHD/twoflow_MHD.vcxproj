@@ -142,6 +142,7 @@
     <ClCompile Include="boundary.cpp" />
     <ClCompile Include="dadi.cpp" />
     <ClCompile Include="fluid.cpp" />
+    <ClCompile Include="magneticfield.cpp" />
     <ClCompile Include="MHD.cpp" />
     <ClCompile Include="move.cpp" />
     <ClCompile Include="PotentialSolver.cpp" />

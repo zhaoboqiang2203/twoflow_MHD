@@ -7,5 +7,7 @@ void init_solve();
 void tridag(double* a, double* b, double* c, double* r, double* utri, double* gam, int n);
 int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol_test);
 
+
+void potential_boundary();
 void electric_field();
 void potential_solve();

@@ -587,8 +587,8 @@ void electric_field()
 		{
 			if (btype[i][j] == 1)
 			{
-				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dr);
-				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dz);
+				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
+				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
 			}
 			else if (btype[i][j] == LEFT)
 			{
@@ -642,6 +642,56 @@ void electric_field()
 	}
 }
 
+void potential_boundary()
+{
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			if (btype[i][j] == 1)
+			{
+
+			}
+			else if (btype[i][j] == LEFT)
+			{
+				phi[i][j] = phi[i + 1][j];
+			}
+			else if (btype[i][j] == RIGHT)
+			{
+				phi[i][j] = phi[i - 1][j];
+			}
+			else if (btype[i][j] == UP)
+			{
+				phi[i][j] = phi[i][j - 1];
+			}
+			else if (btype[i][j] == DOWN)
+			{
+				phi[i][j] = phi[i][j + 1];
+			}
+			else if (btype[i][j] == (LEFT + UP))
+			{
+				phi[i][j] = phi[i + 1][j - 1];
+			}
+			else if (btype[i][j] == (LEFT + DOWN))
+			{
+				phi[i][j] = phi[i + 1][j + 1];
+			}
+			else if (btype[i][j] == (RIGHT + DOWN))
+			{
+				phi[i][j] = phi[i - 1][j + 1];
+			}
+			else if (btype[i][j] == (RIGHT + UP))
+			{
+				phi[i][j] = phi[i - 1][j - 1];
+			}
+			else if (btype[i][j] == 0)
+			{
+
+			}
+		}
+	}
+}
+
 void potential_solve()
 {
 	for (int i = 0; i < RMAX; i++)
@@ -652,5 +702,8 @@ void potential_solve()
 		}
 	}
 	solve(phi, rho, 50, 0.01);
+
+	potential_boundary();
+
 	electric_field();
 }

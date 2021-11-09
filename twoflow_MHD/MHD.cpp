@@ -44,7 +44,7 @@ int main()
 	dt = 0.1 * ((dr * dr) + (dz * dz));
 	printf("dt = %lf\n", dt);
 	initial();
-	index = 10000;
+	index = 10;
 	while (index--)
 	{
 
@@ -55,7 +55,7 @@ int main()
 		move();
 
 		boundary_condition();
-		if (index % 1000 == 0)
+		//if (index % 1000 == 0)
 		{
 			output();
 		}

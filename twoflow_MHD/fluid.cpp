@@ -194,7 +194,7 @@ void electron_flow()
 				U_bar[i][j].u12 = U_bar[i - 1][j - 1].u12;
 				U_bar[i][j].u13 = U_bar[i - 1][j - 1].u13;
 			}
-			//else if(btype[i][j] == LEFT)//��ߵı߽磬�����ұߵĲ���
+			//else if(btype[i][j] == LEFT)//左边的边界，复制右边的参数
 			//{
 
 			//	U_bar[i][j].u1 = U[i][j].u1 - dt / dr * (Fr[i][j + 1].f1 - Fr[i][j].f1) - dt / dz * (Fz[i + 1][j].f1 - Fz[i][j].f1) + dt * s[i][j].f1;
@@ -356,7 +356,7 @@ void electron_flow()
 		}
 	}
 
-	//������
+	//矫正步
 	for (int i = 0; i < nr; i++)
 	{
 		for (int j = 0; j < nz; j++)
@@ -389,7 +389,7 @@ void electron_flow()
 
 				}
 			}
-			else if (btype[i][j] == LEFT)//��ߵı߽磬�����ұߵĲ���
+			else if (btype[i][j] == LEFT)//左边的边界，复制右边的参数
 			{
 				U_bar2[i][j].u1 = U_bar2[i + 1][j].u1;
 				U_bar2[i][j].u2 = U_bar2[i + 1][j].u2;
@@ -518,7 +518,7 @@ void electron_flow()
 				U_bar2[i][j].u12 = U_bar2[i - 1][j - 1].u12;
 				U_bar2[i][j].u13 = U_bar2[i - 1][j - 1].u13;
 			}
-			//else if(btype[i][j] == LEFT)//��ߵı߽磬�����ұߵĲ���
+			//else if(btype[i][j] == LEFT)//左侧边界
 			//{
 			//	
 			//	U_bar2[i][j].u1 = 0.5 * (U[i][j].u1 + U_bar[i][j].u1 - dt / dr * (Fr_bar[i][j].f1 - Fr_bar[i][j - 1].f1) - dt / dz * (Fz_bar[i + 1][j].f1 - Fz_bar[i][j].f1) + dt * s_bar[i][j].f1);
@@ -684,7 +684,7 @@ void electron_flow()
 		}
 	}
 
-	///����
+	//计算
 	for (int i = 0; i < nr; i++)
 	{
 		for (int j = 0; j < nz; j++)
@@ -694,23 +694,23 @@ void electron_flow()
 
 				double Qr = 0;
 				double Qz = 0;
-				//if (abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) != 0)
-				//{
-				//	Qz = abs(MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) / abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
-				//}
-				//if (abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
-				//{
-				//	Qr = abs(MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) / abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne);
-				//}
+				if (abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) != 0)
+				{
+					Qz =0.24 *  abs(MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) / abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
+				}
+				if (abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
+				{
+					Qr =0.24 *  abs(MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) / abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne);
+				}
 
-				if (abs(U_bar2[i + 1][j].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1 )!= 0)
-				{
-					Qz = abs(U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1) / abs(U_bar2[i + 1][j].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);
-				}
-				if (abs(U_bar2[i][j + 1].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) != 0)
-				{
-					Qr = abs(U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) / abs(U_bar2[i][j + 1].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1);
-				}
+				//if (abs(U_bar2[i + 1][j].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1 )!= 0)
+				//{
+				//	Qz = abs(U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1) / abs(U_bar2[i + 1][j].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);
+				//}
+				//if (abs(U_bar2[i][j + 1].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) != 0)
+				//{
+				//	Qr = abs(U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) / abs(U_bar2[i][j + 1].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1);
+				//}
 
 				if (i == row && j == col)
 				{
@@ -718,13 +718,12 @@ void electron_flow()
 					printf("Qz = %e\n", Qz);
 				}
 
-				//if (Qz > 1)
+				if (Qz > 1)
 				{
-					Qz = 0;
 					//printf("Qz = %e\n", Qz);
 					//Qz = 0;
 				}
-				//if (Qr > 1)
+				if (Qr > 1)
 				{
 					//printf("Qr = %e\n", Qr);
 					//Qr = 0;
@@ -749,6 +748,10 @@ void electron_flow()
 				{
 					//cout << "final U[i][j].u1 = " << U[i][j].u1 << endl;
 					printf("final U[i][j].u1 = %.5e\n", U[i][j].u1);
+					printf("U_bar2[i][j + 1].u1 = %.5e\n", U_bar2[i][j + 1].u1);
+					printf("U_bar2[i][j - 1].u1 = %.5e\n", U_bar2[i][j - 1].u1);
+					printf("U_bar2[i + 1][j].u1 = %.5e\n", U_bar2[i + 1][j].u1);
+					printf("U_bar2[i - 1][j].u1 = %.5e\n", U_bar2[i - 1][j].u1);
 					//printf("Fr_bar[i][j].f1 = %.5e\n", Fr_bar[i][j].f1);
 					//printf("Fr_bar[i][j - 1].f1 = %.5e\n", Fr_bar[i][j - 1].f1);
 					//printf("Fz_bar[i][j].f1 = %.5e\n", Fz_bar[i][j].f1);
@@ -771,7 +774,7 @@ void electron_flow()
 				//}
 
 			}
-			else if (btype[i][j] == LEFT)//��ߵı߽磬�����ұߵĲ���
+			else if (btype[i][j] == LEFT)//左边的边界，复制右边的参数
 			{
 				U[i][j].u1 = U[i + 1][j].u1;
 				U[i][j].u2 = U[i + 1][j].u2;
@@ -981,8 +984,8 @@ void ion_flow()
 struct _U cal_u(int i, int j)
 {
 	struct _U uij;
-	uij.r = i;
-	uij.z = j;
+	uij.r = j;
+	uij.z = i;
 	uij.u1 = MPDT[i][j].ne;
 	uij.u2 = MPDT[i][j].ni;
 	uij.u3 = MPDT[i][j].ver;

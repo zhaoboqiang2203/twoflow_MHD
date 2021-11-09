@@ -434,25 +434,36 @@ void electron_flow()
 
 				double Qr = 0;
 				double Qz = 0;
-				if (abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) != 0)
+				//if (abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) != 0)
+				//{
+				//	Qz = abs(MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) / abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
+				//}
+				//if (abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
+				//{
+				//	Qr = abs(MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) / abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne);
+				//}
+
+				if (abs(U_bar2[i + 1][j].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1 )!= 0)
 				{
-					Qz = abs(MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) / abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
+					Qz = abs(U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1) / abs(U_bar2[i + 1][j].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);
 				}
-				if (abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
+				if (abs(U_bar2[i][j + 1].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) != 0)
 				{
-					Qr = abs(MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) / abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne);
+					Qr = abs(U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) / abs(U_bar2[i][j + 1].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1);
 				}
 
 				if (Qz > 1)
 				{
-					Qz = 0;
 					//printf("Qz = %e\n", Qz);
+					//Qz = 0;
 				}
 				if (Qr > 1)
 				{
-					Qr = 0;
 					//printf("Qr = %e\n", Qr);
+					//Qr = 0;
 				}
+
+
 
 				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 2 * (U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1) + Qz / 2 * (U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);
 				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 2 * (U_bar2[i + 1][j].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i - 1][j].u2) + Qz / 2 * (U_bar2[i + 1][j].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i - 1][j].u2);

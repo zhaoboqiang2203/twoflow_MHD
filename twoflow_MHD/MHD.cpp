@@ -44,7 +44,7 @@ int main()
 	dt = 0.1 * ((dr * dr) + (dz * dz));
 	printf("dt = %lf\n", dt);
 	initial();
-	index = 20;
+	index = 10000;
 	while (index--)
 	{
 
@@ -55,7 +55,11 @@ int main()
 		move();
 
 		boundary_condition();
-		output();
+		if (index % 1000 == 0)
+		{
+			output();
+		}
+		
 	}
 
 	//scanf_s("%c", &a);
@@ -233,6 +237,14 @@ void output()
 	sprintf_s(fname, (".\\output\\ion ei\\ion_ei_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
+
+	//Ez分布
+	sprintf_s(fname, (".\\output\\Ez\\Ez_%d.csv"), index);
+	matrix_to_csv((double**)Ez, ZMAX, RMAX, RMAX, fname);
+
+	//Er分布
+	sprintf_s(fname, (".\\output\\Er\\Er_%d.csv"), index);
+	matrix_to_csv((double**)Er, ZMAX, RMAX, RMAX, fname);
 }
 
 

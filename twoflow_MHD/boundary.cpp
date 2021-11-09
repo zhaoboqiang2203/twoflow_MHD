@@ -134,8 +134,8 @@ int initial()
 		{
 			if (btype[i][j] != 0)
 			{
-				MPDT[i][j].ne = 6.02e10 / scale;
-				MPDT[i][j].ni = 6.02e10 / scale;
+				MPDT[i][j].ne = 6.02e5 / scale;
+				MPDT[i][j].ni = 6.02e5 / scale;
 			}
 			else
 			{
@@ -201,6 +201,7 @@ int fill_plasma(int tr, int tz, int fill_n)
 void  boundary_condition()
 {
 	int i, j, k;
+	double inter_e_den = 3.7500e+15;
 	_for(k, 0, BND_NUM)
 	{
 		if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
@@ -208,21 +209,25 @@ void  boundary_condition()
 			if (boundary_array[k].bnd_dir == R_DIR)
 			{
 				i = boundary_array[k].start.z;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+				_feq(j, boundary_array[k].start.r + 1, boundary_array[k].end.r - 1)
 				{
-					if (btype[i][j + 1] != 1) continue;
-					MPDT[i + 1][j].ne += 7.4e17 / scale;
-					MPDT[i + 1][j].ver = 0;
+					MPDT[i][j].ver = 0;
+					MPDT[i][j].vez = 0;
+					if (btype[i + 1][j] != 1) continue;
+					MPDT[i + 1][j].ne += inter_e_den / scale;
+					MPDT[i][j].ne += inter_e_den / scale;
 				}
 			}
 			else if (boundary_array[k].bnd_dir == Z_DIR)
 			{
 				j = boundary_array[k].start.r;
-				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+				_feq(i, boundary_array[k].start.z + 1, boundary_array[k].end.z - 1)
 				{
+					MPDT[i][j].ver = 0;
+					MPDT[i][j].vez = 0;
 					if (btype[i][j + 1] != 1) continue;
-					MPDT[i][j + 1].ne += 7.4e17 / scale;
-					MPDT[i][j + 1].vez = 0;
+					MPDT[i][j + 1].ne += inter_e_den / scale;
+					MPDT[i][j].ne += inter_e_den / scale;
 				}
 			}
 		}
@@ -237,6 +242,8 @@ void  boundary_condition()
 					if (btype[i - 1][j] != 1) continue;
 					MPDT[i - 1][j].ne /= 2;
 					MPDT[i - 1][j].ni /= 2;
+					MPDT[i][j].ne /= 2;
+					MPDT[i][j].ni /= 2;
 				}
 			}
 			else if (boundary_array[k].bnd_dir == Z_DIR)
@@ -247,6 +254,8 @@ void  boundary_condition()
 					if (btype[i][j - 1] != 1) continue;
 					MPDT[i][j - 1].ne /= 2;
 					MPDT[i][j - 1].ni /= 2;
+					MPDT[i][j].ne /= 2;
+					MPDT[i][j].ni /= 2;
 				}
 			}
 		}
@@ -283,7 +292,7 @@ void  boundary_condition()
 				{
 					if (btype[i + 1][j] != 1) continue;
 					MPDT[i + 1][j].ne /= 1000;
-
+					MPDT[i][j].ne /= 1000;
 				}
 			}
 			else if (boundary_array[k].bnd_dir == Z_DIR)
@@ -293,6 +302,7 @@ void  boundary_condition()
 				{
 					if (btype[i][j - 1] != 1) continue;
 					MPDT[i][j - 1].ne /= 1000;
+					MPDT[i][j].ne /= 1000;
 				}
 			}
 		}
@@ -304,11 +314,15 @@ void  boundary_condition()
 				i = boundary_array[k].start.z;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
+					MPDT[i][j].vez = 0;
+					MPDT[i][j].viz = 0;
 					if (btype[i + 1][j] != 1) continue;
 					MPDT[i + 1][j].ne += 6.02e12 / scale;
 					MPDT[i + 1][j].ni += 6.02e12 / scale;
-					MPDT[i + 1][j].vez = 0;
-					MPDT[i + 1][j].viz = 0;
+					MPDT[i][j].ne += 6.02e12 / scale;
+					MPDT[i][j].ni += 6.02e12 / scale;
+					MPDT[i + 1][j].ne += inter_e_den / scale;
+					MPDT[i][j].ne += inter_e_den / scale;
 				}
 			}
 			else if (boundary_array[k].bnd_dir == Z_DIR)
@@ -316,11 +330,15 @@ void  boundary_condition()
 				j = boundary_array[k].start.r;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
+					MPDT[i][j].vez = 0;
+					MPDT[i][j].viz = 0;
 					if (btype[i][j + 1] != 1) continue;
 					MPDT[i][j + 1].ne += 6.02e12 / scale;
 					MPDT[i][j + 1].ni += 6.02e12 / scale;
-					MPDT[i][j + 1].vez = 0;
-					MPDT[i][j + 1].viz = 0;
+					MPDT[i][j].ne += 6.02e12 / scale;
+					MPDT[i][j].ni += 6.02e12 / scale;
+					MPDT[i][j + 1].ne += inter_e_den / scale;
+					MPDT[i][j].ne += inter_e_den / scale;
 				}
 			}
 		}

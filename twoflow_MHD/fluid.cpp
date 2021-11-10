@@ -39,8 +39,7 @@ void electron_flow()
 				U_bar[i][j].u11 = U[i][j].u11 - dt / dr * (Fr[i][j + 1].f11 - Fr[i][j].f11) - dt / dz * (Fz[i + 1][j].f11 - Fz[i][j].f11) + dt * s[i][j].f11;
 				U_bar[i][j].u12 = U[i][j].u12 - dt / dr * (Fr[i][j + 1].f12 - Fr[i][j].f12) - dt / dz * (Fz[i + 1][j].f12 - Fz[i][j].f12) + dt * s[i][j].f12;
 				U_bar[i][j].u13 = U[i][j].u13 - dt / dr * (Fr[i][j + 1].f13 - Fr[i][j].f13) - dt / dz * (Fz[i + 1][j].f13 - Fz[i][j].f13) + dt * s[i][j].f13;
-
-
+#ifdef FLUID_DEBUG
 				if (i == row && j == col)
 				{
 					printf("U[i][j].u1 = %.5e\n", U[i][j].u1);
@@ -52,20 +51,9 @@ void electron_flow()
 					printf("U_bar[i][j].u1 = %.5e\n", U_bar[i][j].u1);
 					
 				}
-				//if (U_bar[i][j].u5 != U_bar[i][j].u5)
-				//{
-				//	printf("U_bar = %.5e\n", U_bar[i][j].u5);
-				//	printf("Fz = %.5e\n", Fz[i][j].f5);
-				//	printf("Fr = %.5e\n", Fr[i][j].f5);
-				//	printf("s = %.5e\n", s[i][j].f5);
-				//	printf("U_bar2 = %.5e\n", U_bar2[i][j].u5);
-				//	printf("Fz_bar = %.5e\n", Fz_bar[i][j].f5);
-				//	printf("Fr_bar = %.5e\n", Fr_bar[i][j].f5);
-				//	printf("s_bar = %.5e\n", s_bar[i][j].f5);
-
-				//}
+#endif// FLUID_DEBUG
 			}
-			else if (btype[i][j] == LEFT)//��ߵı߽磬�����ұߵĲ���
+			else if (btype[i][j] == LEFT)//左边的边界，复制右边的参数
 			{
 				U_bar[i][j].u1 = U_bar[i + 1][j].u1;
 				U_bar[i][j].u2 = U_bar[i + 1][j].u2;
@@ -376,7 +364,7 @@ void electron_flow()
 				U_bar2[i][j].u11 = 0.5 * (U[i][j].u11 + U_bar[i][j].u11 - dt / dr * (Fr_bar[i][j].f11 - Fr_bar[i][j - 1].f11) - dt / dz * (Fz_bar[i][j].f11 - Fz_bar[i - 1][j].f11) + dt * s_bar[i][j].f11);
 				U_bar2[i][j].u12 = 0.5 * (U[i][j].u12 + U_bar[i][j].u12 - dt / dr * (Fr_bar[i][j].f12 - Fr_bar[i][j - 1].f12) - dt / dz * (Fz_bar[i][j].f12 - Fz_bar[i - 1][j].f12) + dt * s_bar[i][j].f12);
 				U_bar2[i][j].u13 = 0.5 * (U[i][j].u13 + U_bar[i][j].u13 - dt / dr * (Fr_bar[i][j].f13 - Fr_bar[i][j - 1].f13) - dt / dz * (Fz_bar[i][j].f13 - Fz_bar[i - 1][j].f13) + dt * s_bar[i][j].f13);
-				
+#ifdef FLUID_DEBUG
 				if (i == row && j == col)
 				{
 					printf("U[i][j].u1 = %.5e\n", U[i][j].u1);
@@ -388,6 +376,8 @@ void electron_flow()
 					printf("U_bar2[i][j].u1 = %.5e\n", U_bar2[i][j].u1);
 
 				}
+#endif// FLUID_DEBUG				
+
 			}
 			else if (btype[i][j] == LEFT)//左边的边界，复制右边的参数
 			{
@@ -696,11 +686,11 @@ void electron_flow()
 				double Qz = 0;
 				if (abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) != 0)
 				{
-					Qz =0.24 *  abs(MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) / abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
+					Qz = 0.24 *  abs(MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) / abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
 				}
 				if (abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
 				{
-					Qr =0.24 *  abs(MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) / abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne);
+					Qr = 0.24 *  abs(MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) / abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne);
 				}
 
 				//if (abs(U_bar2[i + 1][j].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1 )!= 0)
@@ -712,22 +702,6 @@ void electron_flow()
 				//	Qr = abs(U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) / abs(U_bar2[i][j + 1].u1 + 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1);
 				//}
 
-				if (i == row && j == col)
-				{
-					printf("Qr = %e\n", Qr);
-					printf("Qz = %e\n", Qz);
-				}
-
-				if (Qz > 1)
-				{
-					//printf("Qz = %e\n", Qz);
-					//Qz = 0;
-				}
-				if (Qr > 1)
-				{
-					//printf("Qr = %e\n", Qr);
-					//Qr = 0;
-				}
 
 				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 2 * (U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) + Qz / 2 * (U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);
 				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 2 * (U_bar2[i][j + 1].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i][j - 1].u2) + Qz / 2 * (U_bar2[i + 1][j].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i - 1][j].u2);
@@ -743,7 +717,7 @@ void electron_flow()
 				U[i][j].u12 = U_bar2[i][j].u12 + Qr / 2 * (U_bar2[i][j + 1].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i][j - 1].u12) + Qz / 2 * (U_bar2[i + 1][j].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i - 1][j].u12);
 				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 2 * (U_bar2[i][j + 1].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i][j - 1].u13) + Qz / 2 * (U_bar2[i + 1][j].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i - 1][j].u13);
 				
-
+#ifdef FLUID_DEBUG
 				if (i == row && j == col)
 				{
 					//cout << "final U[i][j].u1 = " << U[i][j].u1 << endl;
@@ -760,148 +734,137 @@ void electron_flow()
 					//printf("U_bar2[i][j].u1 = %.5e\n", U_bar2[i][j].u1);
 
 				}
-				//if (U[i][j].u5 != U[i][j].u5)
-				//{
-				//	printf("U_bar = %.5e\n", U_bar[i][j].u5);
-				//	printf("Fz = %.5e\n", Fz[i][j].f5);
-				//	printf("Fr = %.5e\n", Fr[i][j].f5);
-				//	printf("s = %.5e\n", s[i][j].f5);
-				//	printf("U_bar2 = %.5e\n", U_bar2[i][j].u5);
-				//	printf("Fz_bar = %.5e\n", Fz_bar[i][j].f5);
-				//	printf("Fr_bar = %.5e\n", Fr_bar[i][j].f5);
-				//	printf("s_bar = %.5e\n", s_bar[i][j].f5);
-
-				//}
+#endif// FLUID_DEBUG	
 
 			}
-			else if (btype[i][j] == LEFT)//左边的边界，复制右边的参数
-			{
-				U[i][j].u1 = U[i + 1][j].u1;
-				U[i][j].u2 = U[i + 1][j].u2;
-				U[i][j].u3 = U[i + 1][j].u3;
-				U[i][j].u4 = U[i + 1][j].u4;
-				U[i][j].u5 = U[i + 1][j].u5;
-				U[i][j].u6 = U[i + 1][j].u6;
-				U[i][j].u7 = U[i + 1][j].u7;
-				U[i][j].u8 = U[i + 1][j].u8;
-				U[i][j].u9 = U[i + 1][j].u9;
-				U[i][j].u10 = U[i + 1][j].u10;
-				U[i][j].u11 = U[i + 1][j].u11;
-				U[i][j].u12 = U[i + 1][j].u12;
-				U[i][j].u13 = U[i + 1][j].u13;
-			}
-			else if (btype[i][j] == RIGHT)
-			{
-				U[i][j].u1 = U[i - 1][j].u1;
-				U[i][j].u2 = U[i - 1][j].u2;
-				U[i][j].u3 = U[i - 1][j].u3;
-				U[i][j].u4 = U[i - 1][j].u4;
-				U[i][j].u5 = U[i - 1][j].u5;
-				U[i][j].u6 = U[i - 1][j].u6;
-				U[i][j].u7 = U[i - 1][j].u7;
-				U[i][j].u8 = U[i - 1][j].u8;
-				U[i][j].u9 = U[i - 1][j].u9;
-				U[i][j].u10 = U[i - 1][j].u10;
-				U[i][j].u11 = U[i - 1][j].u11;
-				U[i][j].u12 = U[i - 1][j].u12;
-				U[i][j].u13 = U[i - 1][j].u13;
-			}
-			else if (btype[i][j] == UP)
-			{
-				U[i][j].u1 = U[i][j - 1].u1;
-				U[i][j].u2 = U[i][j - 1].u2;
-				U[i][j].u3 = U[i][j - 1].u3;
-				U[i][j].u4 = U[i][j - 1].u4;
-				U[i][j].u5 = U[i][j - 1].u5;
-				U[i][j].u6 = U[i][j - 1].u6;
-				U[i][j].u7 = U[i][j - 1].u7;
-				U[i][j].u8 = U[i][j - 1].u8;
-				U[i][j].u9 = U[i][j - 1].u9;
-				U[i][j].u10 = U[i][j - 1].u10;
-				U[i][j].u11 = U[i][j - 1].u11;
-				U[i][j].u12 = U[i][j - 1].u12;
-				U[i][j].u13 = U[i][j - 1].u13;
-			}
-			else if (btype[i][j] == DOWN)
-			{
-				U[i][j].u1 = U[i][j + 1].u1;
-				U[i][j].u2 = U[i][j + 1].u2;
-				U[i][j].u3 = U[i][j + 1].u3;
-				U[i][j].u4 = U[i][j + 1].u4;
-				U[i][j].u5 = U[i][j + 1].u5;
-				U[i][j].u6 = U[i][j + 1].u6;
-				U[i][j].u7 = U[i][j + 1].u7;
-				U[i][j].u8 = U[i][j + 1].u8;
-				U[i][j].u9 = U[i][j + 1].u9;
-				U[i][j].u10 = U[i][j + 1].u10;
-				U[i][j].u11 = U[i][j + 1].u11;
-				U[i][j].u12 = U[i][j + 1].u12;
-				U[i][j].u13 = U[i][j + 1].u13;
-			}
-			else if (btype[i][j] == (LEFT + UP))
-			{
-				U[i][j].u1 = U[i + 1][j - 1].u1;
-				U[i][j].u2 = U[i + 1][j - 1].u2;
-				U[i][j].u3 = U[i + 1][j - 1].u3;
-				U[i][j].u4 = U[i + 1][j - 1].u4;
-				U[i][j].u5 = U[i + 1][j - 1].u5;
-				U[i][j].u6 = U[i + 1][j - 1].u6;
-				U[i][j].u7 = U[i + 1][j - 1].u7;
-				U[i][j].u8 = U[i + 1][j - 1].u8;
-				U[i][j].u9 = U[i + 1][j - 1].u9;
-				U[i][j].u10 = U[i + 1][j - 1].u10;
-				U[i][j].u11 = U[i + 1][j - 1].u11;
-				U[i][j].u12 = U[i + 1][j - 1].u12;
-				U[i][j].u13 = U[i + 1][j - 1].u13;
-			}
-			else if (btype[i][j] == (LEFT + DOWN))
-			{
-				U[i][j].u1 = U[i + 1][j + 1].u1;
-				U[i][j].u2 = U[i + 1][j + 1].u2;
-				U[i][j].u3 = U[i + 1][j + 1].u3;
-				U[i][j].u4 = U[i + 1][j + 1].u4;
-				U[i][j].u5 = U[i + 1][j + 1].u5;
-				U[i][j].u6 = U[i + 1][j + 1].u6;
-				U[i][j].u7 = U[i + 1][j + 1].u7;
-				U[i][j].u8 = U[i + 1][j + 1].u8;
-				U[i][j].u9 = U[i + 1][j + 1].u9;
-				U[i][j].u10 = U[i + 1][j + 1].u10;
-				U[i][j].u11 = U[i + 1][j + 1].u11;
-				U[i][j].u12 = U[i + 1][j + 1].u12;
-				U[i][j].u13 = U[i + 1][j + 1].u13;
-			}
-			else if (btype[i][j] == (RIGHT + DOWN))
-			{
-				U[i][j].u1 = U[i - 1][j + 1].u1;
-				U[i][j].u2 = U[i - 1][j + 1].u2;
-				U[i][j].u3 = U[i - 1][j + 1].u3;
-				U[i][j].u4 = U[i - 1][j + 1].u4;
-				U[i][j].u5 = U[i - 1][j + 1].u5;
-				U[i][j].u6 = U[i - 1][j + 1].u6;
-				U[i][j].u7 = U[i - 1][j + 1].u7;
-				U[i][j].u8 = U[i - 1][j + 1].u8;
-				U[i][j].u9 = U[i - 1][j + 1].u9;
-				U[i][j].u10 = U[i - 1][j + 1].u10;
-				U[i][j].u11 = U[i - 1][j + 1].u11;
-				U[i][j].u12 = U[i - 1][j + 1].u12;
-				U[i][j].u13 = U[i - 1][j + 1].u13;
-			}
-			else if (btype[i][j] == (RIGHT + UP))
-			{
-				U[i][j].u1 = U[i - 1][j - 1].u1;
-				U[i][j].u2 = U[i - 1][j - 1].u2;
-				U[i][j].u3 = U[i - 1][j - 1].u3;
-				U[i][j].u4 = U[i - 1][j - 1].u4;
-				U[i][j].u5 = U[i - 1][j - 1].u5;
-				U[i][j].u6 = U[i - 1][j - 1].u6;
-				U[i][j].u7 = U[i - 1][j - 1].u7;
-				U[i][j].u8 = U[i - 1][j - 1].u8;
-				U[i][j].u9 = U[i - 1][j - 1].u9;
-				U[i][j].u10 = U[i - 1][j - 1].u10;
-				U[i][j].u11 = U[i - 1][j - 1].u11;
-				U[i][j].u12 = U[i - 1][j - 1].u12;
-				U[i][j].u13 = U[i - 1][j - 1].u13;
-			}
+			//else if (btype[i][j] == LEFT)//左边的边界，复制右边的参数
+			//{
+			//	U[i][j].u1 = U[i + 1][j].u1;
+			//	U[i][j].u2 = U[i + 1][j].u2;
+			//	U[i][j].u3 = U[i + 1][j].u3;
+			//	U[i][j].u4 = U[i + 1][j].u4;
+			//	U[i][j].u5 = U[i + 1][j].u5;
+			//	U[i][j].u6 = U[i + 1][j].u6;
+			//	U[i][j].u7 = U[i + 1][j].u7;
+			//	U[i][j].u8 = U[i + 1][j].u8;
+			//	U[i][j].u9 = U[i + 1][j].u9;
+			//	U[i][j].u10 = U[i + 1][j].u10;
+			//	U[i][j].u11 = U[i + 1][j].u11;
+			//	U[i][j].u12 = U[i + 1][j].u12;
+			//	U[i][j].u13 = U[i + 1][j].u13;
+			//}
+			//else if (btype[i][j] == RIGHT)
+			//{
+			//	U[i][j].u1 = U[i - 1][j].u1;
+			//	U[i][j].u2 = U[i - 1][j].u2;
+			//	U[i][j].u3 = U[i - 1][j].u3;
+			//	U[i][j].u4 = U[i - 1][j].u4;
+			//	U[i][j].u5 = U[i - 1][j].u5;
+			//	U[i][j].u6 = U[i - 1][j].u6;
+			//	U[i][j].u7 = U[i - 1][j].u7;
+			//	U[i][j].u8 = U[i - 1][j].u8;
+			//	U[i][j].u9 = U[i - 1][j].u9;
+			//	U[i][j].u10 = U[i - 1][j].u10;
+			//	U[i][j].u11 = U[i - 1][j].u11;
+			//	U[i][j].u12 = U[i - 1][j].u12;
+			//	U[i][j].u13 = U[i - 1][j].u13;
+			//}
+			//else if (btype[i][j] == UP)
+			//{
+			//	U[i][j].u1 = U[i][j - 1].u1;
+			//	U[i][j].u2 = U[i][j - 1].u2;
+			//	U[i][j].u3 = U[i][j - 1].u3;
+			//	U[i][j].u4 = U[i][j - 1].u4;
+			//	U[i][j].u5 = U[i][j - 1].u5;
+			//	U[i][j].u6 = U[i][j - 1].u6;
+			//	U[i][j].u7 = U[i][j - 1].u7;
+			//	U[i][j].u8 = U[i][j - 1].u8;
+			//	U[i][j].u9 = U[i][j - 1].u9;
+			//	U[i][j].u10 = U[i][j - 1].u10;
+			//	U[i][j].u11 = U[i][j - 1].u11;
+			//	U[i][j].u12 = U[i][j - 1].u12;
+			//	U[i][j].u13 = U[i][j - 1].u13;
+			//}
+			//else if (btype[i][j] == DOWN)
+			//{
+			//	U[i][j].u1 = U[i][j + 1].u1;
+			//	U[i][j].u2 = U[i][j + 1].u2;
+			//	U[i][j].u3 = U[i][j + 1].u3;
+			//	U[i][j].u4 = U[i][j + 1].u4;
+			//	U[i][j].u5 = U[i][j + 1].u5;
+			//	U[i][j].u6 = U[i][j + 1].u6;
+			//	U[i][j].u7 = U[i][j + 1].u7;
+			//	U[i][j].u8 = U[i][j + 1].u8;
+			//	U[i][j].u9 = U[i][j + 1].u9;
+			//	U[i][j].u10 = U[i][j + 1].u10;
+			//	U[i][j].u11 = U[i][j + 1].u11;
+			//	U[i][j].u12 = U[i][j + 1].u12;
+			//	U[i][j].u13 = U[i][j + 1].u13;
+			//}
+			//else if (btype[i][j] == (LEFT + UP))
+			//{
+			//	U[i][j].u1 = U[i + 1][j - 1].u1;
+			//	U[i][j].u2 = U[i + 1][j - 1].u2;
+			//	U[i][j].u3 = U[i + 1][j - 1].u3;
+			//	U[i][j].u4 = U[i + 1][j - 1].u4;
+			//	U[i][j].u5 = U[i + 1][j - 1].u5;
+			//	U[i][j].u6 = U[i + 1][j - 1].u6;
+			//	U[i][j].u7 = U[i + 1][j - 1].u7;
+			//	U[i][j].u8 = U[i + 1][j - 1].u8;
+			//	U[i][j].u9 = U[i + 1][j - 1].u9;
+			//	U[i][j].u10 = U[i + 1][j - 1].u10;
+			//	U[i][j].u11 = U[i + 1][j - 1].u11;
+			//	U[i][j].u12 = U[i + 1][j - 1].u12;
+			//	U[i][j].u13 = U[i + 1][j - 1].u13;
+			//}
+			//else if (btype[i][j] == (LEFT + DOWN))
+			//{
+			//	U[i][j].u1 = U[i + 1][j + 1].u1;
+			//	U[i][j].u2 = U[i + 1][j + 1].u2;
+			//	U[i][j].u3 = U[i + 1][j + 1].u3;
+			//	U[i][j].u4 = U[i + 1][j + 1].u4;
+			//	U[i][j].u5 = U[i + 1][j + 1].u5;
+			//	U[i][j].u6 = U[i + 1][j + 1].u6;
+			//	U[i][j].u7 = U[i + 1][j + 1].u7;
+			//	U[i][j].u8 = U[i + 1][j + 1].u8;
+			//	U[i][j].u9 = U[i + 1][j + 1].u9;
+			//	U[i][j].u10 = U[i + 1][j + 1].u10;
+			//	U[i][j].u11 = U[i + 1][j + 1].u11;
+			//	U[i][j].u12 = U[i + 1][j + 1].u12;
+			//	U[i][j].u13 = U[i + 1][j + 1].u13;
+			//}
+			//else if (btype[i][j] == (RIGHT + DOWN))
+			//{
+			//	U[i][j].u1 = U[i - 1][j + 1].u1;
+			//	U[i][j].u2 = U[i - 1][j + 1].u2;
+			//	U[i][j].u3 = U[i - 1][j + 1].u3;
+			//	U[i][j].u4 = U[i - 1][j + 1].u4;
+			//	U[i][j].u5 = U[i - 1][j + 1].u5;
+			//	U[i][j].u6 = U[i - 1][j + 1].u6;
+			//	U[i][j].u7 = U[i - 1][j + 1].u7;
+			//	U[i][j].u8 = U[i - 1][j + 1].u8;
+			//	U[i][j].u9 = U[i - 1][j + 1].u9;
+			//	U[i][j].u10 = U[i - 1][j + 1].u10;
+			//	U[i][j].u11 = U[i - 1][j + 1].u11;
+			//	U[i][j].u12 = U[i - 1][j + 1].u12;
+			//	U[i][j].u13 = U[i - 1][j + 1].u13;
+			//}
+			//else if (btype[i][j] == (RIGHT + UP))
+			//{
+			//	U[i][j].u1 = U[i - 1][j - 1].u1;
+			//	U[i][j].u2 = U[i - 1][j - 1].u2;
+			//	U[i][j].u3 = U[i - 1][j - 1].u3;
+			//	U[i][j].u4 = U[i - 1][j - 1].u4;
+			//	U[i][j].u5 = U[i - 1][j - 1].u5;
+			//	U[i][j].u6 = U[i - 1][j - 1].u6;
+			//	U[i][j].u7 = U[i - 1][j - 1].u7;
+			//	U[i][j].u8 = U[i - 1][j - 1].u8;
+			//	U[i][j].u9 = U[i - 1][j - 1].u9;
+			//	U[i][j].u10 = U[i - 1][j - 1].u10;
+			//	U[i][j].u11 = U[i - 1][j - 1].u11;
+			//	U[i][j].u12 = U[i - 1][j - 1].u12;
+			//	U[i][j].u13 = U[i - 1][j - 1].u13;
+			//}
 			else if (btype[i][j] == 0)
 			{
 				U[i][j].u1 = 0;
@@ -938,7 +901,10 @@ void electron_flow()
 
 		}
 	}
-	//output_u_all();
+	
+	//更新边界信息
+
+	
 
 	for (int i = 0; i < nr; i++)
 	{

@@ -6,8 +6,10 @@
 
 #include <string> 
 #include <queue>
+#include <cmath>
 
-#define DADI_DEBUG
+//#define DADI_DEBUG
+//#define FLUID_DEBUG
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)
@@ -167,7 +169,8 @@ extern struct _U U[RMAX][ZMAX], U_bar[RMAX][ZMAX], U_bar2[RMAX][ZMAX];
 extern struct _F Fr[RMAX][ZMAX], Fr_bar[RMAX][ZMAX], Fr_bar2[RMAX][ZMAX];
 extern struct _F Fz[RMAX][ZMAX], Fz_bar[RMAX][ZMAX], Fz_bar2[RMAX][ZMAX];
 extern struct _F s[RMAX][ZMAX], s_bar[RMAX][ZMAX], s_bar2[RMAX][ZMAX];
-extern double bapp;
+extern double app_Bz[RMAX][ZMAX];
+extern double app_Br[RMAX][ZMAX];
 
 void move();
 
@@ -176,3 +179,5 @@ void test_sor_code();
 void outputcsv();
 void output_u_all();
 void output_u(int n);
+
+void magnetic_field_initial();

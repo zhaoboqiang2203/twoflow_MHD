@@ -132,7 +132,7 @@ int initial()
 	{
 		for (int j = 0; j < nz; j++)
 		{
-			if (btype[i][j] != 0)
+			if (btype[i][j] == 1)
 			{
 				MPDT[i][j].ne = 6.02e5 / scale;
 				MPDT[i][j].ni = 6.02e5 / scale;
@@ -200,8 +200,157 @@ int fill_plasma(int tr, int tz, int fill_n)
 //边界条件处理
 void  boundary_condition()
 {
+
 	int i, j, k;
 	double inter_e_den = 3.7500e+15;
+
+	//固体边界和对称轴边界
+
+	_for(k, 0, BND_NUM)
+	{
+		if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
+		{
+			if (boundary_array[k].bnd_dir == R_DIR)
+			{
+				i = boundary_array[k].start.z;
+				_feq(j, boundary_array[k].start.r + 1, boundary_array[k].end.r - 1)
+				{
+					if (btype[i + 1][j] != 1) continue;
+
+					double pd = MPDT[i][j].vez * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i + 1][j].vez;
+					
+					MPDT[i + 1][j].ne += MPDT[i][j].ne;
+					MPDT[i + 1][j].vez = -pd / MPDT[i + 1][j].ne;
+
+					MPDT[i][j].ne = 0;
+					MPDT[i][j].ver = 0;
+					MPDT[i][j].vez = 0;
+
+				}
+			}
+			else if (boundary_array[k].bnd_dir == Z_DIR)
+			{
+				j = boundary_array[k].start.r;
+				_feq(i, boundary_array[k].start.z + 1, boundary_array[k].end.z - 1)
+				{
+					if (btype[i][j + 1] != 1) continue;
+					double pd = MPDT[i][j].ver * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i][j + 1].ver;
+					MPDT[i][j + 1].ne += MPDT[i][j].ne;
+					MPDT[i][j + 1].ver = -pd / MPDT[i][j + 1].ne;
+
+					MPDT[i][j].ne = 0;
+					MPDT[i][j].ver = 0;
+					MPDT[i][j].vez = 0;
+				}
+			}
+		}
+
+		if (boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
+		{
+			if (boundary_array[k].bnd_dir == R_DIR)
+			{
+				i = boundary_array[k].start.z;
+				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+				{
+
+					if (btype[i + 1][j] != 1) continue;
+
+					double pd = MPDT[i][j].vez * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i + 1][j].vez;
+
+					MPDT[i + 1][j].ne += MPDT[i][j].ne;
+					MPDT[i + 1][j].vez = -pd / MPDT[i + 1][j].ne;
+
+					MPDT[i][j].ne = 0;
+					MPDT[i][j].ver = 0;
+					MPDT[i][j].vez = 0;
+				}
+			}
+			else if (boundary_array[k].bnd_dir == Z_DIR)
+			{
+				j = boundary_array[k].start.r;
+				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+				{
+					if (btype[i][j - 1] != 1) continue;
+					double pd = MPDT[i][j].ver * MPDT[i][j].ne + MPDT[i - 1][j].ne * MPDT[i][j - 1].ver;
+					MPDT[i][j - 1].ne += MPDT[i][j].ne;
+					MPDT[i][j - 1].ver = -pd / MPDT[i][j - 1].ne;
+
+					MPDT[i][j].ne = 0;
+					MPDT[i][j].ver = 0;
+					MPDT[i][j].vez = 0;
+				}
+			}
+		}
+
+		if (boundary_array[k].physics_type == ANODE_BOUNDARY)
+		{
+			if (boundary_array[k].bnd_dir == R_DIR)
+			{
+				i = boundary_array[k].start.z;
+				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+				{
+					if (btype[i + 1][j] != 1) continue;
+
+					double pd = MPDT[i][j].vez * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i + 1][j].vez;
+
+					MPDT[i + 1][j].ne += MPDT[i][j].ne;
+					MPDT[i + 1][j].vez = -pd / MPDT[i + 1][j].ne;
+
+					MPDT[i][j].ne = 0;
+					MPDT[i][j].ver = 0;
+					MPDT[i][j].vez = 0;
+				
+				}
+			}
+			else if (boundary_array[k].bnd_dir == Z_DIR)
+			{
+				j = boundary_array[k].start.r;
+				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+				{
+					//阳极只有r方向
+					//if (btype[i][j - 1] != 1) continue;
+					//double pd = MPDT[i][j].ver * MPDT[i][j].ne + MPDT[i - 1][j].ne * MPDT[i][j - 1].ver;
+					//MPDT[i][j - 1].ne += MPDT[i][j].ne;
+					//MPDT[i][j - 1].ver = -pd / MPDT[i][j - 1].ne;
+
+					//MPDT[i][j].ne = 0;
+					//MPDT[i][j].ver = 0;
+					//MPDT[i][j].vez = 0;
+				}
+			}
+		}
+
+		if (boundary_array[k].physics_type == CYLINDRICAL_AXIS)
+		{
+			if (boundary_array[k].bnd_dir == R_DIR)
+			{
+				i = boundary_array[k].start.z;
+				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+				{
+
+
+				}
+			}
+			else if (boundary_array[k].bnd_dir == Z_DIR)
+			{
+				j = boundary_array[k].start.r;
+				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+				{
+					if (btype[i][j - 1] != 1) continue;
+					double pd = MPDT[i][j].ver * MPDT[i][j].ne + MPDT[i - 1][j].ne * MPDT[i][j - 1].ver;
+					MPDT[i][j - 1].ne += MPDT[i][j].ne;
+					MPDT[i][j - 1].ver = -pd / MPDT[i][j - 1].ne;
+
+					MPDT[i][j].ne = 0;
+					MPDT[i][j].ver = 0;
+					MPDT[i][j].vez = 0;
+				}
+			}
+		}
+
+	}
+
+	//等离子体和电子进入和离开仿真区域
 	_for(k, 0, BND_NUM)
 	{
 		if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
@@ -260,27 +409,27 @@ void  boundary_condition()
 			}
 		}
 
-		//if(boundary_array[k].physics_type == VACCUM_BOUNDARY)
-		//{
-		//	if (boundary_array[k].bnd_dir == R_DIR)
-		//	{
-		//		i = boundary_array[k].start.z;
-		//		_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
-		//		{
-		//			MPDT[i][j].ne /= 2;
-		//			MPDT[i][j].ni /= 2;
-		//		}
-		//	}
-		//	else if (boundary_array[k].bnd_dir == Z_DIR)
-		//	{
-		//		j = boundary_array[k].start.r;
-		//		_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
-		//		{
-		//			MPDT[i][j].ne /= 2;
-		//			MPDT[i][j].ni /= 2;
-		//		}
-		//	}
-		//}
+		if(boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
+		{
+			if (boundary_array[k].bnd_dir == R_DIR)
+			{
+				i = boundary_array[k].start.z;
+				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+				{
+					MPDT[i][j].ne /= 2;
+					MPDT[i][j].ni /= 2;
+				}
+			}
+			else if (boundary_array[k].bnd_dir == Z_DIR)
+			{
+				j = boundary_array[k].start.r;
+				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+				{
+					MPDT[i][j].ne /= 2;
+					MPDT[i][j].ni /= 2;
+				}
+			}
+		}
 
 		//保证阴极进入和阳极流出的电子密度相等
 		if (boundary_array[k].physics_type == ANODE_BOUNDARY)

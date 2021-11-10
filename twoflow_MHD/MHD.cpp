@@ -29,7 +29,8 @@ double viz[RMAX][ZMAX];
 double vir[RMAX][ZMAX];
 double vithera[RMAX][ZMAX];
 
-double bapp;
+double app_Bz[RMAX][ZMAX];
+double app_Br[RMAX][ZMAX];
 double denJ[RMAX][ZMAX];
 double res_out[RMAX][ZMAX];
 int main()
@@ -44,7 +45,8 @@ int main()
 	dt = 0.1 * ((dr * dr) + (dz * dz));
 	printf("dt = %lf\n", dt);
 	initial();
-	index = 10;
+	magnetic_field_initial();
+	index = 20;
 	while (index--)
 	{
 

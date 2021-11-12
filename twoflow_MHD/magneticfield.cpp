@@ -1,7 +1,7 @@
 #include "MHD.h"
 
 double c0 = 2e-7;// mu0 / 2pi = 2e-7
-double I = 100;// current, unit: A
+double I = 18000;// current, unit: A
 double a = 0.5;// radius of current coil, unit: m
 double eps = 1e-4;
 

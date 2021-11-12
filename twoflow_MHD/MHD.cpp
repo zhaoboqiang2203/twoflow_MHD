@@ -19,6 +19,9 @@ struct _F s[RMAX][ZMAX], s_bar[RMAX][ZMAX], s_bar2[RMAX][ZMAX];
 double phi[RMAX][ZMAX];
 double rho[RMAX][ZMAX];
 
+double phi1[RMAX][ZMAX];
+double rou[RMAX][ZMAX];
+
 int scale;
 
 double vez[RMAX][ZMAX];
@@ -42,11 +45,11 @@ int main()
 	scale = RMAX / 100;
 
 	dr = 0.001 / scale, dz = 0.001 / scale;
-	dt = 0.1 * ((dr * dr) + (dz * dz));
+	dt = 0.001 * ((dr * dr) + (dz * dz));
 	printf("dt = %lf\n", dt);
 	initial();
 	magnetic_field_initial();
-	index = 20;
+	index = 100;
 	while (index--)
 	{
 
@@ -188,6 +191,8 @@ void output()
 	sprintf_s(fname, (".\\output\\phi\\phi_%d.csv"), index);
 	matrix_to_csv((double**)phi, ZMAX, RMAX, RMAX, fname);
 
+	sprintf_s(fname, (".\\output\\phi\\phi1_%d.csv"), index);
+	matrix_to_csv((double**)phi1, ZMAX, RMAX, RMAX, fname);
 
 	sprintf_s(fname, (".\\output\\rho\\rho_%d.csv"), index);
 	matrix_to_csv((double**)rho, ZMAX, RMAX, RMAX, fname);

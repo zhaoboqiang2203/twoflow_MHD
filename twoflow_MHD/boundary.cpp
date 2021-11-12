@@ -4,7 +4,7 @@ using namespace std;
 
 double world[RMAX][ZMAX];
 double btype[RMAX][ZMAX];
-double tb[RMAX][ZMAX];
+double ptype[RMAX][ZMAX];
 Boundary boundary_array[BND_NUM];
 
 int initial()
@@ -37,7 +37,7 @@ int initial()
 	boundary_array[1].bnd_dir = R_DIR;
 	boundary_array[1].boundary_type = RIGHT;
 
-	boundary_array[2].physics_type = VACCUM_BOUNDARY;
+	boundary_array[2].physics_type = ANODE_BOUNDARY;
 	boundary_array[2].start.r = 80 * scale;
 	boundary_array[2].start.z = 50 * scale;
 	boundary_array[2].end.r = 80 * scale;
@@ -45,7 +45,7 @@ int initial()
 	boundary_array[2].bnd_dir = Z_DIR;
 	boundary_array[2].boundary_type = UP;
 
-	boundary_array[3].physics_type = ANODE_BOUNDARY;
+	boundary_array[3].physics_type = DIELECTRIC_SURFACE_BOUNDARY;
 	boundary_array[3].start.r = 30 * scale;
 	boundary_array[3].start.z = 50 * scale;
 	boundary_array[3].end.r = 80 * scale;
@@ -90,7 +90,7 @@ int initial()
 
 	memset(world, 0, sizeof(world));
 	memset(btype, 0, sizeof(world));
-	//memset(world, 0, sizeof(world));
+	memset(ptype, 0, sizeof(world));
 
 	_for(k, 0, BND_NUM)
 	{
@@ -101,6 +101,7 @@ int initial()
 			{
 				world[i][j] += 2;
 				btype[i][j] += boundary_array[k].boundary_type;
+				ptype[i][j] += boundary_array[k].physics_type;
 			}
 		}
 		else if (boundary_array[k].bnd_dir == Z_DIR)
@@ -110,6 +111,7 @@ int initial()
 			{
 				world[i][j] += 2;
 				btype[i][j] += boundary_array[k].boundary_type;
+				ptype[i][j] += boundary_array[k].physics_type;
 			}
 		}
 	}
@@ -126,13 +128,16 @@ int initial()
 			}
 		}
 	}
+#ifdef DADI_DEBUG
 	matrix_to_csv((double**)world, ZMAX, RMAX, RMAX, (char*)(".\\output\\world.csv"));
 	matrix_to_csv((double**)btype, ZMAX, RMAX, RMAX, (char*)(".\\output\\btype.csv"));
+	matrix_to_csv((double**)ptype, ZMAX, RMAX, RMAX, (char*)(".\\output\\ptype.csv"));
+#endif
 	for (int i = 0; i < nr; i++)
 	{
 		for (int j = 0; j < nz; j++)
 		{
-			if (btype[i][j] == 1)
+			if (btype[i][j] != 0)
 			{
 				MPDT[i][j].ne = 6.02e5 / scale;
 				MPDT[i][j].ni = 6.02e5 / scale;
@@ -142,6 +147,7 @@ int initial()
 				MPDT[i][j].ne = 0;
 				MPDT[i][j].ni = 0;
 			}
+
 			MPDT[i][j].ver = 0;
 			MPDT[i][j].vez = 0;
 			MPDT[i][j].vetheta = 0;
@@ -202,9 +208,9 @@ void  boundary_condition()
 {
 
 	int i, j, k;
-	double inter_e_den = 3.7500e+15;
-
-	//固体边界和对称轴边界
+	double inter_e_den = 3.7500e+12;
+	double inter_pla_den = 6.02e10;
+	//固体边界
 
 	_for(k, 0, BND_NUM)
 	{
@@ -215,16 +221,16 @@ void  boundary_condition()
 				i = boundary_array[k].start.z;
 				_feq(j, boundary_array[k].start.r + 1, boundary_array[k].end.r - 1)
 				{
-					if (btype[i + 1][j] != 1) continue;
+					//if (btype[i + 1][j] != 1) continue;
 
-					double pd = MPDT[i][j].vez * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i + 1][j].vez;
+					//double pd = MPDT[i][j].vez * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i + 1][j].vez;
 					
-					MPDT[i + 1][j].ne += MPDT[i][j].ne;
-					MPDT[i + 1][j].vez = -pd / MPDT[i + 1][j].ne;
+					//MPDT[i + 1][j].ne += MPDT[i][j].ne;
+					MPDT[i + 1][j].vez = -MPDT[i + 1][j].vez;
 
-					MPDT[i][j].ne = 0;
-					MPDT[i][j].ver = 0;
-					MPDT[i][j].vez = 0;
+					//MPDT[i][j].ne = 0;
+					//MPDT[i][j].ver = 0;
+					MPDT[i][j].vez = -MPDT[i][j].vez;
 
 				}
 			}
@@ -233,54 +239,55 @@ void  boundary_condition()
 				j = boundary_array[k].start.r;
 				_feq(i, boundary_array[k].start.z + 1, boundary_array[k].end.z - 1)
 				{
-					if (btype[i][j + 1] != 1) continue;
-					double pd = MPDT[i][j].ver * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i][j + 1].ver;
-					MPDT[i][j + 1].ne += MPDT[i][j].ne;
-					MPDT[i][j + 1].ver = -pd / MPDT[i][j + 1].ne;
+					//if (btype[i][j + 1] != 1) continue;
+					//double pd = MPDT[i][j].ver * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i][j + 1].ver;
+					//MPDT[i][j + 1].ne += MPDT[i][j].ne;
+					//MPDT[i][j + 1].ver = -pd / MPDT[i][j + 1].ne;
 
-					MPDT[i][j].ne = 0;
-					MPDT[i][j].ver = 0;
-					MPDT[i][j].vez = 0;
+					MPDT[i][j + 1].ver = -MPDT[i][j + 1].ver;
+					//MPDT[i][j].ne = 0;
+					MPDT[i][j].ver = -MPDT[i][j].ver;
+					//MPDT[i][j].vez = 0;
 				}
 			}
 		}
 
-		if (boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
-		{
-			if (boundary_array[k].bnd_dir == R_DIR)
-			{
-				i = boundary_array[k].start.z;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
-				{
+		//if (boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
+		//{
+		//	if (boundary_array[k].bnd_dir == R_DIR)
+		//	{
+		//		i = boundary_array[k].start.z;
+		//		_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+		//		{
+		//			//if (btype[i + 1][j] != 1) continue;
 
-					if (btype[i + 1][j] != 1) continue;
+		//			//double pd = MPDT[i][j].vez * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i + 1][j].vez;
 
-					double pd = MPDT[i][j].vez * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i + 1][j].vez;
+		//			//MPDT[i + 1][j].ne += MPDT[i][j].ne;
+		//			//MPDT[i + 1][j].vez = -pd / MPDT[i + 1][j].ne;
+		//			MPDT[i + 1][j].vez =  -MPDT[i + 1][j].vez;
+		//			//MPDT[i][j].ne = 0;
+		//			//MPDT[i][j].ver = 0;
+		//			MPDT[i][j].vez = -MPDT[i][j].vez;
+		//		}
+		//	}
+		//	else if (boundary_array[k].bnd_dir == Z_DIR)
+		//	{
+		//		j = boundary_array[k].start.r;
+		//		_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+		//		{
+		//			//if (btype[i][j - 1] != 1) continue;
+		//			//double pd = MPDT[i][j].ver * MPDT[i][j].ne + MPDT[i - 1][j].ne * MPDT[i][j - 1].ver;
+		//			//MPDT[i][j - 1].ne += MPDT[i][j].ne;
+		//			//MPDT[i][j - 1].ver = -pd / MPDT[i][j - 1].ne;
+		//			MPDT[i][j - 1].ver = -MPDT[i][j - 1].ver;
 
-					MPDT[i + 1][j].ne += MPDT[i][j].ne;
-					MPDT[i + 1][j].vez = -pd / MPDT[i + 1][j].ne;
-
-					MPDT[i][j].ne = 0;
-					MPDT[i][j].ver = 0;
-					MPDT[i][j].vez = 0;
-				}
-			}
-			else if (boundary_array[k].bnd_dir == Z_DIR)
-			{
-				j = boundary_array[k].start.r;
-				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
-				{
-					if (btype[i][j - 1] != 1) continue;
-					double pd = MPDT[i][j].ver * MPDT[i][j].ne + MPDT[i - 1][j].ne * MPDT[i][j - 1].ver;
-					MPDT[i][j - 1].ne += MPDT[i][j].ne;
-					MPDT[i][j - 1].ver = -pd / MPDT[i][j - 1].ne;
-
-					MPDT[i][j].ne = 0;
-					MPDT[i][j].ver = 0;
-					MPDT[i][j].vez = 0;
-				}
-			}
-		}
+		//			//MPDT[i][j].ne = 0;
+		//			MPDT[i][j].ver = -MPDT[i][j].ver;
+		//			//MPDT[i][j].vez = 0;
+		//		}
+		//	}
+		//}
 
 		if (boundary_array[k].physics_type == ANODE_BOUNDARY)
 		{
@@ -289,16 +296,17 @@ void  boundary_condition()
 				i = boundary_array[k].start.z;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
-					if (btype[i + 1][j] != 1) continue;
+					//if (btype[i + 1][j] != 1) continue;
 
-					double pd = MPDT[i][j].vez * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i + 1][j].vez;
+					//double pd = MPDT[i][j].vez * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i + 1][j].vez;
 
-					MPDT[i + 1][j].ne += MPDT[i][j].ne;
-					MPDT[i + 1][j].vez = -pd / MPDT[i + 1][j].ne;
+					//MPDT[i + 1][j].ne += MPDT[i][j].ne;
+					//MPDT[i + 1][j].vez = -pd / MPDT[i + 1][j].ne;
+					MPDT[i + 1][j].vez = -MPDT[i + 1][j].vez;
 
-					MPDT[i][j].ne = 0;
-					MPDT[i][j].ver = 0;
-					MPDT[i][j].vez = 0;
+					//MPDT[i][j].ne = 0;
+					//MPDT[i][j].ver = 0;
+					MPDT[i][j].vez = -MPDT[i][j].vez;
 				
 				}
 			}
@@ -319,35 +327,6 @@ void  boundary_condition()
 				}
 			}
 		}
-
-		if (boundary_array[k].physics_type == CYLINDRICAL_AXIS)
-		{
-			if (boundary_array[k].bnd_dir == R_DIR)
-			{
-				i = boundary_array[k].start.z;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
-				{
-
-
-				}
-			}
-			else if (boundary_array[k].bnd_dir == Z_DIR)
-			{
-				j = boundary_array[k].start.r;
-				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
-				{
-					if (btype[i][j - 1] != 1) continue;
-					double pd = MPDT[i][j].ver * MPDT[i][j].ne + MPDT[i - 1][j].ne * MPDT[i][j - 1].ver;
-					MPDT[i][j - 1].ne += MPDT[i][j].ne;
-					MPDT[i][j - 1].ver = -pd / MPDT[i][j - 1].ne;
-
-					MPDT[i][j].ne = 0;
-					MPDT[i][j].ver = 0;
-					MPDT[i][j].vez = 0;
-				}
-			}
-		}
-
 	}
 
 	//等离子体和电子进入和离开仿真区域
@@ -370,7 +349,7 @@ void  boundary_condition()
 			else if (boundary_array[k].bnd_dir == Z_DIR)
 			{
 				j = boundary_array[k].start.r;
-				_feq(i, boundary_array[k].start.z + 1, boundary_array[k].end.z - 1)
+				_feq(i, (boundary_array[k].start.z + boundary_array[k].end.z) / 2, boundary_array[k].end.z)
 				{
 					MPDT[i][j].ver = 0;
 					MPDT[i][j].vez = 0;
@@ -409,27 +388,7 @@ void  boundary_condition()
 			}
 		}
 
-		if(boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
-		{
-			if (boundary_array[k].bnd_dir == R_DIR)
-			{
-				i = boundary_array[k].start.z;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
-				{
-					MPDT[i][j].ne /= 2;
-					MPDT[i][j].ni /= 2;
-				}
-			}
-			else if (boundary_array[k].bnd_dir == Z_DIR)
-			{
-				j = boundary_array[k].start.r;
-				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
-				{
-					MPDT[i][j].ne /= 2;
-					MPDT[i][j].ni /= 2;
-				}
-			}
-		}
+
 
 		//保证阴极进入和阳极流出的电子密度相等
 		if (boundary_array[k].physics_type == ANODE_BOUNDARY)
@@ -466,10 +425,10 @@ void  boundary_condition()
 					MPDT[i][j].vez = 0;
 					MPDT[i][j].viz = 0;
 					if (btype[i + 1][j] != 1) continue;
-					MPDT[i + 1][j].ne += 6.02e12 / scale;
-					MPDT[i + 1][j].ni += 6.02e12 / scale;
-					MPDT[i][j].ne += 6.02e12 / scale;
-					MPDT[i][j].ni += 6.02e12 / scale;
+					MPDT[i + 1][j].ne += inter_pla_den / scale;
+					MPDT[i + 1][j].ni += inter_pla_den / scale;
+					MPDT[i][j].ne += inter_pla_den / scale;
+					MPDT[i][j].ni += inter_pla_den / scale;
 					MPDT[i + 1][j].ne += inter_e_den / scale;
 					MPDT[i][j].ne += inter_e_den / scale;
 				}
@@ -482,10 +441,10 @@ void  boundary_condition()
 					MPDT[i][j].vez = 0;
 					MPDT[i][j].viz = 0;
 					if (btype[i][j + 1] != 1) continue;
-					MPDT[i][j + 1].ne += 6.02e12 / scale;
-					MPDT[i][j + 1].ni += 6.02e12 / scale;
-					MPDT[i][j].ne += 6.02e12 / scale;
-					MPDT[i][j].ni += 6.02e12 / scale;
+					MPDT[i][j + 1].ne += inter_pla_den / scale;
+					MPDT[i][j + 1].ni += inter_pla_den / scale;
+					MPDT[i][j].ne += inter_pla_den / scale;
+					MPDT[i][j].ni += inter_pla_den / scale;
 					MPDT[i][j + 1].ne += inter_e_den / scale;
 					MPDT[i][j].ne += inter_e_den / scale;
 				}

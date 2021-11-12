@@ -8,8 +8,9 @@
 #include <queue>
 #include <cmath>
 
-//#define DADI_DEBUG
+#define DADI_DEBUG
 //#define FLUID_DEBUG
+#define BOUNDARY_DEBUG
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)
@@ -138,7 +139,7 @@ extern int scale;
 
 extern double world[RMAX][ZMAX];
 extern double btype[RMAX][ZMAX];
-extern double tb[RMAX][ZMAX];
+extern double ptype[RMAX][ZMAX];
 int initial();
 void  boundary_condition();
 void matrix_to_csv(double** a, int N, int M, int array_size, char* filename);
@@ -156,8 +157,10 @@ const double EvToK = QE / K;				// 1eV in K ~ 11604
 const double gamma = 1.4;
 const double MU_0 = 4 * PI * 1e-7;
 extern double phi[RMAX][ZMAX];
-
 extern double rho[RMAX][ZMAX];
+extern double phi1[RMAX][ZMAX];
+extern double rou[RMAX][ZMAX];
+
 extern double Er[RMAX][ZMAX];
 extern double Ez[RMAX][ZMAX];
 

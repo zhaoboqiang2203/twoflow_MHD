@@ -114,9 +114,9 @@ void adi(double uadi[RMAX][ZMAX], double s[RMAX][ZMAX], double del_t)
 	/* Do z pass.  Set up variables for    */
 	/* tridiagonal inversion along z.      */
 
-	for (j = 0; j < ZMAX; j++)
+	for (j = 0; j < RMAX; j++)
 	{
-		for (i = 0; i < RMAX; i++)
+		for (i = 0; i < ZMAX; i++)
 		{
 			a_x1[i] = -dth * a_x1geom[i][j];
 			b_x1[i] = 1 - dth * b_x1geom[i][j];
@@ -124,17 +124,17 @@ void adi(double uadi[RMAX][ZMAX], double s[RMAX][ZMAX], double del_t)
 		}
 
 		/*  handle the boundary conditions, neumann and dirichlet */
-		for (i = 0; i < RMAX; i++)
+		for (i = 0; i < ZMAX; i++)
 			if (b_x2geom[i][j] != 0)  //non-dirichlet
 				r_x1[i] = uadi[i][j] + dth * (-s[i][j]
 					+ ((j > 0) ? a_x2geom[i][j] * uadi[i][j - 1] : 0)
 					+ b_x2geom[i][j] * uadi[i][j]
-					+ ((j < ZMAX) ? c_x2geom[i][j] * uadi[i][j + 1] : 0));
+					+ ((j < RMAX) ? c_x2geom[i][j] * uadi[i][j + 1] : 0));
 			else
 				r_x1[i] = uadi[i][j];  // metal sets the potential here.
 
 	  /* Solve tridiagonal system. */
-		tridag(a_x1, b_x1, c_x1, r_x1, v_x1, gam_x1, RMAX);
+		tridag(a_x1, b_x1, c_x1, r_x1, v_x1, gam_x1, ZMAX);
 
 		/* Copy solution into ustar. */
 		for (i = 0; i < RMAX; i++) ustar[i][j] = v_x1[i];
@@ -144,9 +144,9 @@ void adi(double uadi[RMAX][ZMAX], double s[RMAX][ZMAX], double del_t)
 	/* Do y pass.  Set up variables for    */
 	/* tridiagonal inversion along y     */
 
-	for (i = 0; i < RMAX; i++)
+	for (i = 0; i < ZMAX; i++)
 	{
-		for (j = 0; j < ZMAX; j++)
+		for (j = 0; j < RMAX; j++)
 		{
 			a_x2[j] = -dth * a_x2geom[i][j];
 			b_x2[j] = 1 - dth * b_x2geom[i][j];
@@ -156,20 +156,20 @@ void adi(double uadi[RMAX][ZMAX], double s[RMAX][ZMAX], double del_t)
 		/*  handle the boundary conditions, dirichlet or neumann */
 
 		 /*  The following code handles some special cases like corners*/
-		for (j = 0; j < ZMAX; j++)
+		for (j = 0; j < RMAX; j++)
 			if (b_x2geom[i][j] != 0)  //non-dirichlet
 				r_x2[j] = ustar[i][j] + dth * (-s[i][j]
 					+ ((i > 0) ? a_x1geom[i][j] * ustar[i - 1][j] : 0)
 					+ b_x1geom[i][j] * ustar[i][j]
-					+ ((i < RMAX) ? c_x1geom[i][j] * ustar[i + 1][j] : 0));
+					+ ((i < ZMAX) ? c_x1geom[i][j] * ustar[i + 1][j] : 0));
 			else
 				r_x2[j] = ustar[i][j];  // metal sets the potential here.
 
 	  /* Solve tridiagonal system. */
-		tridag(a_x2, b_x2, c_x2, r_x2, v_x2, gam_x2, ZMAX);
+		tridag(a_x2, b_x2, c_x2, r_x2, v_x2, gam_x2, RMAX);
 
 		/* Copy solution into ustar. */
-		for (j = 0; j < ZMAX; j++) uadi[i][j] = v_x2[j];
+		for (j = 0; j < RMAX; j++) uadi[i][j] = v_x2[j];
 
 	}
 
@@ -179,23 +179,24 @@ void adi(double uadi[RMAX][ZMAX], double s[RMAX][ZMAX], double del_t)
 }
 void init_solve()
 {
+	int i, j, k;
 
 	del_t0 = 0.1 * ((dr * dr) + (dz * dz));
-	for (int i = 0; i < RMAX; i++)
+	for (i = 0; i < RMAX; i++)
 	{
-		for (int j = 0; j < ZMAX; j++)
+		for (j = 0; j < ZMAX; j++)
 		{
 			if (world[i][j] == 1)
 			{
-				a_x1geom[i][j] = 1 / (dr * dr) + 1 / (2 * j * dr * dr);
-				c_x1geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
+				a_x1geom[i][j] = 1 / (dz * dz);
+				c_x1geom[i][j] = 1 / (dz * dz);
 				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
 
-				a_x2geom[i][j] = 1 / (dz * dz);
-				c_x2geom[i][j] = 1 / (dz * dz);
+				a_x2geom[i][j] = 1 / (dr * dr) + 1 / (2 * j * dr * dr);
+				c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
 				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
 			}
-			else
+			else if(ptype[i][j] == ANODE_BOUNDARY || ptype[i][j] == CATHODE_BOUNDARY)
 			{
 				a_x1geom[i][j] = 0.0;
 				b_x1geom[i][j] = 0.0;
@@ -204,8 +205,146 @@ void init_solve()
 				b_x2geom[i][j] = 0.0;
 				c_x2geom[i][j] = 0.0;
 			}
+			else if (ptype[i][j] == CYLINDRICAL_AXIS)
+			{
+				a_x1geom[i][j] = 1 / (dz * dz);
+				c_x1geom[i][j] = 1 / (dz * dz);
+				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
+
+				a_x2geom[i][j] = 0;
+				c_x2geom[i][j] = 1 / (dr * dr);
+				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+
+			}
 		}
 	}
+
+	_for(k, 0, BND_NUM)
+	{
+		if (boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
+		{
+			if (boundary_array[k].bnd_dir == R_DIR)
+			{
+				i = boundary_array[k].start.z ;
+				_feq(j, boundary_array[k].start.r + 1, boundary_array[k].end.r - 1)
+				{
+					a_x1geom[i][j] = 1 / (dz * dz);
+					c_x1geom[i][j] = 0.0;
+					b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
+
+					if (j != 0)
+					{
+						a_x2geom[i][j] = 1 / (dr * dr) + 1 / (2 * j * dr * dr);
+						c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
+						b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+					}
+					else
+					{
+						a_x2geom[i][j] = 1 / (dr * dr) ;
+						c_x2geom[i][j] = 1 / (dr * dr) ;
+						b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+					}
+				}
+
+				j = boundary_array[k].start.r;
+				a_x1geom[i][j] = 1 / (dz * dz);
+				c_x1geom[i][j] = 0.0;
+				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
+
+				if (j != 0)
+				{
+					a_x2geom[i][j] = 1 / (dr * dr) + 1 / (2 * j * dr * dr);
+					c_x2geom[i][j] = 0;
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+				else
+				{
+					a_x2geom[i][j] = 1 / (dr * dr);
+					c_x2geom[i][j] = 0;
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+
+				j = boundary_array[k].end.r - 1;
+				a_x1geom[i][j] = 1 / (dz * dz);
+				c_x1geom[i][j] = 0.0;
+				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
+
+				if (j != 0)
+				{
+					a_x2geom[i][j] = 0;
+					c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+				else
+				{
+					a_x2geom[i][j] = 0;
+					c_x2geom[i][j] = 1 / (dr * dr);
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+
+			}
+			else if (boundary_array[k].bnd_dir == Z_DIR)
+			{
+				j = boundary_array[k].start.r;
+				_feq(i, boundary_array[k].start.z + 1, boundary_array[k].end.z - 1)
+				{
+					a_x1geom[i][j] = 1 / (dz * dz);
+					c_x1geom[i][j] = 1 / (dz * dz);
+					b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
+
+					if (j != 0)
+					{
+						a_x2geom[i][j] = 0.0;
+						c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
+						b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+					}
+					else
+					{
+						a_x2geom[i][j] = 0.0;
+						c_x2geom[i][j] = 1 / (dr * dr);
+						b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+					}
+				}
+				i = boundary_array[k].start.z;
+				a_x1geom[i][j] = 1 / (dz * dz);
+				c_x1geom[i][j] = 0.0;
+				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
+
+				if (j != 0)
+				{
+					a_x2geom[i][j] = 0.0;
+					c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+				else
+				{
+					a_x2geom[i][j] = 0.0;
+					c_x2geom[i][j] = 1 / (dr * dr);
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+
+				i = boundary_array[k].end.z - 1;
+				a_x1geom[i][j] = 0.0;
+				c_x1geom[i][j] = 1 / (dz * dz);
+				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
+
+				if (j != 0)
+				{
+					a_x2geom[i][j] = 0.0;
+					c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+				else
+				{
+					a_x2geom[i][j] = 0.0;
+					c_x2geom[i][j] = 1 / (dr * dr);
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+			}
+		}
+
+	}
+#ifdef DADI_DEBUG
 
 	matrix_to_csv((double**)a_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\a_x1geom.csv"));
 	matrix_to_csv((double**)b_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\b_x1geom.csv"));
@@ -213,6 +352,7 @@ void init_solve()
 	matrix_to_csv((double**)a_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\a_x2geom.csv"));
 	matrix_to_csv((double**)b_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\b_x2geom.csv"));
 	matrix_to_csv((double**)c_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\c_x2geom.csv"));
+#endif
 }
 
 //void set_coefficient(int i, int j, PTypes type)
@@ -350,8 +490,8 @@ int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol
 	init_solve();
 
 	rnorm = rsum = 0.0;
-	for (i = 0; i < RMAX; i++)
-		for (j = 0; j < ZMAX; j++) {
+	for (i = 0; i < ZMAX; i++)
+		for (j = 0; j < RMAX; j++) {
 
 			/* Residual normalization.  */
 			// dirichlet conditions don't add to rnorm
@@ -365,7 +505,7 @@ int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol
 		   than the stored maximum absolute error, record new maximum
 		   absolute error and location.  */
 
-			if (i > 0 && j > 0 && i < RMAX && j < ZMAX) {
+			if (i > 0 && j > 0 && i < ZMAX && j < RMAX) {
 				dxdxutrm = a_x1geom[i][j] * u_in[i - 1][j] + b_x1geom[i][j] * u_in[i][j] + c_x1geom[i][j] * u_in[i + 1][j];
 				dydyutrm = a_x2geom[i][j] * u_in[i][j - 1] + b_x2geom[i][j] * u_in[i][j] + c_x2geom[i][j] * u_in[i][j + 1];
 			}
@@ -381,20 +521,20 @@ int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol
 	if (rnorm == 0.0) {
 
 		// check dirichlet conditions
-		for (i = 0; i < RMAX; i++) for (j = 0; j < ZMAX; j++)
+		for (i = 0; i < ZMAX; i++) for (j = 0; j < RMAX; j++)
 		{
 			rnorm += sqr(((i > 0 && b_x2geom[i - 1][j] != 0) ? c_x1geom[i - 1][j] * u[i][j] : 0));
 			// check right
-			rnorm += sqr(((i < RMAX&& b_x2geom[i + 1][j] != 0) ? a_x1geom[i + 1][j] * u[i][j] : 0));
+			rnorm += sqr(((i < ZMAX && b_x2geom[i + 1][j] != 0) ? a_x1geom[i + 1][j] * u[i][j] : 0));
 			// check up
 			rnorm += sqr(((j > 0 && b_x2geom[i][j - 1] != 0) ? c_x2geom[i][j - 1] * u[i][j] : 0));
 			// check right
-			rnorm += sqr(((j < ZMAX&& b_x2geom[i][j + 1] != 0) ? c_x2geom[i][j + 1] * u[i][j] : 0));
+			rnorm += sqr(((j < RMAX && b_x2geom[i][j + 1] != 0) ? c_x2geom[i][j + 1] * u[i][j] : 0));
 
 		}
 
 		if (rnorm == 0) { //still zero, we don't need to iterate
-			for (i = 0; i < RMAX; i++) for (j = 0; j < ZMAX; j++) u_in[i][j] = 0;
+			for (i = 0; i < ZMAX; i++) for (j = 0; j < RMAX; j++) u_in[i][j] = 0;
 			return 0;
 		}
 	}
@@ -420,8 +560,8 @@ int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol
 		/*************************************************/
 		/* Copy u into the work array and storage array. */
 
-		for (i = 0; i < RMAX; i++)
-			for (j = 0; j < ZMAX; j++) uwork[i][j] = ustor[i][j] = u[i][j];
+		for (i = 0; i < ZMAX; i++)
+			for (j = 0; j < RMAX; j++) uwork[i][j] = ustor[i][j] = u[i][j];
 
 		/************************************/
 		/* Two advances of u via ADI at del_t. */
@@ -441,8 +581,8 @@ int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol
 
 		tptop = tpbot = rsum = 0.0;
 
-		for (i = 1; i < RMAX; i++)
-			for (j = 1; j < ZMAX; j++)
+		for (i = 1; i < ZMAX; i++)
+			for (j = 1; j < RMAX; j++)
 			{
 				/* Test paramter sums. */
 				tptop += (u[i][j] - uwork[i][j]) * (u[i][j] - uwork[i][j]);
@@ -475,8 +615,8 @@ int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol
 #ifdef DADI_DEBUG
 			printf("dadi: iter=%d\n", iter);
 #endif// DADI_DEBUG
-			for (i = 0; i < RMAX; i++)
-				for (j = 0; j < ZMAX; j++)
+			for (i = 0; i < ZMAX; i++)
+				for (j = 0; j < RMAX; j++)
 					u_in[i][j] = (double)u[i][j];
 
 			return(0);
@@ -497,8 +637,8 @@ int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol
 		if (ratio >= 0.10 && ratio < 0.30) del_t *= 0.80;
 		if (ratio >= 0.30 && ratio < 0.40) del_t *= 0.50;
 		if (ratio >= 0.40 && ratio < 0.60) del_t *= 0.25;
-		for (i = 0; i < RMAX; i++)
-			for (j = 0; j < ZMAX; j++)
+		for (i = 0; i < ZMAX; i++)
+			for (j = 0; j < RMAX; j++)
 				u_in[i][j] = (double)u[i][j];
 #endif   
 
@@ -515,8 +655,8 @@ int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol
 			/* Check if too many discards. */
 			if (ndiscard > 20)
 			{
-				for (i = 0; i < RMAX; i++)
-					for (j = 0; j < ZMAX; j++)
+				for (i = 0; i < ZMAX; i++)
+					for (j = 0; j < RMAX; j++)
 						u_in[i][j] = (double)u[i][j];
 				del_t = del_t0;
 				//		  if(solve(u_in,s,itermax,tol_test))
@@ -524,8 +664,8 @@ int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol
 				return 1;
 			}
 			/* Discard by replacing u with what we started with. */
-			for (i = 0; i < RMAX; i++)
-				for (j = 0; j < ZMAX; j++) u[i][j] = ustor[i][j];
+			for (i = 0; i < ZMAX; i++)
+				for (j = 0; j < RMAX; j++) u[i][j] = ustor[i][j];
 
 			/* Reduce del_t. */
 			del_t /= 8.0;
@@ -537,8 +677,8 @@ int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol
 
 	printf("Poisson solve FAILURE: dadi:  iter>= %d\n", itermax);
 
-	for (i = 0; i < RMAX; i++)
-		for (j = 0; j < ZMAX; j++)
+	for (i = 0; i < ZMAX; i++)
+		for (j = 0; j < RMAX; j++)
 			u_in[i][j] = (double)u[i][j];
 
 	return(2);
@@ -581,9 +721,9 @@ void tridag(double* a, double* b, double* c, double* r, double* utri, double* ga
 
 void electric_field()
 {
-	for (int i = 0; i < RMAX; i++)
+	for (int i = 0; i < ZMAX; i++)
 	{
-		for (int j = 0; j < ZMAX; j++)
+		for (int j = 0; j < RMAX; j++)
 		{
 			if (btype[i][j] == 1)
 			{
@@ -592,43 +732,43 @@ void electric_field()
 			}
 			else if (btype[i][j] == LEFT)
 			{
-				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
 				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
 			}
 			else if (btype[i][j] == RIGHT)
 			{
-				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
+				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
 				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
 			}
 			else if (btype[i][j] == DOWN)
 			{
 				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
-				Er[i][j] = -(-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
 			}
 			else if (btype[i][j] == UP)
 			{
 				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
-				Er[i][j] = -(phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
 			}
 			else if (btype[i][j] == (LEFT + UP))
 			{
-				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
-				Er[i][j] = -(phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
 			}
 			else if (btype[i][j] == (LEFT + DOWN))
 			{
-				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
-				Er[i][j] = -(-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
 			}
 			else if (btype[i][j] == (RIGHT + DOWN))
 			{
-				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
-				Er[i][j] = -(-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
+				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
 			}
 			else if (btype[i][j] == (RIGHT + UP))
 			{
-				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
-				Er[i][j] = -(phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
+				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
 
 			}
 			else if (btype[i][j] == 0)
@@ -698,11 +838,12 @@ void potential_solve()
 	{
 		for (int j = 0; j < ZMAX; j++)
 		{
-			rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE;
+			rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0;
+			//rou[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE;
 		}
 	}
 	solve(phi, rho, 50, 0.01);
-
+	//solveGS();
 	potential_boundary();
 
 	electric_field();

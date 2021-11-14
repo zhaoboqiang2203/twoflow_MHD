@@ -186,7 +186,7 @@ void init_solve()
 	{
 		for (j = 0; j < ZMAX; j++)
 		{
-			if (world[i][j] == 1)
+			if (btype[i][j] == 1)
 			{
 				a_x1geom[i][j] = 1 / (dz * dz);
 				c_x1geom[i][j] = 1 / (dz * dz);

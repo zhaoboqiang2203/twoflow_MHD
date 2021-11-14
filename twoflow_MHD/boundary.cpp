@@ -126,6 +126,22 @@ int initial()
 			{
 				btype[i][j] = 1;
 			}
+			else if (btype[i][j] == (LEFT + UP) && (i != 0 && j != RMAX))
+			{
+				btype[i][j] = 1;
+			}
+			else if (btype[i][j] == (LEFT + DOWN) && (i != 0 && j != 0))
+			{
+				btype[i][j] = 1;
+			}
+			else if (btype[i][j] == (RIGHT + DOWN) && (i != ZMAX && j != 0))
+			{
+				btype[i][j] = 1;
+			}
+			else if (btype[i][j] == (RIGHT + UP) && (i != ZMAX && j != RMAX))
+			{
+				btype[i][j] = 1;
+			}
 		}
 	}
 #ifdef DADI_DEBUG
@@ -208,7 +224,7 @@ void  boundary_condition()
 {
 
 	int i, j, k;
-	double inter_e_den = 3.7500e+12;
+	double inter_e_den = 3.7500e+11;
 	double inter_pla_den = 6.02e10;
 	//¹ÌÌå±ß½ç
 
@@ -226,11 +242,11 @@ void  boundary_condition()
 					//double pd = MPDT[i][j].vez * MPDT[i][j].ne + MPDT[i + 1][j].ne * MPDT[i + 1][j].vez;
 					
 					//MPDT[i + 1][j].ne += MPDT[i][j].ne;
-					MPDT[i + 1][j].vez = -MPDT[i + 1][j].vez;
+					//MPDT[i + 1][j].vez = -MPDT[i + 1][j].vez;
 
 					//MPDT[i][j].ne = 0;
 					//MPDT[i][j].ver = 0;
-					MPDT[i][j].vez = -MPDT[i][j].vez;
+					//MPDT[i][j].vez = -MPDT[i][j].vez;
 
 				}
 			}
@@ -244,9 +260,9 @@ void  boundary_condition()
 					//MPDT[i][j + 1].ne += MPDT[i][j].ne;
 					//MPDT[i][j + 1].ver = -pd / MPDT[i][j + 1].ne;
 
-					MPDT[i][j + 1].ver = -MPDT[i][j + 1].ver;
+					//MPDT[i][j + 1].ver = -MPDT[i][j + 1].ver;
 					//MPDT[i][j].ne = 0;
-					MPDT[i][j].ver = -MPDT[i][j].ver;
+					//MPDT[i][j].ver = -MPDT[i][j].ver;
 					//MPDT[i][j].vez = 0;
 				}
 			}
@@ -337,10 +353,10 @@ void  boundary_condition()
 			if (boundary_array[k].bnd_dir == R_DIR)
 			{
 				i = boundary_array[k].start.z;
-				_feq(j, boundary_array[k].start.r + 1, boundary_array[k].end.r - 1)
+				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r - scale)
 				{
-					MPDT[i][j].ver = 0;
-					MPDT[i][j].vez = 0;
+					//MPDT[i][j].ver = 100;
+					//MPDT[i][j].vez = 100;
 					if (btype[i + 1][j] != 1) continue;
 					MPDT[i + 1][j].ne += inter_e_den / scale;
 					MPDT[i][j].ne += inter_e_den / scale;
@@ -349,13 +365,17 @@ void  boundary_condition()
 			else if (boundary_array[k].bnd_dir == Z_DIR)
 			{
 				j = boundary_array[k].start.r;
-				_feq(i, (boundary_array[k].start.z + boundary_array[k].end.z) / 2, boundary_array[k].end.z)
+				int con = 1;
+				int num = (boundary_array[k].end.z - boundary_array[k].start.z) / 2;
+				double den_step = (inter_e_den - 6.02e5) / num;
+
+				_feq(i, (boundary_array[k].start.z + boundary_array[k].end.z) / 2, boundary_array[k].end.z - scale)
 				{
-					MPDT[i][j].ver = 0;
-					MPDT[i][j].vez = 0;
+					//MPDT[i][j].ver = 100;
+					//MPDT[i][j].vez = 100;
 					if (btype[i][j + 1] != 1) continue;
-					MPDT[i][j + 1].ne += inter_e_den / scale;
-					MPDT[i][j].ne += inter_e_den / scale;
+					MPDT[i][j + 1].ne += (6.02e5 +  con * den_step) / scale;
+					MPDT[i][j].ne += (6.02e5 + con * den_step) / scale;
 				}
 			}
 		}
@@ -420,10 +440,10 @@ void  boundary_condition()
 			if (boundary_array[k].bnd_dir == R_DIR)
 			{
 				i = boundary_array[k].start.z;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r - scale)
 				{
-					MPDT[i][j].vez = 0;
-					MPDT[i][j].viz = 0;
+					//MPDT[i][j].vez = 0;
+					//MPDT[i][j].viz = 0;
 					if (btype[i + 1][j] != 1) continue;
 					MPDT[i + 1][j].ne += inter_pla_den / scale;
 					MPDT[i + 1][j].ni += inter_pla_den / scale;
@@ -436,10 +456,10 @@ void  boundary_condition()
 			else if (boundary_array[k].bnd_dir == Z_DIR)
 			{
 				j = boundary_array[k].start.r;
-				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z - scale)
 				{
-					MPDT[i][j].vez = 0;
-					MPDT[i][j].viz = 0;
+					//MPDT[i][j].vez = 0;
+					//MPDT[i][j].viz = 0;
 					if (btype[i][j + 1] != 1) continue;
 					MPDT[i][j + 1].ne += inter_pla_den / scale;
 					MPDT[i][j + 1].ni += inter_pla_den / scale;

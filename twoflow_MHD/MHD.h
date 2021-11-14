@@ -9,7 +9,7 @@
 #include <cmath>
 
 #define DADI_DEBUG
-//#define FLUID_DEBUG
+#define FLUID_DEBUG
 #define BOUNDARY_DEBUG
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
@@ -22,8 +22,8 @@
 #define cube(a)       ((a)*(a)*(a))
 
 
-#define RMAX 101
-#define ZMAX 101
+#define RMAX 501
+#define ZMAX 501
 
 #define R_DIR 0
 #define Z_DIR 1
@@ -34,12 +34,7 @@
 #define DOWN 11
 
 #define BND_NUM  8
-//IB() = 1 vaccum， 2 dielectric surface， 3 extern interior  4 periodic  5 inlet 6 mirror reflection 7 anode 8 dielectric but fix phi
-//9 轴对称边界条件（粒子弹性反射，电势梯度为0）10 无穷远边界条件（粒子消失，电势梯度为0） 11导体边界（粒子消失，电势给定或通过电容公式计算得到)
 
-//int ib[num_rgn][4] = { {7,  3, 9, 2},
-//					{3, 10, 9, 3},
-//					{11, 5, 3,10} };	//边界条件
 
 enum PTypes {
 	VACCUM_BOUNDARY = 1,                 //真空边界
@@ -109,6 +104,8 @@ struct _F
 	double f13;
 };
 
+/* node interface with plasma information */
+
 struct  node
 {
 	double ne;
@@ -126,6 +123,7 @@ struct  node
 	double pi;
 	double ee;
 	double ei;
+	double mu_ie;       /*电子离子碰撞频率*/
 };
 
 
@@ -136,6 +134,7 @@ extern int nr, nz;
 extern double dr, dz;
 extern double dt;
 extern int scale;
+extern int index;
 
 extern double world[RMAX][ZMAX];
 extern double btype[RMAX][ZMAX];

@@ -134,6 +134,10 @@ void move()
 			MPDT[i][j].vez -= m_eiz;
 			MPDT[i][j].viz += m_eiz;
 
+			MPDT[i][j].ver /=3;
+			MPDT[i][j].vitheta /= 3;
+			MPDT[i][j].vez /= 3;
+
 			//能量守恒验证
 
 			MPDT[i][j].ee = 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);

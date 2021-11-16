@@ -408,9 +408,9 @@ void electron_flow()
 			}
 		}
 	}
-	for (int i = 0; i < nr; i++)
+	for (int i = 0; i < nz; i++)
 	{
-		for (int j = 0; j < nz; j++)
+		for (int j = 0; j < nr; j++)
 		{
 			if (btype[i][j] == LEFT)//左边的边界，复制右边的参数
 			{

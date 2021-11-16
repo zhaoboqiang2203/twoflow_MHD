@@ -5,9 +5,9 @@ void outputcsv()
 {
 	ofstream out("outfile.csv");
 
-	for (int i = 0; i < nr; i++)
+	for (int i = 0; i < nz; i++)
 	{
-		for (int j = 0; j < nz; j++)
+		for (int j = 0; j < nr; j++)
 		{
 			out << phi[i][j] << ",";
 		}
@@ -18,9 +18,9 @@ void outputcsv()
 
 void test_sor_code()
 {
-	for (int i = 0; i < nr; i++)
+	for (int i = 0; i < nz; i++)
 	{
-		for (int j = 0; j < nz; j++)
+		for (int j = 0; j < nr; j++)
 		{
 			phi[i][j] = 0;
 

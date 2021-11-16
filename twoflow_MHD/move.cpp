@@ -51,9 +51,9 @@ void move()
 	double srho, stheta, sz;
 	double urho, utheta, uz;
 	double urho_half, utheta_half, uz_half;
-	for (int i = 0; i < nr; i++)
+	for (int i = 0; i < nz; i++)
 	{
-		for (int j = 0; j < nz; j++)
+		for (int j = 0; j < nr; j++)
 		{
 
 			q_half = -dt * QE / ME / 2;
@@ -78,13 +78,13 @@ void move()
 			//MPDT[i][j].ver = -QE * Er[i][j] / ME * dt;
 			//MPDT[i][j].vez = -QE * Ez[i][j] / ME * dt;
 
-			MPDT[i][j].ee = 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-			MPDT[i][j].pe = 0.5 * MPDT[i][j].ee / (dr * j * dz * PI / 180);
-			MPDT[i][j].pe = 0.5 * MPDT[i][j].ee / (dr * j * dz * PI / 180);
-			MPDT[i][j].ee /= 2;
-			MPDT[i][j].ver = 0;
-			MPDT[i][j].vetheta = 0;
-			MPDT[i][j].vez = 0;
+			//MPDT[i][j].ee = 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+			//MPDT[i][j].pe = 0.5 * MPDT[i][j].ee / (dr * j * dz * PI / 180);
+			//MPDT[i][j].pe = 0.5 * MPDT[i][j].ee / (dr * j * dz * PI / 180);
+			//MPDT[i][j].ee /= 2;
+			//MPDT[i][j].ver = 0;
+			//MPDT[i][j].vetheta = 0;
+			//MPDT[i][j].vez = 0;
 			
 
 			q_half = dt * QE / MI / 2;

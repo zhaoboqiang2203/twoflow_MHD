@@ -72,9 +72,9 @@ void magnetic_field_initial()
     a = 0.1;
 
     bias = 0;
-    for (int i = 0; i < nr; i++)
+    for (int i = 0; i < nz; i++)
     {
-        for (int j = 0; j < nz; j++)
+        for (int j = 0; j < nr; j++)
         {
             app_Br[i][j] = Brho(i * dr - bias, 0, j * dz);
             app_Bz[i][j] = Bscz(i * dr - bias, 0, j * dz);

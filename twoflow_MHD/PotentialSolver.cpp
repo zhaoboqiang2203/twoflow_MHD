@@ -19,8 +19,8 @@ int solveGS()
     for (unsigned it = 0; it < max_solver_it; it++)
     {
         //printf(" it = %d \n", it);
-        for (int i = 0; i < nr; i++)
-            for (int j = 0; j < nz; j++)
+        for (int i = 0; i < nz; i++)
+            for (int j = 0; j < nr; j++)
             {
                 /*skip over solid (fixed) nodes = Dirichlet boundaries*/
                 //if (world.object_id[i][j]>0) continue;
@@ -57,8 +57,8 @@ int solveGS()
         if (it % 25 == 0)
         {
             double sum = 0;
-            for (int i = 0; i < nr; i++)
-                for (int j = 0; j < nz; j++)
+            for (int i = 0; i < nz; i++)
+                for (int j = 0; j < nr; j++)
 
                 {
                     /*skip over solid (fixed) nodes*/

@@ -22,7 +22,7 @@
 #define cube(a)       ((a)*(a)*(a))
 
 
-#define RMAX 501
+#define RMAX 401
 #define ZMAX 501
 
 #define R_DIR 0
@@ -38,15 +38,15 @@
 
 enum PTypes {
 	VACCUM_BOUNDARY = 1,                 //真空边界
-	DIELECTRIC_SURFACE_BOUNDARY,         //介质边界
-	EXTERN_INTERIOR_BOUNDARY,			 //内部边界
-	PERIODIC_BOUNDARY,					 //周期边界
-	INLET,								 //内部边界
-	MIRROR_REFLECTION_BOUNDARY,          //反射边界
-	ANODE_BOUNDARY,						 //阳极边界
-	CATHODE_BOUNDARY,					 //阴极边界
-	CYLINDRICAL_AXIS,			         //对称轴
-	CONDUCTING_BOUNDARY			         //导体边界
+	DIELECTRIC_SURFACE_BOUNDARY = 2,         //介质边界
+	EXTERN_INTERIOR_BOUNDARY = 4,			 //内部边界
+	PERIODIC_BOUNDARY = 8,					 //周期边界
+	INLET = 16,								 //内部边界
+	MIRROR_REFLECTION_BOUNDARY = 32,          //反射边界
+	ANODE_BOUNDARY = 64,						 //阳极边界
+	CATHODE_BOUNDARY = 128,					 //阴极边界
+	CYLINDRICAL_AXIS = 256,			         //对称轴
+	CONDUCTING_BOUNDARY = 512			         //导体边界
 };
 
 
@@ -136,9 +136,9 @@ extern double dt;
 extern int scale;
 extern int index;
 
-extern double world[RMAX][ZMAX];
-extern double btype[RMAX][ZMAX];
-extern double ptype[RMAX][ZMAX];
+extern double world[ZMAX][RMAX];
+extern double btype[ZMAX][RMAX];
+extern double ptype[ZMAX][RMAX];
 int initial();
 void  boundary_condition();
 void matrix_to_csv(double** a, int N, int M, int array_size, char* filename);
@@ -155,24 +155,24 @@ const double PI = 3.141592653;			// pi
 const double EvToK = QE / K;				// 1eV in K ~ 11604
 const double gamma = 1.4;
 const double MU_0 = 4 * PI * 1e-7;
-extern double phi[RMAX][ZMAX];
-extern double rho[RMAX][ZMAX];
-extern double phi1[RMAX][ZMAX];
-extern double rou[RMAX][ZMAX];
+extern double phi[ZMAX][RMAX];
+extern double rho[ZMAX][RMAX];
+extern double phi1[ZMAX][RMAX];
+extern double rou[ZMAX][RMAX];
 
-extern double Er[RMAX][ZMAX];
-extern double Ez[RMAX][ZMAX];
+extern double Er[ZMAX][RMAX];
+extern double Ez[ZMAX][RMAX];
 
-extern double ne[RMAX][ZMAX];
-extern double ni[RMAX][ZMAX];
+extern double ne[ZMAX][RMAX];
+extern double ni[ZMAX][RMAX];
 
-extern struct node MPDT[RMAX][ZMAX];
-extern struct _U U[RMAX][ZMAX], U_bar[RMAX][ZMAX], U_bar2[RMAX][ZMAX];
-extern struct _F Fr[RMAX][ZMAX], Fr_bar[RMAX][ZMAX], Fr_bar2[RMAX][ZMAX];
-extern struct _F Fz[RMAX][ZMAX], Fz_bar[RMAX][ZMAX], Fz_bar2[RMAX][ZMAX];
-extern struct _F s[RMAX][ZMAX], s_bar[RMAX][ZMAX], s_bar2[RMAX][ZMAX];
-extern double app_Bz[RMAX][ZMAX];
-extern double app_Br[RMAX][ZMAX];
+extern struct node MPDT[ZMAX][RMAX];
+extern struct _U U[ZMAX][RMAX], U_bar[ZMAX][RMAX], U_bar2[ZMAX][RMAX];
+extern struct _F Fr[ZMAX][RMAX], Fr_bar[ZMAX][RMAX], Fr_bar2[ZMAX][RMAX];
+extern struct _F Fz[ZMAX][RMAX], Fz_bar[ZMAX][RMAX], Fz_bar2[ZMAX][RMAX];
+extern struct _F s[ZMAX][RMAX], s_bar[ZMAX][RMAX], s_bar2[ZMAX][RMAX];
+extern double app_Bz[ZMAX][RMAX];
+extern double app_Br[ZMAX][RMAX];
 
 void move();
 

@@ -1,7 +1,7 @@
 ﻿#include "fluid.h"
 using namespace std;
 
-int row = 104, col = 9;
+int row = 106, col = 2;
 
 void electron_flow()
 {

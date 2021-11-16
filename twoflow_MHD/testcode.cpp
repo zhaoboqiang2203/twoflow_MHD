@@ -2,12 +2,12 @@
 
 void test_potential()
 {
-	double res[RMAX][ZMAX];
-	double test_s[RMAX][ZMAX];
+	double res[ZMAX][RMAX];
+	double test_s[ZMAX][RMAX];
 	//f = cos()
 
 	for(int i=0;i<RMAX;i++)
-		for (int j = 0; j < ZMAX; j++)
+		for (int j = 0; j < RMAX; j++)
 		{
 			res[i][j] = 0;
 			test_s[i][j] = 0;

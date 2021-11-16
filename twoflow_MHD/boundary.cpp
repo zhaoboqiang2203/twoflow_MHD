@@ -2,9 +2,9 @@
 
 using namespace std;
 
-double world[RMAX][ZMAX];
-double btype[RMAX][ZMAX];
-double ptype[RMAX][ZMAX];
+double world[ZMAX][RMAX];
+double btype[ZMAX][RMAX];
+double ptype[ZMAX][RMAX];
 Boundary boundary_array[BND_NUM];
 
 int initial()
@@ -117,16 +117,16 @@ int initial()
 	}
 
 	fill_plasma(4 * scale, 2 * scale, 1);
-
-	for (int i = 0; i < nr; i++)
+	fill_plasma(0,0, 110);
+	for (int i = 0; i < nz; i++)
 	{
-		for (int j = 0; j < nz; j++)
+		for (int j = 0; j < nr; j++)
 		{
 			if (world[i][j] == 1)
 			{
 				btype[i][j] = 1;
 			}
-			else if (btype[i][j] == (LEFT + UP) && (i != 0 && j != RMAX))
+			else if (btype[i][j] == (LEFT + UP) && (i != 0 && j != (RMAX - 1)))
 			{
 				btype[i][j] = 1;
 			}
@@ -134,13 +134,17 @@ int initial()
 			{
 				btype[i][j] = 1;
 			}
-			else if (btype[i][j] == (RIGHT + DOWN) && (i != ZMAX && j != 0))
+			else if (btype[i][j] == (RIGHT + DOWN) && (i != (ZMAX - 1) && j != 0))
 			{
 				btype[i][j] = 1;
 			}
-			else if (btype[i][j] == (RIGHT + UP) && (i != ZMAX && j != RMAX))
+			else if (btype[i][j] == (RIGHT + UP) && (i != (ZMAX - 1) && j != (RMAX - 1)))
 			{
 				btype[i][j] = 1;
+			}
+			else if (world[i][j] == 110)
+			{
+				btype[i][j] = 110;
 			}
 		}
 	}
@@ -149,9 +153,9 @@ int initial()
 	matrix_to_csv((double**)btype, ZMAX, RMAX, RMAX, (char*)(".\\output\\btype.csv"));
 	matrix_to_csv((double**)ptype, ZMAX, RMAX, RMAX, (char*)(".\\output\\ptype.csv"));
 #endif
-	for (int i = 0; i < nr; i++)
+	for (int i = 0; i < nz; i++)
 	{
-		for (int j = 0; j < nz; j++)
+		for (int j = 0; j < nr; j++)
 		{
 			if (btype[i][j] != 0)
 			{
@@ -224,8 +228,8 @@ void  boundary_condition()
 {
 
 	int i, j, k;
-	double inter_e_den = 3.7500e+11;
-	double inter_pla_den = 6.02e10;
+	double inter_e_den = 2.7500e+13;
+	double inter_pla_den = 6.02e12;
 	//¹ÌÌå±ß½ç
 
 	_for(k, 0, BND_NUM)

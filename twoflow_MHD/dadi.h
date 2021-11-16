@@ -5,7 +5,7 @@
 
 void init_solve();
 void tridag(double* a, double* b, double* c, double* r, double* utri, double* gam, int n);
-int solve(double u_in[RMAX][ZMAX], double s[RMAX][ZMAX], int itermax, double tol_test);
+int solve(double u_in[ZMAX][RMAX], double s[ZMAX][RMAX], int itermax, double tol_test);
 
 
 void potential_boundary();

@@ -288,6 +288,30 @@ void output()
 
 	sprintf_s(fname, (".\\output\\bz\\bz_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	//电子离子碰撞频率
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].mu_ie;
+		}
+	}
+
+	sprintf_s(fname, (".\\output\\mu_ie\\mu_ie_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	
+	//电流密度
+	for (int i = 0; i < RMAX; i++)
+	{
+		for (int j = 0; j < ZMAX; j++)
+		{
+			res_out[i][j] = (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE / dt;
+		}
+	}
+
+	sprintf_s(fname, (".\\output\\mu_ie\\mu_ie_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 }
 
 

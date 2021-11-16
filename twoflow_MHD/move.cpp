@@ -78,9 +78,14 @@ void move()
 			//MPDT[i][j].ver = -QE * Er[i][j] / ME * dt;
 			//MPDT[i][j].vez = -QE * Ez[i][j] / ME * dt;
 
-			MPDT[i][j].ee = 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-			//MPDT[i][j].pe = MPDT[i][j].ne * MPDT[i][j].ee;
-
+			//MPDT[i][j].ee = 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+			//MPDT[i][j].pe = 0.5 * MPDT[i][j].ee / (dr * j * dz * PI / 180);
+			//MPDT[i][j].pe = 0.5 * MPDT[i][j].ee / (dr * j * dz * PI / 180);
+			//MPDT[i][j].ee /= 2;
+			//MPDT[i][j].ver = 0;
+			//MPDT[i][j].vetheta = 0;
+			//MPDT[i][j].vez = 0;
+			
 
 			q_half = dt * QE / MI / 2;
 			hrho = q_half * app_Br[i][j];
@@ -110,7 +115,14 @@ void move()
 
 			double Q_ei = 1.4e-20;//电子离子碰撞截面
 			MPDT[i][j].mu_ie = MPDT[i][j].ni * Q_ei * ((8 * MPDT[i][j].ee) / (PI * ME));
-
+			//if(abs(MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz) < 1e-6)
+			//{ 
+			//	MPDT[i][j].mu_ie = 0;
+			//}
+			//else
+			//{
+			//	MPDT[i][j].mu_ie = (MPDT[i][j].ne * PI * pow(QE, 4)) / (128 * sqr(EPS_0) * sqr(ME) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 3));
+			//}
 			double m_eir = 0;        //电子向离子转移的径向（r方向）动量
 			double m_eitheta = 0;    //电子向离子转移的角向（theta方向）动量
 			double m_eiz = 0;        //电子向离子转移的轴向（z方向）动量
@@ -134,9 +146,9 @@ void move()
 			MPDT[i][j].vez -= m_eiz;
 			MPDT[i][j].viz += m_eiz;
 
-			MPDT[i][j].ver /=3;
-			MPDT[i][j].vitheta /= 3;
-			MPDT[i][j].vez /= 3;
+			//MPDT[i][j].ver /=3;
+			//MPDT[i][j].vitheta /= 3;
+			//MPDT[i][j].vez /= 3;
 
 			//能量守恒验证
 

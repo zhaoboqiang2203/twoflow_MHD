@@ -114,7 +114,9 @@ void move()
 
 
 			double Q_ei = 1.4e-20;//电子离子碰撞截面
-			MPDT[i][j].mu_ie = MPDT[i][j].ni * Q_ei * ((8 * MPDT[i][j].ee) / (PI * ME));
+
+			MPDT[i][j].mu_ie = MPDT[i][j].ni * Q_ei * sqrt((12 * MPDT[i][j].ee) / (PI * ME));
+
 			//if(abs(MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz) < 1e-6)
 			//{ 
 			//	MPDT[i][j].mu_ie = 0;
@@ -138,17 +140,17 @@ void move()
 
 			double pre_eng = MPDT[i][j].ei + MPDT[i][j].ee;
 
+			if (MPDT[i][j].ne != 0 && MPDT[i][j].ni != 0)
+			{
+				double dev = m_eir / (MPDT[i][j].ne * ME);
+				MPDT[i][j].ver -= m_eir / (MPDT[i][j].ne * ME);
+				MPDT[i][j].vir += m_eir / (MPDT[i][j].ni * MI);
+				MPDT[i][j].vetheta -= m_eitheta / (MPDT[i][j].ne * ME);
+				MPDT[i][j].vitheta += m_eitheta / (MPDT[i][j].ni * MI);
+				MPDT[i][j].vez -= m_eiz / (MPDT[i][j].ne * ME);
+				MPDT[i][j].viz += m_eiz / (MPDT[i][j].ni * MI);
+			}
 
-			MPDT[i][j].ver -= m_eir;
-			MPDT[i][j].vir += m_eir;
-			MPDT[i][j].vetheta -= m_eitheta;
-			MPDT[i][j].vitheta += m_eitheta;
-			MPDT[i][j].vez -= m_eiz;
-			MPDT[i][j].viz += m_eiz;
-
-			//MPDT[i][j].ver /=3;
-			//MPDT[i][j].vitheta /= 3;
-			//MPDT[i][j].vez /= 3;
 
 			//能量守恒验证
 

@@ -228,8 +228,8 @@ void  boundary_condition()
 {
 
 	int i, j, k;
-	double inter_e_den = 2.7500e+13;
-	double inter_pla_den = 6.02e12;
+	double inter_e_den = 3.500e9;
+	double inter_pla_den = 1.11e9;
 	//¹ÌÌå±ß½ç
 
 	_for(k, 0, BND_NUM)

@@ -42,7 +42,7 @@ int main()
 	nz = ZMAX;
 	nr = RMAX;
 
-	scale = ZMAX / 100;
+	scale = ZMAX / 200;
 
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
@@ -50,10 +50,9 @@ int main()
 	printf("dt = %e\n", dt);
 	initial();
 	magnetic_field_initial();
-	index = 12000;
+	index = 100;
 	while (index--)
 	{
-
 		printf("index %d\n", index);
 		boundary_condition();
 		//electron_flow();
@@ -62,7 +61,7 @@ int main()
 		move();
 
 		
-		if (index % 100 == 0)
+		//if (index % 100 == 0)
 		{
 			output();
 		}

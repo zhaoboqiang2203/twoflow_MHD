@@ -8,9 +8,9 @@
 #include <queue>
 #include <cmath>
 
-//#define DADI_DEBUG
-//#define FLUID_DEBUG
-//#define BOUNDARY_DEBUG
+#define DADI_DEBUG
+#define FLUID_DEBUG
+#define BOUNDARY_DEBUG
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)
@@ -23,17 +23,17 @@
 
 
 #define RMAX 401
-#define ZMAX 501
+#define ZMAX 1001
 
 #define R_DIR 0
 #define Z_DIR 1
 
-#define LEFT 3
-#define UP 5
-#define RIGHT 7
-#define DOWN 11
+#define LEFT 1
+#define UP 4
+#define RIGHT 16
+#define DOWN 64
 
-#define BND_NUM  8
+#define BND_NUM  10
 
 
 enum PTypes {

@@ -55,6 +55,7 @@ void move()
 	{
 		for (int j = 0; j < nr; j++)
 		{
+			if (btype[i][j] != 1) continue;
 
 			q_half = -dt * QE / ME / 2;
 			hrho = q_half * app_Br[i][j];

@@ -28,10 +28,10 @@
 #define R_DIR 0
 #define Z_DIR 1
 
-#define LEFT 1
-#define UP 4
-#define RIGHT 16
-#define DOWN 64
+#define LEFT 2
+#define UP 8
+#define RIGHT 32
+#define DOWN 128
 
 #define BND_NUM  10
 

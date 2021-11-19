@@ -8,9 +8,9 @@
 #include <queue>
 #include <cmath>
 
-#define DADI_DEBUG
-#define FLUID_DEBUG
-#define BOUNDARY_DEBUG
+//#define DADI_DEBUG
+//#define FLUID_DEBUG
+//#define BOUNDARY_DEBUG
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)

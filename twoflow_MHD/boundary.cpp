@@ -392,36 +392,6 @@ void  boundary_condition()
 	//等离子体和电子进入和离开仿真区域
 	_for(k, 0, BND_NUM)
 	{
-		if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
-		{
-			if (boundary_array[k].bnd_dir == R_DIR)
-			{
-				i = boundary_array[k].start.z;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r - scale)
-				{
-					//MPDT[i][j].ver = 100;
-					//MPDT[i][j].vez = 100;
-					if (btype[i + 1][j] != 1) continue;
-					MPDT[i + 1][j].ne += inter_e_den / scale;
-					MPDT[i][j].ne += inter_e_den / scale;
-				}
-			}
-			else if (boundary_array[k].bnd_dir == Z_DIR)
-			{
-				j = boundary_array[k].start.r;
-				int num = (boundary_array[k].end.z - boundary_array[k].start.z) / 2;
-				double den_step = (inter_e_den - 6.02e5) / num;
-
-				_feq(i, (boundary_array[k].start.z + boundary_array[k].end.z) / 2, boundary_array[k].end.z - scale)
-				{
-					//MPDT[i][j].ver = 100;
-					//MPDT[i][j].vez = 100;
-					if (btype[i][j + 1] != 1) continue;
-					MPDT[i][j + 1].ne += (6.02e5 + den_step) / scale;
-					MPDT[i][j].ne += (6.02e5 + den_step) / scale;
-				}
-			}
-		}
 
 		if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
 		{
@@ -468,6 +438,7 @@ void  boundary_condition()
 				i = 0;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
+					if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ne < 1e4) continue;
 					if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j] != 1) continue;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ne /= 2;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ni /= 2;
@@ -482,6 +453,7 @@ void  boundary_condition()
 				j = 0;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
+					if (MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne < 1e4) continue;
 					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne /= 2;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ni /= 2;
@@ -507,6 +479,7 @@ void  boundary_condition()
 				i = 0;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
+					if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j].ne < 1e4) continue;
 					if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j].ne /= 1.2;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne /= 1.2;
@@ -519,6 +492,7 @@ void  boundary_condition()
 				j = 0;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
+					if (MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne < 1e4) continue;
 					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne /= 1.2;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne /= 1.2;
@@ -536,7 +510,7 @@ void  boundary_condition()
 			{
 				double ins_z = dz / dr;
 				i = 0;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r - scale)
 				{
 					if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j].ne += inter_pla_den / scale;
@@ -552,7 +526,7 @@ void  boundary_condition()
 			{
 				double ins_r = dr / dz;
 				j = 0;
-				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z - scale)
 				{
 					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1] != 1) continue;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1].ne += inter_pla_den / scale;

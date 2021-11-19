@@ -814,65 +814,121 @@ void tridag(double* a, double* b, double* c, double* r, double* utri, double* ga
 }
 
 
+//void electric_field()
+//{
+//	for (int i = 0; i < ZMAX; i++)
+//	{
+//		for (int j = 0; j < RMAX; j++)
+//		{
+//			if (btype[i][j] == 1)
+//			{
+//				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
+//				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
+//			}
+//			else if (btype[i][j] == LEFT)
+//			{
+//				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+//				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
+//			}
+//			else if (btype[i][j] == RIGHT)
+//			{
+//				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
+//				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
+//			}
+//			else if (btype[i][j] == DOWN)
+//			{
+//				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
+//				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+//			}
+//			else if (btype[i][j] == UP)
+//			{
+//				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
+//				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+//			}
+//			else if (btype[i][j] == (LEFT + UP))
+//			{
+//				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+//				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+//			}
+//			else if (btype[i][j] == (LEFT + DOWN))
+//			{
+//				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+//				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+//			}
+//			else if (btype[i][j] == (RIGHT + DOWN))
+//			{
+//				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
+//				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+//			}
+//			else if (btype[i][j] == (RIGHT + UP))
+//			{
+//				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
+//				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+//
+//			}
+//			else if (btype[i][j] == 0)
+//			{
+//				Ez[i][j] = 0;
+//				Er[i][j] = 0;
+//
+//			}
+//
+//		}
+//	}
+//}
+
 void electric_field()
 {
 	for (int i = 0; i < ZMAX; i++)
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			if (btype[i][j] == 1)
+			if (i > 0 &&j > 0 && i< (ZMAX - 1) &&j<(RMAX - 1))
 			{
 				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
 				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
 			}
-			else if (btype[i][j] == LEFT)
+			else if (i == 0 && j > 0  && j < (RMAX - 1))
 			{
 				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
 				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
 			}
-			else if (btype[i][j] == RIGHT)
+			else if (i == (ZMAX - 1) && j > 0 && j < (RMAX - 1))
 			{
 				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
 				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
 			}
-			else if (btype[i][j] == DOWN)
+			else if (i > 0 && j == 0 && i < (ZMAX - 1))
 			{
 				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
 				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
 			}
-			else if (btype[i][j] == UP)
+			else if (i > 0 && j == (RMAX - 1) && i < (ZMAX - 1))
 			{
 				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
 				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
 			}
-			else if (btype[i][j] == (LEFT + UP))
+			else if (i == 0 && j == (RMAX - 1))
 			{
 				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
 				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
 			}
-			else if (btype[i][j] == (LEFT + DOWN))
+			else if (i == 0 && j == 0)
 			{
 				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
 				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
 			}
-			else if (btype[i][j] == (RIGHT + DOWN))
+			else if (i == (ZMAX - 1) && j == 0)
 			{
 				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
 				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
 			}
-			else if (btype[i][j] == (RIGHT + UP))
+			else if (i == (ZMAX - 1) && j == (RMAX - 1))
 			{
 				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
 				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
 
 			}
-			else if (btype[i][j] == 0)
-			{
-				Ez[i][j] = 0;
-				Er[i][j] = 0;
-
-			}
-
 		}
 	}
 }

@@ -201,8 +201,8 @@ int initial()
 		{
 			if (btype[i][j] != 0)
 			{
-				MPDT[i][j].ne = 6.02e5 / scale;
-				MPDT[i][j].ni = 6.02e5 / scale;
+				MPDT[i][j].ne = 2.41e8 / scale;
+				MPDT[i][j].ni = 2.41e8 / scale;
 			}
 			else
 			{
@@ -438,7 +438,7 @@ void  boundary_condition()
 				i = 0;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
-					if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ne < 1e4) continue;
+					if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne < 1e4) continue;
 					if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j] != 1) continue;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ne /= 2;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ni /= 2;
@@ -453,7 +453,7 @@ void  boundary_condition()
 				j = 0;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
-					if (MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne < 1e4) continue;
+					if (MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne < 1e4) continue;
 					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne /= 2;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ni /= 2;
@@ -479,7 +479,7 @@ void  boundary_condition()
 				i = 0;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
-					if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j].ne < 1e4) continue;
+					if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne < 1e4) continue;
 					if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j].ne /= 1.2;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne /= 1.2;
@@ -492,7 +492,7 @@ void  boundary_condition()
 				j = 0;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
-					if (MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne < 1e4) continue;
+					if (MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne < 1e4) continue;
 					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne /= 1.2;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne /= 1.2;

@@ -50,7 +50,7 @@ int main()
 	printf("dt = %e\n", dt);
 	initial();
 	magnetic_field_initial();
-	index = 200;
+	index = 12000;
 	while (index--)
 	{
 		printf("index %d\n", index);
@@ -61,8 +61,7 @@ int main()
 		move();
 
 		
-		//if (index % 100 == 0)
-		if (index < 69)
+		if (index % 100 == 0)
 		{
 			output();
 		}

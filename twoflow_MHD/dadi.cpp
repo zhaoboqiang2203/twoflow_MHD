@@ -883,6 +883,8 @@ void electric_field()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
+			if (btype[i][j] == 0 || btype[i][j] == 110) continue;
+
 			if (i > 0 &&j > 0 && i< (ZMAX - 1) &&j<(RMAX - 1))
 			{
 				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);

@@ -61,7 +61,8 @@ int main()
 		move();
 
 		
-		if (index % 100 == 0)
+		//if (index % 100 == 0)
+		//if(index < 11790)
 		{
 			output();
 		}
@@ -322,6 +323,18 @@ void output()
 	}
 
 	sprintf_s(fname, (".\\output\\Jz\\Jz_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	//电子向离子转移能量
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].delta_ei;
+		}
+	}
+
+	sprintf_s(fname, (".\\output\\delta_ei\\delta_ei_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 }

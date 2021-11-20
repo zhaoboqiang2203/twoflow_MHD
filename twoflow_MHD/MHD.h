@@ -10,7 +10,7 @@
 
 //#define DADI_DEBUG
 //#define FLUID_DEBUG
-//#define BOUNDARY_DEBUG
+#define BOUNDARY_DEBUG
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)
@@ -124,6 +124,7 @@ struct  node
 	double ee;
 	double ei;
 	double mu_ie;       /*电子离子碰撞频率*/
+	double delta_ei;    /*电子向离子转移能量*/
 };
 
 

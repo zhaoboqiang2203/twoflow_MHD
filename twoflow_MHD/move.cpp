@@ -55,7 +55,8 @@ void move()
 	{
 		for (int j = 0; j < nr; j++)
 		{
-			if (btype[i][j] != 1) continue;
+			if (ptype[i][j] == VACCUM_BOUNDARY) continue;
+			if (MPDT[i][j].ne == 0 || MPDT[i][j].ni == 0) continue;
 
 			q_half = -dt * QE / ME / 2;
 			hrho = q_half * app_Br[i][j];
@@ -130,20 +131,19 @@ void move()
 			double m_eitheta = 0;    //电子向离子转移的角向（theta方向）动量
 			double m_eiz = 0;        //电子向离子转移的轴向（z方向）动量
 
-			double delta_ei = 0;     //电子向离子转移的能量
+			//double delta_ei = 0;     //电子向离子转移的能量
 			
 			double eta = MPDT[i][j].mu_ie * MPDT[i][j].ne * ME;
 			m_eir      = eta * (MPDT[i][j].ver - MPDT[i][j].vir);
 			m_eitheta  = eta * (MPDT[i][j].vetheta - MPDT[i][j].vitheta);
 			m_eiz      = eta * (MPDT[i][j].vez - MPDT[i][j].viz);
 
-			delta_ei = 3 * MPDT[i][j].ne * ME * MPDT[i][j].mu_ie * (MPDT[i][j].ee - MPDT[i][j].ei);
+			//delta_ei = 3 * MPDT[i][j].ne * ME * MPDT[i][j].mu_ie * (MPDT[i][j].ee - MPDT[i][j].ei);
 
 			double pre_eng = MPDT[i][j].ei + MPDT[i][j].ee;
 
 			if (MPDT[i][j].ne != 0 && MPDT[i][j].ni != 0)
 			{
-				double dev = m_eir / (MPDT[i][j].ne * ME);
 				MPDT[i][j].ver -= m_eir / (MPDT[i][j].ne * ME);
 				MPDT[i][j].vir += m_eir / (MPDT[i][j].ni * MI);
 				MPDT[i][j].vetheta -= m_eitheta / (MPDT[i][j].ne * ME);
@@ -154,10 +154,16 @@ void move()
 
 
 			//能量守恒验证
-
+			double pre_ee = MPDT[i][j].ee;
+			double pre_ei = MPDT[i][j].ei;
 			MPDT[i][j].ee = 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 			MPDT[i][j].ei = 0.5 * MPDT[i][j].ni * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
 
+			double dee = pre_ee - MPDT[i][j].ee;
+			double dei = MPDT[i][j].ei - pre_ei;
+
+			MPDT[i][j].delta_ei = dee;
+			MPDT[i][j].mu_ie = dei; // 看一下离子获得能量
 			//if (i == 200 && j == 11)
 			//{
 			//	printf("ss\n");

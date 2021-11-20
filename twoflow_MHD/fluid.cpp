@@ -1008,8 +1008,8 @@ void electron_flow()
 //边界条件的第二个版本
 void ion_flow()
 {
-	double Qr = 0;
-	double Qz = 0;
+	struct _U Qr;
+	struct _U Qz;
 	for (int i = 0; i < nz; i++)
 	{
 		for (int j = 0; j < nr; j++)
@@ -1435,36 +1435,28 @@ void ion_flow()
 	}
 
 	//计算				
-	double eta =1;
+
 	for (int i = 0; i < nz; i++)
 	{
 		for (int j = 0; j < nr; j++)
 		{
 			if (btype[i][j] == 1)
 			{
-
-				if (abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) != 0)
-				{
-					Qz = eta * abs(MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) / abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
-				}
-				if (abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
-				{
-					Qr = eta * abs(MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) / abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne);
-				}
-
-				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 4 * (U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) + Qz / 4 * (U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);
-				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 4 * (U_bar2[i][j + 1].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i][j - 1].u2) + Qz / 4 * (U_bar2[i + 1][j].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i - 1][j].u2);
-				U[i][j].u3 = U_bar2[i][j].u3 + Qr / 4 * (U_bar2[i][j + 1].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i][j - 1].u3) + Qz / 4 * (U_bar2[i + 1][j].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i - 1][j].u3);
-				U[i][j].u4 = U_bar2[i][j].u4 + Qr / 4 * (U_bar2[i][j + 1].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i][j - 1].u4) + Qz / 4 * (U_bar2[i + 1][j].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i - 1][j].u4);
-				U[i][j].u5 = U_bar2[i][j].u5 + Qr / 4 * (U_bar2[i][j + 1].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i][j - 1].u5) + Qz / 4 * (U_bar2[i + 1][j].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i - 1][j].u5);
-				U[i][j].u6 = U_bar2[i][j].u6 + Qr / 4 * (U_bar2[i][j + 1].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i][j - 1].u6) + Qz / 4 * (U_bar2[i + 1][j].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i - 1][j].u6);
-				U[i][j].u7 = U_bar2[i][j].u7 + Qr / 4 * (U_bar2[i][j + 1].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i][j - 1].u7) + Qz / 4 * (U_bar2[i + 1][j].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i - 1][j].u7);
-				U[i][j].u8 = U_bar2[i][j].u8 + Qr / 4 * (U_bar2[i][j + 1].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i][j - 1].u8) + Qz / 4 * (U_bar2[i + 1][j].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i - 1][j].u8);
-				U[i][j].u9 = U_bar2[i][j].u9 + Qr / 4 * (U_bar2[i][j + 1].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i][j - 1].u9) + Qz / 4 * (U_bar2[i + 1][j].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i - 1][j].u9);
-				U[i][j].u10 = U_bar2[i][j].u10 + Qr / 4 * (U_bar2[i][j + 1].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i][j - 1].u10) + Qz / 4 * (U_bar2[i + 1][j].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i - 1][j].u10);
-				U[i][j].u11 = U_bar2[i][j].u11 + Qr / 4 * (U_bar2[i][j + 1].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i][j - 1].u11) + Qz / 4 * (U_bar2[i + 1][j].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i - 1][j].u11);
-				U[i][j].u12 = U_bar2[i][j].u12 + Qr / 4 * (U_bar2[i][j + 1].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i][j - 1].u12) + Qz / 4 * (U_bar2[i + 1][j].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i - 1][j].u12);
-				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 4 * (U_bar2[i][j + 1].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i][j - 1].u13) + Qz / 4 * (U_bar2[i + 1][j].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i - 1][j].u13);
+				Qz = arti_vis(MPDT[i + 1][j], MPDT[i][j], MPDT[i - 1][j]);
+				Qr = arti_vis(MPDT[i][j + 1], MPDT[i][j] ,MPDT[i][j - 1]);
+				U[i][j].u1 = U_bar2[i][j].u1 + Qr.u1 / 4 * (U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) + Qz.u1 / 4 * (U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);				
+				U[i][j].u2 = U_bar2[i][j].u2 + Qr.u2 / 4 * (U_bar2[i][j + 1].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i][j - 1].u2) + Qz.u1 / 4 * (U_bar2[i + 1][j].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i - 1][j].u2);
+				U[i][j].u3 = U_bar2[i][j].u3 + Qr.u3 / 4 * (U_bar2[i][j + 1].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i][j - 1].u3) + Qz.u2 / 4 * (U_bar2[i + 1][j].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i - 1][j].u3);
+				U[i][j].u4 = U_bar2[i][j].u4 + Qr.u4 / 4 * (U_bar2[i][j + 1].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i][j - 1].u4) + Qz.u3 / 4 * (U_bar2[i + 1][j].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i - 1][j].u4);
+				U[i][j].u5 = U_bar2[i][j].u5 + Qr.u5 / 4 * (U_bar2[i][j + 1].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i][j - 1].u5) + Qz.u4 / 4 * (U_bar2[i + 1][j].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i - 1][j].u5);
+				U[i][j].u6 = U_bar2[i][j].u6 + Qr.u6 / 4 * (U_bar2[i][j + 1].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i][j - 1].u6) + Qz.u5 / 4 * (U_bar2[i + 1][j].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i - 1][j].u6);
+				U[i][j].u7 = U_bar2[i][j].u7 + Qr.u7 / 4 * (U_bar2[i][j + 1].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i][j - 1].u7) + Qz.u6 / 4 * (U_bar2[i + 1][j].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i - 1][j].u7);
+				U[i][j].u8 = U_bar2[i][j].u8 + Qr.u8 / 4 * (U_bar2[i][j + 1].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i][j - 1].u8) + Qz.u7 / 4 * (U_bar2[i + 1][j].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i - 1][j].u8);
+				U[i][j].u9 = U_bar2[i][j].u9 + Qr.u9 / 4 * (U_bar2[i][j + 1].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i][j - 1].u9) + Qz.u8 / 4 * (U_bar2[i + 1][j].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i - 1][j].u9);
+				U[i][j].u10 = U_bar2[i][j].u10 + Qr.u10 / 4 * (U_bar2[i][j + 1].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i][j - 1].u10) + Qz.u9 / 4 * (U_bar2[i + 1][j].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i - 1][j].u10);
+				U[i][j].u11 = U_bar2[i][j].u11 + Qr.u11 / 4 * (U_bar2[i][j + 1].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i][j - 1].u11) + Qz.u10 / 4 * (U_bar2[i + 1][j].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i - 1][j].u11);
+				U[i][j].u12 = U_bar2[i][j].u12 + Qr.u12 / 4 * (U_bar2[i][j + 1].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i][j - 1].u12) + Qz.u11 / 4 * (U_bar2[i + 1][j].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i - 1][j].u12);
+				U[i][j].u13 = U_bar2[i][j].u13 + Qr.u13 / 4 * (U_bar2[i][j + 1].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i][j - 1].u13) + Qz.u12 / 4 * (U_bar2[i + 1][j].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i - 1][j].u13);
 
 #ifdef FLUID_DEBUG
 				if (i == row && j == col)
@@ -1488,211 +1480,144 @@ void ion_flow()
 			}
 			else if (btype[i][j] == LEFT)//左边的边界，复制右边的参数
 			{
-				if (abs(MPDT[i + 1][j].ne +  MPDT[i][j].ne) != 0)
-				{
-					Qz = eta * abs(MPDT[i + 1][j].ne -  MPDT[i][j].ne ) / abs(MPDT[i + 1][j].ne + MPDT[i][j].ne );
-				}
-				if (abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
-				{
-					Qr = eta * abs(MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) / abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne);
-				}
+				Qr = arti_vis(MPDT[i][j + 1], MPDT[i][j], MPDT[i][j - 1]);
 
-
-				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 4 * (U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) + Qz / 4 * (U_bar2[i + 1][j].u1 - U_bar2[i][j].u1);
-				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 4 * (U_bar2[i][j + 1].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i][j - 1].u2) + Qz / 4 * (U_bar2[i + 1][j].u2 - U_bar2[i][j].u2);
-				U[i][j].u3 = U_bar2[i][j].u3 + Qr / 4 * (U_bar2[i][j + 1].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i][j - 1].u3) + Qz / 4 * (U_bar2[i + 1][j].u3 - U_bar2[i][j].u3);
-				U[i][j].u4 = U_bar2[i][j].u4 + Qr / 4 * (U_bar2[i][j + 1].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i][j - 1].u4) + Qz / 4 * (U_bar2[i + 1][j].u4 - U_bar2[i][j].u4);
-				U[i][j].u5 = U_bar2[i][j].u5 + Qr / 4 * (U_bar2[i][j + 1].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i][j - 1].u5) + Qz / 4 * (U_bar2[i + 1][j].u5 - U_bar2[i][j].u5);
-				U[i][j].u6 = U_bar2[i][j].u6 + Qr / 4 * (U_bar2[i][j + 1].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i][j - 1].u6) + Qz / 4 * (U_bar2[i + 1][j].u6 - U_bar2[i][j].u6);
-				U[i][j].u7 = U_bar2[i][j].u7 + Qr / 4 * (U_bar2[i][j + 1].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i][j - 1].u7) + Qz / 4 * (U_bar2[i + 1][j].u7 - U_bar2[i][j].u7);
-				U[i][j].u8 = U_bar2[i][j].u8 + Qr / 4 * (U_bar2[i][j + 1].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i][j - 1].u8) + Qz / 4 * (U_bar2[i + 1][j].u8 - U_bar2[i][j].u8);
-				U[i][j].u9 = U_bar2[i][j].u9 + Qr / 4 * (U_bar2[i][j + 1].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i][j - 1].u9) + Qz / 4 * (U_bar2[i + 1][j].u9 - U_bar2[i][j].u9);
-				U[i][j].u10 = U_bar2[i][j].u10 + Qr / 4 * (U_bar2[i][j + 1].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i][j - 1].u10) + Qz / 4 * (U_bar2[i + 1][j].u10 - U_bar2[i][j].u10);
-				U[i][j].u11 = U_bar2[i][j].u11 + Qr / 4 * (U_bar2[i][j + 1].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i][j - 1].u11) + Qz / 4 * (U_bar2[i + 1][j].u11 - U_bar2[i][j].u11);
-				U[i][j].u12 = U_bar2[i][j].u12 + Qr / 4 * (U_bar2[i][j + 1].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i][j - 1].u12) + Qz / 4 * (U_bar2[i + 1][j].u12 - U_bar2[i][j].u12);
-				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 4 * (U_bar2[i][j + 1].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i][j - 1].u13) + Qz / 4 * (U_bar2[i + 1][j].u13 - U_bar2[i][j].u13);
+				U[i][j].u1 = U_bar2[i][j].u1 + Qr.u1 / 4 * (U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1);
+				U[i][j].u2 = U_bar2[i][j].u2 + Qr.u2 / 4 * (U_bar2[i][j + 1].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i][j - 1].u2);
+				U[i][j].u3 = U_bar2[i][j].u3 + Qr.u3 / 4 * (U_bar2[i][j + 1].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i][j - 1].u3);
+				U[i][j].u4 = U_bar2[i][j].u4 + Qr.u4 / 4 * (U_bar2[i][j + 1].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i][j - 1].u4);
+				U[i][j].u5 = U_bar2[i][j].u5 + Qr.u5 / 4 * (U_bar2[i][j + 1].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i][j - 1].u5);
+				U[i][j].u6 = U_bar2[i][j].u6 + Qr.u6 / 4 * (U_bar2[i][j + 1].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i][j - 1].u6);
+				U[i][j].u7 = U_bar2[i][j].u7 + Qr.u7 / 4 * (U_bar2[i][j + 1].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i][j - 1].u7);
+				U[i][j].u8 = U_bar2[i][j].u8 + Qr.u8 / 4 * (U_bar2[i][j + 1].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i][j - 1].u8);
+				U[i][j].u9 = U_bar2[i][j].u9 + Qr.u9 / 4 * (U_bar2[i][j + 1].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i][j - 1].u9);
+				U[i][j].u10 = U_bar2[i][j].u10 + Qr.u10 / 4 * (U_bar2[i][j + 1].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i][j - 1].u10);
+				U[i][j].u11 = U_bar2[i][j].u11 + Qr.u11 / 4 * (U_bar2[i][j + 1].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i][j - 1].u11);
+				U[i][j].u12 = U_bar2[i][j].u12 + Qr.u12 / 4 * (U_bar2[i][j + 1].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i][j - 1].u12);
+				U[i][j].u13 = U_bar2[i][j].u13 + Qr.u13 / 4 * (U_bar2[i][j + 1].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i][j - 1].u13);
 			}
 			else if (btype[i][j] == RIGHT)
 			{
-				if (abs( MPDT[i][j].ne + MPDT[i - 1][j].ne) != 0)
-				{
-					Qz = eta * abs(MPDT[i - 1][j].ne -  MPDT[i][j].ne) / abs(MPDT[i][j].ne + MPDT[i - 1][j].ne);
-				}
-				if (abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
-				{
-					Qr = eta * abs(MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) / abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne);
-				}
 
-				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 4 * (U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1) + Qz / 4 * (U_bar2[i - 1][j].u1 - U_bar2[i][j].u1);
-				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 4 * (U_bar2[i][j + 1].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i][j - 1].u2) + Qz / 4 * (U_bar2[i - 1][j].u2 - U_bar2[i][j].u2);
-				U[i][j].u3 = U_bar2[i][j].u3 + Qr / 4 * (U_bar2[i][j + 1].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i][j - 1].u3) + Qz / 4 * (U_bar2[i - 1][j].u3 - U_bar2[i][j].u3);
-				U[i][j].u4 = U_bar2[i][j].u4 + Qr / 4 * (U_bar2[i][j + 1].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i][j - 1].u4) + Qz / 4 * (U_bar2[i - 1][j].u4 - U_bar2[i][j].u4);
-				U[i][j].u5 = U_bar2[i][j].u5 + Qr / 4 * (U_bar2[i][j + 1].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i][j - 1].u5) + Qz / 4 * (U_bar2[i - 1][j].u5 - U_bar2[i][j].u5);
-				U[i][j].u6 = U_bar2[i][j].u6 + Qr / 4 * (U_bar2[i][j + 1].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i][j - 1].u6) + Qz / 4 * (U_bar2[i - 1][j].u6 - U_bar2[i][j].u6);
-				U[i][j].u7 = U_bar2[i][j].u7 + Qr / 4 * (U_bar2[i][j + 1].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i][j - 1].u7) + Qz / 4 * (U_bar2[i - 1][j].u7 - U_bar2[i][j].u7);
-				U[i][j].u8 = U_bar2[i][j].u8 + Qr / 4 * (U_bar2[i][j + 1].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i][j - 1].u8) + Qz / 4 * (U_bar2[i - 1][j].u8 - U_bar2[i][j].u8);
-				U[i][j].u9 = U_bar2[i][j].u9 + Qr / 4 * (U_bar2[i][j + 1].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i][j - 1].u9) + Qz / 4 * (U_bar2[i - 1][j].u9 - U_bar2[i][j].u9);
-				U[i][j].u10 = U_bar2[i][j].u10 + Qr / 4 * (U_bar2[i][j + 1].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i][j - 1].u10) + Qz / 4 * (U_bar2[i - 1][j].u10 - U_bar2[i][j].u10);
-				U[i][j].u11 = U_bar2[i][j].u11 + Qr / 4 * (U_bar2[i][j + 1].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i][j - 1].u11) + Qz / 4 * (U_bar2[i - 1][j].u11 - U_bar2[i][j].u11);
-				U[i][j].u12 = U_bar2[i][j].u12 + Qr / 4 * (U_bar2[i][j + 1].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i][j - 1].u12) + Qz / 4 * (U_bar2[i - 1][j].u12 - U_bar2[i][j].u12);
-				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 4 * (U_bar2[i][j + 1].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i][j - 1].u13) + Qz / 4 * (U_bar2[i - 1][j].u13 - U_bar2[i][j].u13);
+				Qr = arti_vis(MPDT[i][j + 1], MPDT[i][j], MPDT[i][j - 1]);
+
+				U[i][j].u1 = U_bar2[i][j].u1 + Qr.u1 / 4 * (U_bar2[i][j + 1].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i][j - 1].u1);
+				U[i][j].u2 = U_bar2[i][j].u2 + Qr.u2 / 4 * (U_bar2[i][j + 1].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i][j - 1].u2);
+				U[i][j].u3 = U_bar2[i][j].u3 + Qr.u3 / 4 * (U_bar2[i][j + 1].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i][j - 1].u3);
+				U[i][j].u4 = U_bar2[i][j].u4 + Qr.u4 / 4 * (U_bar2[i][j + 1].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i][j - 1].u4);
+				U[i][j].u5 = U_bar2[i][j].u5 + Qr.u5 / 4 * (U_bar2[i][j + 1].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i][j - 1].u5);
+				U[i][j].u6 = U_bar2[i][j].u6 + Qr.u6 / 4 * (U_bar2[i][j + 1].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i][j - 1].u6);
+				U[i][j].u7 = U_bar2[i][j].u7 + Qr.u7 / 4 * (U_bar2[i][j + 1].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i][j - 1].u7);
+				U[i][j].u8 = U_bar2[i][j].u8 + Qr.u8 / 4 * (U_bar2[i][j + 1].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i][j - 1].u8);
+				U[i][j].u9 = U_bar2[i][j].u9 + Qr.u9 / 4 * (U_bar2[i][j + 1].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i][j - 1].u9);
+				U[i][j].u10 = U_bar2[i][j].u10 + Qr.u10 / 4 * (U_bar2[i][j + 1].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i][j - 1].u10);
+				U[i][j].u11 = U_bar2[i][j].u11 + Qr.u11 / 4 * (U_bar2[i][j + 1].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i][j - 1].u11);
+				U[i][j].u12 = U_bar2[i][j].u12 + Qr.u12 / 4 * (U_bar2[i][j + 1].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i][j - 1].u12);
+				U[i][j].u13 = U_bar2[i][j].u13 + Qr.u13 / 4 * (U_bar2[i][j + 1].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i][j - 1].u13);
 			}
 			else if (btype[i][j] == UP)
 			{
-				if (abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) != 0)
-				{
-					Qz = eta * abs(MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) / abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
-				}
-				if (abs(MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
-				{
-					Qr = eta * abs(MPDT[i][j - 1].ne - MPDT[i][j].ne) / abs(MPDT[i][j].ne + MPDT[i][j - 1].ne);
-				}
+				Qz = arti_vis(MPDT[i + 1][j], MPDT[i][j], MPDT[i - 1][j]);
 
-				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 4 * (U_bar2[i][j - 1].u1 - U_bar2[i][j].u1) + Qz / 4 * (U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);
-				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 4 * (U_bar2[i][j - 1].u2 - U_bar2[i][j].u2) + Qz / 4 * (U_bar2[i + 1][j].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i - 1][j].u2);
-				U[i][j].u3 = U_bar2[i][j].u3 + Qr / 4 * (U_bar2[i][j - 1].u3 - U_bar2[i][j].u3) + Qz / 4 * (U_bar2[i + 1][j].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i - 1][j].u3);
-				U[i][j].u4 = U_bar2[i][j].u4 + Qr / 4 * (U_bar2[i][j - 1].u4 - U_bar2[i][j].u4) + Qz / 4 * (U_bar2[i + 1][j].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i - 1][j].u4);
-				U[i][j].u5 = U_bar2[i][j].u5 + Qr / 4 * (U_bar2[i][j - 1].u5 - U_bar2[i][j].u5) + Qz / 4 * (U_bar2[i + 1][j].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i - 1][j].u5);
-				U[i][j].u6 = U_bar2[i][j].u6 + Qr / 4 * (U_bar2[i][j - 1].u6 - U_bar2[i][j].u6) + Qz / 4 * (U_bar2[i + 1][j].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i - 1][j].u6);
-				U[i][j].u7 = U_bar2[i][j].u7 + Qr / 4 * (U_bar2[i][j - 1].u7 - U_bar2[i][j].u7) + Qz / 4 * (U_bar2[i + 1][j].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i - 1][j].u7);
-				U[i][j].u8 = U_bar2[i][j].u8 + Qr / 4 * (U_bar2[i][j - 1].u8 - U_bar2[i][j].u8) + Qz / 4 * (U_bar2[i + 1][j].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i - 1][j].u8);
-				U[i][j].u9 = U_bar2[i][j].u9 + Qr / 4 * (U_bar2[i][j - 1].u9 - U_bar2[i][j].u9) + Qz / 4 * (U_bar2[i + 1][j].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i - 1][j].u9);
-				U[i][j].u10 = U_bar2[i][j].u10 + Qr / 4 * (U_bar2[i][j - 1].u10 - U_bar2[i][j].u10) + Qz / 4 * (U_bar2[i + 1][j].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i - 1][j].u10);
-				U[i][j].u11 = U_bar2[i][j].u11 + Qr / 4 * (U_bar2[i][j - 1].u11 - U_bar2[i][j].u11) + Qz / 4 * (U_bar2[i + 1][j].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i - 1][j].u11);
-				U[i][j].u12 = U_bar2[i][j].u12 + Qr / 4 * (U_bar2[i][j - 1].u12 - U_bar2[i][j].u12) + Qz / 4 * (U_bar2[i + 1][j].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i - 1][j].u12);
-				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 4 * (U_bar2[i][j - 1].u13 - U_bar2[i][j].u13) + Qz / 4 * (U_bar2[i + 1][j].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i - 1][j].u13);
+				U[i][j].u1 = U_bar2[i][j].u1 + Qz.u1 / 4 * (U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);
+				U[i][j].u2 = U_bar2[i][j].u2 + Qz.u2 / 4 * (U_bar2[i + 1][j].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i - 1][j].u2);
+				U[i][j].u3 = U_bar2[i][j].u3 + Qz.u3 / 4 * (U_bar2[i + 1][j].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i - 1][j].u3);
+				U[i][j].u4 = U_bar2[i][j].u4 + Qz.u4 / 4 * (U_bar2[i + 1][j].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i - 1][j].u4);
+				U[i][j].u5 = U_bar2[i][j].u5 + Qz.u5 / 4 * (U_bar2[i + 1][j].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i - 1][j].u5);
+				U[i][j].u6 = U_bar2[i][j].u6 + Qz.u6 / 4 * (U_bar2[i + 1][j].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i - 1][j].u6);
+				U[i][j].u7 = U_bar2[i][j].u7 + Qz.u7 / 4 * (U_bar2[i + 1][j].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i - 1][j].u7);
+				U[i][j].u8 = U_bar2[i][j].u8 + Qz.u8 / 4 * (U_bar2[i + 1][j].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i - 1][j].u8);
+				U[i][j].u9 = U_bar2[i][j].u9 + Qz.u9 / 4 * (U_bar2[i + 1][j].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i - 1][j].u9);
+				U[i][j].u10 = U_bar2[i][j].u10 + Qz.u10 / 4 * (U_bar2[i + 1][j].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i - 1][j].u10);
+				U[i][j].u11 = U_bar2[i][j].u11 + Qz.u11 / 4 * (U_bar2[i + 1][j].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i - 1][j].u11);
+				U[i][j].u12 = U_bar2[i][j].u12 + Qz.u12 / 4 * (U_bar2[i + 1][j].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i - 1][j].u12);
+				U[i][j].u13 = U_bar2[i][j].u13 + Qz.u13 / 4 * (U_bar2[i + 1][j].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i - 1][j].u13);
 
 			}
 			else if (btype[i][j] == DOWN)
 			{
-				if (abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) != 0)
-				{
-					Qz = eta * abs(MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne) / abs(MPDT[i + 1][j].ne + 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
-				}
-				if (abs(MPDT[i][j].ne + MPDT[i][j + 1].ne) != 0)
-				{
-					Qr = eta * abs(MPDT[i][j + 1].ne - MPDT[i][j].ne) / abs(MPDT[i][j].ne + MPDT[i][j + 1].ne);
-				}
+				Qz = arti_vis(MPDT[i + 1][j], MPDT[i][j], MPDT[i - 1][j]);
 
-				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 4 * (U_bar2[i][j + 1].u1 - U_bar2[i][j].u1) + Qz / 4 * (U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);
-				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 4 * (U_bar2[i][j + 1].u2 - U_bar2[i][j].u2) + Qz / 4 * (U_bar2[i + 1][j].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i - 1][j].u2);
-				U[i][j].u3 = U_bar2[i][j].u3 + Qr / 4 * (U_bar2[i][j + 1].u3 - U_bar2[i][j].u3) + Qz / 4 * (U_bar2[i + 1][j].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i - 1][j].u3);
-				U[i][j].u4 = U_bar2[i][j].u4 + Qr / 4 * (U_bar2[i][j + 1].u4 - U_bar2[i][j].u4) + Qz / 4 * (U_bar2[i + 1][j].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i - 1][j].u4);
-				U[i][j].u5 = U_bar2[i][j].u5 + Qr / 4 * (U_bar2[i][j + 1].u5 - U_bar2[i][j].u5) + Qz / 4 * (U_bar2[i + 1][j].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i - 1][j].u5);
-				U[i][j].u6 = U_bar2[i][j].u6 + Qr / 4 * (U_bar2[i][j + 1].u6 - U_bar2[i][j].u6) + Qz / 4 * (U_bar2[i + 1][j].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i - 1][j].u6);
-				U[i][j].u7 = U_bar2[i][j].u7 + Qr / 4 * (U_bar2[i][j + 1].u7 - U_bar2[i][j].u7) + Qz / 4 * (U_bar2[i + 1][j].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i - 1][j].u7);
-				U[i][j].u8 = U_bar2[i][j].u8 + Qr / 4 * (U_bar2[i][j + 1].u8 - U_bar2[i][j].u8) + Qz / 4 * (U_bar2[i + 1][j].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i - 1][j].u8);
-				U[i][j].u9 = U_bar2[i][j].u9 + Qr / 4 * (U_bar2[i][j + 1].u9 - U_bar2[i][j].u9) + Qz / 4 * (U_bar2[i + 1][j].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i - 1][j].u9);
-				U[i][j].u10 = U_bar2[i][j].u10 + Qr / 4 * (U_bar2[i][j + 1].u10 - U_bar2[i][j].u10) + Qz / 4 * (U_bar2[i + 1][j].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i - 1][j].u10);
-				U[i][j].u11 = U_bar2[i][j].u11 + Qr / 4 * (U_bar2[i][j + 1].u11 - U_bar2[i][j].u11) + Qz / 4 * (U_bar2[i + 1][j].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i - 1][j].u11);
-				U[i][j].u12 = U_bar2[i][j].u12 + Qr / 4 * (U_bar2[i][j + 1].u12 - U_bar2[i][j].u12) + Qz / 4 * (U_bar2[i + 1][j].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i - 1][j].u12);
-				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 4 * (U_bar2[i][j + 1].u13 - U_bar2[i][j].u13) + Qz / 4 * (U_bar2[i + 1][j].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i - 1][j].u13);
+				U[i][j].u1 = U_bar2[i][j].u1 + Qz.u1 / 4 * (U_bar2[i + 1][j].u1 - 2 * U_bar2[i][j].u1 + U_bar2[i - 1][j].u1);
+				U[i][j].u2 = U_bar2[i][j].u2 + Qz.u2 / 4 * (U_bar2[i + 1][j].u2 - 2 * U_bar2[i][j].u2 + U_bar2[i - 1][j].u2);
+				U[i][j].u3 = U_bar2[i][j].u3 + Qz.u3 / 4 * (U_bar2[i + 1][j].u3 - 2 * U_bar2[i][j].u3 + U_bar2[i - 1][j].u3);
+				U[i][j].u4 = U_bar2[i][j].u4 + Qz.u4 / 4 * (U_bar2[i + 1][j].u4 - 2 * U_bar2[i][j].u4 + U_bar2[i - 1][j].u4);
+				U[i][j].u5 = U_bar2[i][j].u5 + Qz.u5 / 4 * (U_bar2[i + 1][j].u5 - 2 * U_bar2[i][j].u5 + U_bar2[i - 1][j].u5);
+				U[i][j].u6 = U_bar2[i][j].u6 + Qz.u6 / 4 * (U_bar2[i + 1][j].u6 - 2 * U_bar2[i][j].u6 + U_bar2[i - 1][j].u6);
+				U[i][j].u7 = U_bar2[i][j].u7 + Qz.u7 / 4 * (U_bar2[i + 1][j].u7 - 2 * U_bar2[i][j].u7 + U_bar2[i - 1][j].u7);
+				U[i][j].u8 = U_bar2[i][j].u8 + Qz.u8 / 4 * (U_bar2[i + 1][j].u8 - 2 * U_bar2[i][j].u8 + U_bar2[i - 1][j].u8);
+				U[i][j].u9 = U_bar2[i][j].u9 + Qz.u9 / 4 * (U_bar2[i + 1][j].u9 - 2 * U_bar2[i][j].u9 + U_bar2[i - 1][j].u9);
+				U[i][j].u10 = U_bar2[i][j].u10 + Qz.u10 / 4 * (U_bar2[i + 1][j].u10 - 2 * U_bar2[i][j].u10 + U_bar2[i - 1][j].u10);
+				U[i][j].u11 = U_bar2[i][j].u11 + Qz.u11 / 4 * (U_bar2[i + 1][j].u11 - 2 * U_bar2[i][j].u11 + U_bar2[i - 1][j].u11);
+				U[i][j].u12 = U_bar2[i][j].u12 + Qz.u12 / 4 * (U_bar2[i + 1][j].u12 - 2 * U_bar2[i][j].u12 + U_bar2[i - 1][j].u12);
+				U[i][j].u13 = U_bar2[i][j].u13 + Qz.u13 / 4 * (U_bar2[i + 1][j].u13 - 2 * U_bar2[i][j].u13 + U_bar2[i - 1][j].u13);
 			}
 			else if (btype[i][j] == (LEFT + UP))
 			{
-
-				if (abs(MPDT[i + 1][j].ne + MPDT[i][j].ne) != 0)
-				{
-					Qz = eta * abs(MPDT[i + 1][j].ne - MPDT[i][j].ne) / abs(MPDT[i + 1][j].ne + MPDT[i][j].ne);
-				}
-				if (abs(MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
-				{
-					Qr = eta * abs(MPDT[i][j - 1].ne - MPDT[i][j].ne) / abs(MPDT[i][j].ne + MPDT[i][j - 1].ne);
-				}
-
-				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 4 * (U_bar2[i][j - 1].u1 - U_bar2[i][j].u1) + Qz / 4 * (U_bar2[i + 1][j].u1 - U_bar2[i][j].u1);
-				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 4 * (U_bar2[i][j - 1].u2 - U_bar2[i][j].u2) + Qz / 4 * (U_bar2[i + 1][j].u2 - U_bar2[i][j].u2);
-				U[i][j].u3 = U_bar2[i][j].u3 + Qr / 4 * (U_bar2[i][j - 1].u3 - U_bar2[i][j].u3) + Qz / 4 * (U_bar2[i + 1][j].u3 - U_bar2[i][j].u3);
-				U[i][j].u4 = U_bar2[i][j].u4 + Qr / 4 * (U_bar2[i][j - 1].u4 - U_bar2[i][j].u4) + Qz / 4 * (U_bar2[i + 1][j].u4 - U_bar2[i][j].u4);
-				U[i][j].u5 = U_bar2[i][j].u5 + Qr / 4 * (U_bar2[i][j - 1].u5 - U_bar2[i][j].u5) + Qz / 4 * (U_bar2[i + 1][j].u5 - U_bar2[i][j].u5);
-				U[i][j].u6 = U_bar2[i][j].u6 + Qr / 4 * (U_bar2[i][j - 1].u6 - U_bar2[i][j].u6) + Qz / 4 * (U_bar2[i + 1][j].u6 - U_bar2[i][j].u6);
-				U[i][j].u7 = U_bar2[i][j].u7 + Qr / 4 * (U_bar2[i][j - 1].u7 - U_bar2[i][j].u7) + Qz / 4 * (U_bar2[i + 1][j].u7 - U_bar2[i][j].u7);
-				U[i][j].u8 = U_bar2[i][j].u8 + Qr / 4 * (U_bar2[i][j - 1].u8 - U_bar2[i][j].u8) + Qz / 4 * (U_bar2[i + 1][j].u8 - U_bar2[i][j].u8);
-				U[i][j].u9 = U_bar2[i][j].u9 + Qr / 4 * (U_bar2[i][j - 1].u9 - U_bar2[i][j].u9) + Qz / 4 * (U_bar2[i + 1][j].u9 - U_bar2[i][j].u9);
-				U[i][j].u10 = U_bar2[i][j].u10 + Qr / 4 * (U_bar2[i][j - 1].u10 - U_bar2[i][j].u10) + Qz / 4 * (U_bar2[i + 1][j].u10 - U_bar2[i][j].u10);
-				U[i][j].u11 = U_bar2[i][j].u11 + Qr / 4 * (U_bar2[i][j - 1].u11 - U_bar2[i][j].u11) + Qz / 4 * (U_bar2[i + 1][j].u11 - U_bar2[i][j].u11);
-				U[i][j].u12 = U_bar2[i][j].u12 + Qr / 4 * (U_bar2[i][j - 1].u12 - U_bar2[i][j].u12) + Qz / 4 * (U_bar2[i + 1][j].u12 - U_bar2[i][j].u12);
-				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 4 * (U_bar2[i][j - 1].u13 - U_bar2[i][j].u13) + Qz / 4 * (U_bar2[i + 1][j].u13 - U_bar2[i][j].u13);
+				U[i][j].u1 = U_bar2[i][j].u1;
+				U[i][j].u2 = U_bar2[i][j].u2;
+				U[i][j].u3 = U_bar2[i][j].u3;
+				U[i][j].u4 = U_bar2[i][j].u4;
+				U[i][j].u5 = U_bar2[i][j].u5;
+				U[i][j].u6 = U_bar2[i][j].u6;
+				U[i][j].u7 = U_bar2[i][j].u7;
+				U[i][j].u8 = U_bar2[i][j].u8;
+				U[i][j].u9 = U_bar2[i][j].u9;
+				U[i][j].u10 = U_bar2[i][j].u10;
+				U[i][j].u11 = U_bar2[i][j].u11;
+				U[i][j].u12 = U_bar2[i][j].u12;
+				U[i][j].u13 = U_bar2[i][j].u13;
 			}
 			else if (btype[i][j] == (LEFT + DOWN))
 			{
-				if (abs(MPDT[i + 1][j].ne + MPDT[i][j].ne) != 0)
-				{
-					Qz = eta * abs(MPDT[i + 1][j].ne - MPDT[i][j].ne) / abs(MPDT[i + 1][j].ne + MPDT[i][j].ne);
-				}
-				if (abs(MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
-				{
-					Qr = eta * abs(MPDT[i][j + 1].ne - MPDT[i][j].ne) / abs(MPDT[i][j].ne + MPDT[i][j + 1].ne);
-				}
-
-				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 4 * (U_bar2[i][j + 1].u1 - U_bar2[i][j].u1) + Qz / 4 * (U_bar2[i + 1][j].u1 - U_bar2[i][j].u1);
-				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 4 * (U_bar2[i][j + 1].u2 - U_bar2[i][j].u2) + Qz / 4 * (U_bar2[i + 1][j].u2 - U_bar2[i][j].u2);
-				U[i][j].u3 = U_bar2[i][j].u3 + Qr / 4 * (U_bar2[i][j + 1].u3 - U_bar2[i][j].u3) + Qz / 4 * (U_bar2[i + 1][j].u3 - U_bar2[i][j].u3);
-				U[i][j].u4 = U_bar2[i][j].u4 + Qr / 4 * (U_bar2[i][j + 1].u4 - U_bar2[i][j].u4) + Qz / 4 * (U_bar2[i + 1][j].u4 - U_bar2[i][j].u4);
-				U[i][j].u5 = U_bar2[i][j].u5 + Qr / 4 * (U_bar2[i][j + 1].u5 - U_bar2[i][j].u5) + Qz / 4 * (U_bar2[i + 1][j].u5 - U_bar2[i][j].u5);
-				U[i][j].u6 = U_bar2[i][j].u6 + Qr / 4 * (U_bar2[i][j + 1].u6 - U_bar2[i][j].u6) + Qz / 4 * (U_bar2[i + 1][j].u6 - U_bar2[i][j].u6);
-				U[i][j].u7 = U_bar2[i][j].u7 + Qr / 4 * (U_bar2[i][j + 1].u7 - U_bar2[i][j].u7) + Qz / 4 * (U_bar2[i + 1][j].u7 - U_bar2[i][j].u7);
-				U[i][j].u8 = U_bar2[i][j].u8 + Qr / 4 * (U_bar2[i][j + 1].u8 - U_bar2[i][j].u8) + Qz / 4 * (U_bar2[i + 1][j].u8 - U_bar2[i][j].u8);
-				U[i][j].u9 = U_bar2[i][j].u9 + Qr / 4 * (U_bar2[i][j + 1].u9 - U_bar2[i][j].u9) + Qz / 4 * (U_bar2[i + 1][j].u9 - U_bar2[i][j].u9);
-				U[i][j].u10 = U_bar2[i][j].u10 + Qr / 4 * (U_bar2[i][j + 1].u10 - U_bar2[i][j].u10) + Qz / 4 * (U_bar2[i + 1][j].u10 - U_bar2[i][j].u10);
-				U[i][j].u11 = U_bar2[i][j].u11 + Qr / 4 * (U_bar2[i][j + 1].u11 - U_bar2[i][j].u11) + Qz / 4 * (U_bar2[i + 1][j].u11 - U_bar2[i][j].u11);
-				U[i][j].u12 = U_bar2[i][j].u12 + Qr / 4 * (U_bar2[i][j + 1].u12 - U_bar2[i][j].u12) + Qz / 4 * (U_bar2[i + 1][j].u12 - U_bar2[i][j].u12);
-				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 4 * (U_bar2[i][j + 1].u13 - U_bar2[i][j].u13) + Qz / 4 * (U_bar2[i + 1][j].u13 - U_bar2[i][j].u13);
+				U[i][j].u1 = U_bar2[i][j].u1;
+				U[i][j].u2 = U_bar2[i][j].u2;
+				U[i][j].u3 = U_bar2[i][j].u3;
+				U[i][j].u4 = U_bar2[i][j].u4;
+				U[i][j].u5 = U_bar2[i][j].u5;
+				U[i][j].u6 = U_bar2[i][j].u6;
+				U[i][j].u7 = U_bar2[i][j].u7;
+				U[i][j].u8 = U_bar2[i][j].u8;
+				U[i][j].u9 = U_bar2[i][j].u9;
+				U[i][j].u10 = U_bar2[i][j].u10;
+				U[i][j].u11 = U_bar2[i][j].u11;
+				U[i][j].u12 = U_bar2[i][j].u12;
+				U[i][j].u13 = U_bar2[i][j].u13;
 			}
 			else if (btype[i][j] == (RIGHT + DOWN))
 			{
-				if (abs(MPDT[i][j].ne + MPDT[i - 1][j].ne) != 0)
-				{
-					Qz = eta * abs(MPDT[i - 1][j].ne - MPDT[i][j].ne) / abs(MPDT[i][j].ne + MPDT[i - 1][j].ne);
-				}
-				if (abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
-				{
-					Qr = eta * abs(MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) / abs(MPDT[i][j + 1].ne + 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne);
-				}
-
-				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 4 * (U_bar2[i][j + 1].u1 - U_bar2[i][j].u1) + Qz / 4 * (U_bar2[i - 1][j].u1 - U_bar2[i][j].u1);
-				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 4 * (U_bar2[i][j + 1].u2 - U_bar2[i][j].u2) + Qz / 4 * (U_bar2[i - 1][j].u2 - U_bar2[i][j].u2);
-				U[i][j].u3 = U_bar2[i][j].u3 + Qr / 4 * (U_bar2[i][j + 1].u3 - U_bar2[i][j].u3) + Qz / 4 * (U_bar2[i - 1][j].u3 - U_bar2[i][j].u3);
-				U[i][j].u4 = U_bar2[i][j].u4 + Qr / 4 * (U_bar2[i][j + 1].u4 - U_bar2[i][j].u4) + Qz / 4 * (U_bar2[i - 1][j].u4 - U_bar2[i][j].u4);
-				U[i][j].u5 = U_bar2[i][j].u5 + Qr / 4 * (U_bar2[i][j + 1].u5 - U_bar2[i][j].u5) + Qz / 4 * (U_bar2[i - 1][j].u5 - U_bar2[i][j].u5);
-				U[i][j].u6 = U_bar2[i][j].u6 + Qr / 4 * (U_bar2[i][j + 1].u6 - U_bar2[i][j].u6) + Qz / 4 * (U_bar2[i - 1][j].u6 - U_bar2[i][j].u6);
-				U[i][j].u7 = U_bar2[i][j].u7 + Qr / 4 * (U_bar2[i][j + 1].u7 - U_bar2[i][j].u7) + Qz / 4 * (U_bar2[i - 1][j].u7 - U_bar2[i][j].u7);
-				U[i][j].u8 = U_bar2[i][j].u8 + Qr / 4 * (U_bar2[i][j + 1].u8 - U_bar2[i][j].u8) + Qz / 4 * (U_bar2[i - 1][j].u8 - U_bar2[i][j].u8);
-				U[i][j].u9 = U_bar2[i][j].u9 + Qr / 4 * (U_bar2[i][j + 1].u9 - U_bar2[i][j].u9) + Qz / 4 * (U_bar2[i - 1][j].u9 - U_bar2[i][j].u9);
-				U[i][j].u10 = U_bar2[i][j].u10 + Qr / 4 * (U_bar2[i][j + 1].u10 - U_bar2[i][j].u10) + Qz / 4 * (U_bar2[i - 1][j].u10 - U_bar2[i][j].u10);
-				U[i][j].u11 = U_bar2[i][j].u11 + Qr / 4 * (U_bar2[i][j + 1].u11 - U_bar2[i][j].u11) + Qz / 4 * (U_bar2[i - 1][j].u11 - U_bar2[i][j].u11);
-				U[i][j].u12 = U_bar2[i][j].u12 + Qr / 4 * (U_bar2[i][j + 1].u12 - U_bar2[i][j].u12) + Qz / 4 * (U_bar2[i - 1][j].u12 - U_bar2[i][j].u12);
-				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 4 * (U_bar2[i][j + 1].u13 - U_bar2[i][j].u13) + Qz / 4 * (U_bar2[i - 1][j].u13 - U_bar2[i][j].u13);
+				U[i][j].u1 = U_bar2[i][j].u1;
+				U[i][j].u2 = U_bar2[i][j].u2;
+				U[i][j].u3 = U_bar2[i][j].u3;
+				U[i][j].u4 = U_bar2[i][j].u4;
+				U[i][j].u5 = U_bar2[i][j].u5;
+				U[i][j].u6 = U_bar2[i][j].u6;
+				U[i][j].u7 = U_bar2[i][j].u7;
+				U[i][j].u8 = U_bar2[i][j].u8;
+				U[i][j].u9 = U_bar2[i][j].u9;
+				U[i][j].u10 = U_bar2[i][j].u10;
+				U[i][j].u11 = U_bar2[i][j].u11;
+				U[i][j].u12 = U_bar2[i][j].u12;
+				U[i][j].u13 = U_bar2[i][j].u13;
 				
 			}
 			else if (btype[i][j] == (RIGHT + UP))
 			{
-
-				if (abs(MPDT[i - 1][j].ne + MPDT[i][j].ne) != 0)
-				{
-					Qz = eta * abs(MPDT[i - 1][j].ne - MPDT[i][j].ne) / abs(MPDT[i - 1][j].ne + MPDT[i][j].ne);
-				}
-				if (abs(MPDT[i][j].ne + MPDT[i][j - 1].ne) != 0)
-				{
-					Qr = eta * abs(MPDT[i][j - 1].ne - MPDT[i][j].ne) / abs(MPDT[i][j].ne + MPDT[i][j - 1].ne);
-				}
-
-				U[i][j].u1 = U_bar2[i][j].u1 + Qr / 4 * (U_bar2[i][j - 1].u1 - U_bar2[i][j].u1) + Qz / 4 * (U_bar2[i - 1][j].u1 - U_bar2[i][j].u1);
-				U[i][j].u2 = U_bar2[i][j].u2 + Qr / 4 * (U_bar2[i][j - 1].u2 - U_bar2[i][j].u2) + Qz / 4 * (U_bar2[i - 1][j].u2 - U_bar2[i][j].u2);
-				U[i][j].u3 = U_bar2[i][j].u3 + Qr / 4 * (U_bar2[i][j - 1].u3 - U_bar2[i][j].u3) + Qz / 4 * (U_bar2[i - 1][j].u3 - U_bar2[i][j].u3);
-				U[i][j].u4 = U_bar2[i][j].u4 + Qr / 4 * (U_bar2[i][j - 1].u4 - U_bar2[i][j].u4) + Qz / 4 * (U_bar2[i - 1][j].u4 - U_bar2[i][j].u4);
-				U[i][j].u5 = U_bar2[i][j].u5 + Qr / 4 * (U_bar2[i][j - 1].u5 - U_bar2[i][j].u5) + Qz / 4 * (U_bar2[i - 1][j].u5 - U_bar2[i][j].u5);
-				U[i][j].u6 = U_bar2[i][j].u6 + Qr / 4 * (U_bar2[i][j - 1].u6 - U_bar2[i][j].u6) + Qz / 4 * (U_bar2[i - 1][j].u6 - U_bar2[i][j].u6);
-				U[i][j].u7 = U_bar2[i][j].u7 + Qr / 4 * (U_bar2[i][j - 1].u7 - U_bar2[i][j].u7) + Qz / 4 * (U_bar2[i - 1][j].u7 - U_bar2[i][j].u7);
-				U[i][j].u8 = U_bar2[i][j].u8 + Qr / 4 * (U_bar2[i][j - 1].u8 - U_bar2[i][j].u8) + Qz / 4 * (U_bar2[i - 1][j].u8 - U_bar2[i][j].u8);
-				U[i][j].u9 = U_bar2[i][j].u9 + Qr / 4 * (U_bar2[i][j - 1].u9 - U_bar2[i][j].u9) + Qz / 4 * (U_bar2[i - 1][j].u9 - U_bar2[i][j].u9);
-				U[i][j].u10 = U_bar2[i][j].u10 + Qr / 4 * (U_bar2[i][j - 1].u10 - U_bar2[i][j].u10) + Qz / 4 * (U_bar2[i - 1][j].u10 - U_bar2[i][j].u10);
-				U[i][j].u11 = U_bar2[i][j].u11 + Qr / 4 * (U_bar2[i][j - 1].u11 - U_bar2[i][j].u11) + Qz / 4 * (U_bar2[i - 1][j].u11 - U_bar2[i][j].u11);
-				U[i][j].u12 = U_bar2[i][j].u12 + Qr / 4 * (U_bar2[i][j - 1].u12 - U_bar2[i][j].u12) + Qz / 4 * (U_bar2[i - 1][j].u12 - U_bar2[i][j].u12);
-				U[i][j].u13 = U_bar2[i][j].u13 + Qr / 4 * (U_bar2[i][j - 1].u13 - U_bar2[i][j].u13) + Qz / 4 * (U_bar2[i - 1][j].u13 - U_bar2[i][j].u13);
-
+				U[i][j].u1 = U_bar2[i][j].u1;
+				U[i][j].u2 = U_bar2[i][j].u2;
+				U[i][j].u3 = U_bar2[i][j].u3;
+				U[i][j].u4 = U_bar2[i][j].u4;
+				U[i][j].u5 = U_bar2[i][j].u5;
+				U[i][j].u6 = U_bar2[i][j].u6;
+				U[i][j].u7 = U_bar2[i][j].u7;
+				U[i][j].u8 = U_bar2[i][j].u8;
+				U[i][j].u9 = U_bar2[i][j].u9;
+				U[i][j].u10 = U_bar2[i][j].u10;
+				U[i][j].u11 = U_bar2[i][j].u11;
+				U[i][j].u12 = U_bar2[i][j].u12;
+				U[i][j].u13 = U_bar2[i][j].u13;
 			}
-			else if (btype[i][j] == 0)
+			else //if (btype[i][j] == 0)
 			{
 				U[i][j].u1 = 0;
 				U[i][j].u2 = 0;
@@ -1709,22 +1634,7 @@ void ion_flow()
 				U[i][j].u13 = 0;
 
 			}
-			else
-			{
-				U[i][j].u1 = U_bar2[i][j].u1;
-				U[i][j].u2 = U_bar2[i][j].u2;
-				U[i][j].u3 = U_bar2[i][j].u3;
-				U[i][j].u4 = U_bar2[i][j].u4;
-				U[i][j].u5 = U_bar2[i][j].u5;
-				U[i][j].u6 = U_bar2[i][j].u6;
-				U[i][j].u7 = U_bar2[i][j].u7;
-				U[i][j].u8 = U_bar2[i][j].u8;
-				U[i][j].u9 = U_bar2[i][j].u9;
-				U[i][j].u10 = U_bar2[i][j].u10;
-				U[i][j].u11 = U_bar2[i][j].u11;
-				U[i][j].u12 = U_bar2[i][j].u12;
-				U[i][j].u13 = U_bar2[i][j].u13;
-			}
+
 
 		}
 	}
@@ -1743,7 +1653,7 @@ void ion_flow()
 			//}
 			//else
 			//{
-			//	MPDT[i][j].ne = -U[i][j].u1;
+			//	MPDT[i][j].ne = 0;
 			//}
 
 			//if (U[i][j].u2 > 0)
@@ -1752,8 +1662,12 @@ void ion_flow()
 			//}
 			//else
 			//{
-			//	MPDT[i][j].ni = -U[i][j].u2;
+			//	MPDT[i][j].ni = 0;
 			//}
+			if (U[i][j].u1 < -1000 && i!= 1000 && i != 0)
+			{
+				printf("aaa\n");
+			}
 			MPDT[i][j].ne = U[i][j].u1;
 			MPDT[i][j].ni = U[i][j].u2;
 			MPDT[i][j].ver = U[i][j].u3;
@@ -2022,3 +1936,129 @@ struct _F cal_s(struct _U uij)
 	fij.f13 = r1 * (pi * vir + (gamma - 1) * (-vir * (btheta * btheta + bz * bz - br * br) / (2 * MU_0) + vitheta * btheta * br / MU_0 + viz * bz * br / MU_0));
 	return fij;
 }
+
+
+struct _U arti_vis(struct  node np, struct  node n, struct  node nn)
+{
+	struct _U Q;
+	double eta = 0.5;
+
+	Q.u1 = 0;
+	Q.u2 = 0;
+	Q.u3 = 0;
+	Q.u4 = 0;
+	Q.u5 = 0;
+	Q.u6 = 0;
+	Q.u7 = 0;
+	Q.u8 = 0;
+	Q.u9 = 0;
+	Q.u10 = 0;
+	Q.u11 = 0;
+	Q.u12 = 0;
+	Q.u13 = 0;
+
+	if (abs(np.ne - n.ne) + abs(n.ne - nn.ne) != 0)
+	{
+		Q.u1 = eta * abs(abs(np.ne - n.ne) - abs(n.ne - nn.ne)) / abs(abs(np.ne - n.ne) + abs(n.ne - nn.ne));
+	}
+
+	if (abs(np.ni - n.ni) + abs(n.ni - nn.ni) != 0)
+	{
+		Q.u2 = eta * abs(abs(np.ni - n.ni) - abs(n.ni - nn.ni)) / abs(abs(np.ni - n.ni) + abs(n.ni - nn.ni));
+	}
+
+	if (abs(np.ver - n.ver) + abs(n.ver - nn.ver) != 0)
+	{
+		Q.u3 = eta * abs(abs(np.ver - n.ver) - abs(n.ver - nn.ver)) / abs(abs(np.ver - n.ver) + abs(n.ver - nn.ver));
+	}
+
+	if (abs(np.vetheta - n.vetheta) + abs(n.vetheta - nn.vetheta) != 0)
+	{
+		Q.u4 = eta * abs(abs(np.vetheta - n.vetheta) - abs(n.vetheta - nn.vetheta)) / abs(abs(np.vetheta - n.vetheta) + abs(n.vetheta - nn.vetheta));
+	}
+
+	if (abs(np.vez - n.vez) + abs(n.vez - nn.vez) != 0)
+	{
+		Q.u5 = eta * abs(abs(np.vez - n.vez) - abs(n.vez - nn.vez)) / abs(abs(np.vez - n.vez) + abs(n.vez - nn.vez));
+	}
+
+	if (abs(np.vir - n.vir) + abs(n.vir - nn.vir) != 0)
+	{
+		Q.u6 = eta * abs(abs(np.vir - n.vir) - abs(n.vir - nn.vir)) / abs(abs(np.vir - n.vir) + abs(n.vir - nn.vir));
+	}
+
+	if (abs(np.vitheta - n.vitheta) + abs(n.vitheta - nn.vitheta) != 0)
+	{
+		Q.u7 = eta * abs(abs(np.vitheta - n.vitheta) - abs(n.vitheta - nn.vitheta)) / abs(abs(np.vitheta - n.vitheta) + abs(n.vitheta - nn.vitheta));
+	}
+
+	if (abs(np.viz - n.viz) + abs(n.viz - nn.viz) != 0)
+	{
+		Q.u8 = eta * abs(abs(np.viz - n.viz) - abs(n.viz - nn.viz)) / abs(abs(np.viz - n.viz) + abs(n.viz - nn.viz));
+	}
+
+	return Q;
+}
+
+//struct _U arti_vis(struct  node np, struct  node n, struct  node nn)
+//{
+//	struct _U Q;
+//	double eta = 0.5;
+//
+//	Q.u1 = 0;
+//	Q.u2 = 0;
+//	Q.u3 = 0;
+//	Q.u4 = 0;
+//	Q.u5 = 0;
+//	Q.u6 = 0;
+//	Q.u7 = 0;
+//	Q.u8 = 0;
+//	Q.u9 = 0;
+//	Q.u10 = 0;
+//	Q.u11 = 0;
+//	Q.u12 = 0;
+//	Q.u13 = 0;
+//
+//	if (abs(np.ne - n.ne) + abs(n.ne - nn.ne) != 0)
+//	{
+//		Q.u1 = eta * abs(abs(np.ne - n.ne) - abs(n.ne - nn.ne)) / abs(abs(np.ne - n.ne) + abs(n.ne - nn.ne));
+//	}
+//
+//	if (abs(np.ni - n.ni) + abs(n.ni - nn.ni) != 0)
+//	{
+//		Q.u2 = eta * abs(abs(np.ni - n.ni) - abs(n.ni - nn.ni)) / abs(abs(np.ni - n.ni) + abs(n.ni - nn.ni));
+//	}
+//
+//	if (abs(np.ver - n.ver) + abs(n.ver - nn.ver) != 0)
+//	{
+//		Q.u3 = eta * abs(abs(np.ver - n.ver) - abs(n.ver - nn.ver)) / abs(abs(np.ver - n.ver) + abs(n.ver - nn.ver));
+//	}
+//
+//	if (abs(np.vetheta - n.vetheta) + abs(n.vetheta - nn.vetheta) != 0)
+//	{
+//		Q.u4 = eta * abs(abs(np.vetheta - n.vetheta) - abs(n.vetheta - nn.vetheta)) / abs(abs(np.vetheta - n.vetheta) + abs(n.vetheta - nn.vetheta));
+//	}
+//
+//	if (abs(np.vez - n.vez) + abs(n.vez - nn.vez) != 0)
+//	{
+//		Q.u5 = eta * abs(abs(np.vez - n.vez) - abs(n.vez - nn.vez)) / abs(abs(np.vez - n.vez) + abs(n.vez - nn.vez));
+//	}
+//
+//	if (abs(np.vir - n.vir) + abs(n.vir - nn.vir) != 0)
+//	{
+//		Q.u6 = eta * abs(abs(np.vir - n.vir) - abs(n.vir - nn.vir)) / abs(abs(np.vir - n.vir) + abs(n.vir - nn.vir));
+//	}
+//
+//	if (abs(np.vitheta - n.vitheta) + abs(n.vitheta - nn.vitheta) != 0)
+//	{
+//		Q.u7 = eta * abs(abs(np.vitheta - n.vitheta) - abs(n.vitheta - nn.vitheta)) / abs(abs(np.vitheta - n.vitheta) + abs(n.vitheta - nn.vitheta));
+//	}
+//
+//	if (abs(np.viz - n.viz) + abs(n.viz - nn.viz) != 0)
+//	{
+//		Q.u8 = eta * abs(abs(np.viz - n.viz) - abs(n.viz - nn.viz)) / abs(abs(np.viz - n.viz) + abs(n.viz - nn.viz));
+//	}
+//
+//
+//	return Q;
+//}

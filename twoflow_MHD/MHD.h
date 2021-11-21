@@ -164,6 +164,8 @@ extern double rou[ZMAX][RMAX];
 extern double Er[ZMAX][RMAX];
 extern double Ez[ZMAX][RMAX];
 
+extern double btheta[ZMAX][RMAX];
+
 extern double ne[ZMAX][RMAX];
 extern double ni[ZMAX][RMAX];
 

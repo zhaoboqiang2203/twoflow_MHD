@@ -36,32 +36,36 @@ double app_Bz[ZMAX][RMAX];
 double app_Br[ZMAX][RMAX];
 double denJ[ZMAX][RMAX];
 double res_out[ZMAX][RMAX];
+
+double btheta[ZMAX][RMAX];
 int main()
 {
-	char a;
 	nz = ZMAX;
 	nr = RMAX;
-
+	index = 12000;
 	scale = ZMAX / 200;
 
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
-	dt = 0.1 * ((dr * dr) + (dz * dz));
+	dt = dr / 1e5;
+	//dt = 0.05 * ((dr * dr) + (dz * dz));
 	printf("dt = %e\n", dt);
 	initial();
 	magnetic_field_initial();
-	index = 12000;
+	//dadi initial
+	init_solve();
+	
 	while (index--)
 	{
 		printf("index %d\n", index);
 		boundary_condition();
-		//electron_flow();
-		ion_flow();
+		electron_flow();
+		//ion_flow();
 		potential_solve();
 		move();
 
-		
-		//if (index % 100 == 0)
+		mag_phi();
+		if (index % 100 == 0)
 		//if(index < 11790)
 		{
 			output();
@@ -256,38 +260,41 @@ void output()
 	matrix_to_csv((double**)Er, ZMAX, RMAX, RMAX, fname);
 
 	// 输出感生磁场分布
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].br;
-		}
-	}
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].br;
+	//	}
+	//}
 
-	sprintf_s(fname, (".\\output\\br\\br_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\br\\br_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].br;
-		}
-	}
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].btheta;
+	//	}
+	//}
 
+	//sprintf_s(fname, (".\\output\\btheta\\btheta_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].bz;
+	//	}
+	//}
+
+	//sprintf_s(fname, (".\\output\\bz\\bz_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	 
 	sprintf_s(fname, (".\\output\\btheta\\btheta_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].br;
-		}
-	}
-
-	sprintf_s(fname, (".\\output\\bz\\bz_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)btheta, ZMAX, RMAX, RMAX, fname);
 
 	//电子离子碰撞频率
 	for (int i = 0; i < ZMAX; i++)

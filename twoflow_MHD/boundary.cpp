@@ -6,10 +6,15 @@ double world[ZMAX][RMAX];
 double btype[ZMAX][RMAX];
 double ptype[ZMAX][RMAX];
 Boundary boundary_array[BND_NUM];
+//double bg_den = 2.41e8 * 1e9;
+//double inter_e_den = 1.1905e8 * 1e9;
+//double inter_pla_den = 6.68e7 * 1e9;
 double bg_den = 2.41e8;
+double inter_e_den = 1.1905e8;
+double inter_pla_den = 6.68e7;
 int initial()
 {
-	int i, j, k;
+	register int i, j, k;
 	//		 ___________________________________________
 	//		 |  40  | 50      |            100			|
 	//		 |				  |							|
@@ -104,7 +109,6 @@ int initial()
 	boundary_array[9].boundary_type = LEFT;
 
 
-	//初始化 ro_boundary ，
 
 	memset(world, 0, sizeof(world));
 	memset(btype, 0, sizeof(world));
@@ -195,9 +199,9 @@ int initial()
 	matrix_to_csv((double**)btype, ZMAX, RMAX, RMAX, (char*)(".\\output\\btype.csv"));
 	matrix_to_csv((double**)ptype, ZMAX, RMAX, RMAX, (char*)(".\\output\\ptype.csv"));
 #endif
-	for (int i = 0; i < nz; i++)
+	for (i = 0; i < nz; i++)
 	{
-		for (int j = 0; j < nr; j++)
+		for (j = 0; j < nr; j++)
 		{
 			if (btype[i][j] != 0 && btype[i][j] != 110)
 			{
@@ -227,6 +231,7 @@ int initial()
 			MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) + 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 			MPDT[i][j].ei = MPDT[i][j].pi / (gamma - 1) + 0.5 * MPDT[i][j].ni * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
 
+			btheta[i][j] = 0;
 		}
 	}
 
@@ -269,9 +274,8 @@ int fill_plasma(int tr, int tz, int fill_n)
 void  boundary_condition()
 {
 
-	int i, j, k;
-	double inter_e_den = 3.500e9;
-	double inter_pla_den = 1.11e9;
+	register int i, j, k;
+
 	//固体边界
 
 	_for(k, 0, BND_NUM)
@@ -581,4 +585,113 @@ void  boundary_condition()
 		}
 
 	}
+}
+
+int judge_conner(int i,int j)
+{
+	uint8_t state;
+	uint8_t state_left = 8;
+	uint8_t state_right = 4;
+	uint8_t state_down = 2;
+	uint8_t state_up = 1;
+	state = 0;
+	if (i == 0)
+	{
+		state += state_left;
+	}
+	else
+	{
+		if (btype[i - 1][j] == 0 || btype[i - 1][j] == 110)
+		{
+			state += state_left;
+		}
+	}
+	
+	if(i == ZMAX - 1)
+	{
+		state += state_right;
+	}
+	else
+	{
+		if (btype[i + 1][j] == 0 || btype[i + 1][j] == 110)
+		{
+			state += state_right;
+		}
+	}
+
+	if (j == 0)
+	{
+		state += state_down;
+	}
+	else
+	{
+		if (btype[i][j - 1] == 0 || btype[i][j - 1] == 110)
+		{
+			state += state_down;
+		}
+	}
+
+	if (j == RMAX - 1)
+	{
+		state += state_up;
+	}
+	else
+	{
+		if (btype[i][j - 1] == 0 || btype[i - 1][j] == 110)
+		{
+			state += state_down;
+		}
+	}
+
+	if (state == state_left)
+	{
+		return LEFT;
+	}
+	else if (state == state_right)
+	{
+		return RIGHT;
+	}
+	else if (state == state_up)
+	{
+		return UP;
+	}
+	else if (state == state_down)
+	{
+		return DOWN;
+	}
+	else if (state == state_left + state_up)
+	{
+		return LEFT + UP;
+	}
+	else if (state == state_left + state_down)
+	{
+		return LEFT + DOWN;
+	}
+	else if (state == state_right + state_up)
+	{
+		return RIGHT + UP;
+	}
+	else if (state == state_right + state_down)
+	{
+		return RIGHT + DOWN;
+	}
+	else if (state == state_left + state_down + state_up)
+	{
+		return LEFT + DOWN;
+	}
+	else if (state == state_right + state_down + +state_up)
+	{
+		return RIGHT + DOWN;
+	}
+	else if (state == state_right + state_down + +state_up + state_left)
+	{
+		return 1;
+	}
+	else
+	{
+		printf("boundary condition error");
+		return 0;
+	}
+
+	return 0;
 }

@@ -11,3 +11,5 @@ int solve(double u_in[ZMAX][RMAX], double s[ZMAX][RMAX], int itermax, double tol
 void potential_boundary();
 void electric_field();
 void potential_solve();
+
+void mag_phi();

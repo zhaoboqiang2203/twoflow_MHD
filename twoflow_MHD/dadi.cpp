@@ -80,6 +80,8 @@ double del_t0;
 double Er[ZMAX][RMAX];
 double Ez[ZMAX][RMAX];
 
+
+
 /**********************************************************************
   Single Peaceman Rachford Douglas pass with Direchlet 0 c boundary
   conditions for the equation:
@@ -179,7 +181,7 @@ void adi(double uadi[ZMAX][RMAX], double s[ZMAX][RMAX], double del_t)
 }
 void init_solve()
 {
-	int i, j, k;
+	register int i, j, k;
 
 	del_t0 = 0.1 * ((dr * dr) + (dz * dz));
 	for (i = 0; i < ZMAX; i++)
@@ -314,131 +316,7 @@ void init_solve()
 		}
 	}
 
-	//_for(k, 0, BND_NUM)
-	//{
-	//	if (boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
-	//	{
-	//		if (boundary_array[k].bnd_dir == R_DIR)
-	//		{
-	//			i = boundary_array[k].start.z ;
-	//			_feq(j, boundary_array[k].start.r + 1, boundary_array[k].end.r - 1)
-	//			{
-	//				a_x1geom[i][j] = 1 / (dz * dz);
-	//				c_x1geom[i][j] = 0.0;
-	//				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
-
-	//				if (j != 0)
-	//				{
-	//					a_x2geom[i][j] = 1 / (dr * dr) + 1 / (2 * j * dr * dr);
-	//					c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
-	//					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//				}
-	//				else
-	//				{
-	//					a_x2geom[i][j] = 1 / (dr * dr) ;
-	//					c_x2geom[i][j] = 1 / (dr * dr) ;
-	//					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//				}
-	//			}
-
-	//			j = boundary_array[k].start.r;
-	//			a_x1geom[i][j] = 1 / (dz * dz);
-	//			c_x1geom[i][j] = 0.0;
-	//			b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
-
-	//			if (j != 0)
-	//			{
-	//				a_x2geom[i][j] = 1 / (dr * dr) + 1 / (2 * j * dr * dr);
-	//				c_x2geom[i][j] = 0;
-	//				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//			}
-	//			else
-	//			{
-	//				a_x2geom[i][j] = 1 / (dr * dr);
-	//				c_x2geom[i][j] = 0;
-	//				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//			}
-
-	//			j = boundary_array[k].end.r - 1;
-	//			a_x1geom[i][j] = 1 / (dz * dz);
-	//			c_x1geom[i][j] = 0.0;
-	//			b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
-
-	//			if (j != 0)
-	//			{
-	//				a_x2geom[i][j] = 0;
-	//				c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
-	//				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//			}
-	//			else
-	//			{
-	//				a_x2geom[i][j] = 0;
-	//				c_x2geom[i][j] = 1 / (dr * dr);
-	//				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//			}
-
-	//		}
-	//		else if (boundary_array[k].bnd_dir == Z_DIR)
-	//		{
-	//			j = boundary_array[k].start.r;
-	//			_feq(i, boundary_array[k].start.z + 1, boundary_array[k].end.z - 1)
-	//			{
-	//				a_x1geom[i][j] = 1 / (dz * dz);
-	//				c_x1geom[i][j] = 1 / (dz * dz);
-	//				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
-
-	//				if (j != 0)
-	//				{
-	//					a_x2geom[i][j] = 0.0;
-	//					c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
-	//					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//				}
-	//				else
-	//				{
-	//					a_x2geom[i][j] = 0.0;
-	//					c_x2geom[i][j] = 1 / (dr * dr);
-	//					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//				}
-	//			}
-	//			i = boundary_array[k].start.z;
-	//			a_x1geom[i][j] = 1 / (dz * dz);
-	//			c_x1geom[i][j] = 0.0;
-	//			b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
-
-	//			if (j != 0)
-	//			{
-	//				a_x2geom[i][j] = 0.0;
-	//				c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
-	//				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//			}
-	//			else
-	//			{
-	//				a_x2geom[i][j] = 0.0;
-	//				c_x2geom[i][j] = 1 / (dr * dr);
-	//				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//			}
-
-	//			i = boundary_array[k].end.z - 1;
-	//			a_x1geom[i][j] = 0.0;
-	//			c_x1geom[i][j] = 1 / (dz * dz);
-	//			b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
-
-	//			if (j != 0)
-	//			{
-	//				a_x2geom[i][j] = 0.0;
-	//				c_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
-	//				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//			}
-	//			else
-	//			{
-	//				a_x2geom[i][j] = 0.0;
-	//				c_x2geom[i][j] = 1 / (dr * dr);
-	//				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-	//			}
-	//		}
-	//	}
-
-	//}
+	
 #ifdef DADI_DEBUG
 
 	matrix_to_csv((double**)a_x1geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\a_x1geom.csv"));
@@ -449,122 +327,6 @@ void init_solve()
 	matrix_to_csv((double**)c_x2geom, ZMAX, RMAX, RMAX, (char*)(".\\output\\c_x2geom.csv"));
 #endif
 }
-
-//void set_coefficient(int i, int j, PTypes type)
-//{
-//
-//
-//	switch (type)
-//	{
-//	case VACCUM_BOUNDARY:
-//	{
-//		if (b_x2geom[i][j] == 0) break;  //don't override a Dirichlet
-//		//x finite difference
-//		if (i) a_x1geom[i][j] = e1a / (dxa * dxave);
-//		if (i != I) c_x1geom[i][j] = e1b / (dxb * dxave);
-//		b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
-//
-//		//y finite difference
-//		if (j) a_x2geom[i][j] = e2a / dyave / dya;
-//		if (j != J) c_x2geom[i][j] = e2b / dyave / dyb;
-//		b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-//		break;
-//	}
-//	case CONDUCTING_BOUNDARY:
-//	{
-//		a_x1geom[i][j] = 0.0;
-//		b_x1geom[i][j] = 0.0;
-//		c_x1geom[i][j] = 0.0;
-//		a_x2geom[i][j] = 0.0;
-//		b_x2geom[i][j] = 0.0;
-//		c_x2geom[i][j] = 0.0;
-//		break;
-//	}
-//	case DIELECTRIC_BOUNDARY:
-//	{
-//
-//		if (i == 0 && b_x2geom[i][j] != 0) {  // left hand wall, not a conductor
-//			dxa = X[i + 1][j].e1() - X[i][j].e1();
-//			a_x1geom[i][j] = 0.0;
-//			c_x1geom[i][j] = 2 * e1b / dxa / dxa;
-//			b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
-//			if (j == 0) { //neumann neumann corner
-//				dyb = X[i][j + 1].e2() - X[i][j].e2();
-//				a_x2geom[i][j] = 0.0;
-//				c_x2geom[i][j] = e2b / dyb / dyb;
-//				b_x2geom[i][j] = -c_x2geom[i][j];
-//				return;
-//			}
-//			else
-//				if (j == J) { //neumann neumann corner
-//					dya = X[i][j].e2() - X[i][j - 1].e2();
-//					c_x2geom[i][j] = 0.0;
-//					a_x2geom[i][j] = e1b / dya / dya;
-//					b_x2geom[i][j] = -a_x2geom[i][j];
-//					return;
-//				}
-//				else
-//				{
-//					a_x2geom[i][j] = e2a / dyave / dya;
-//					c_x2geom[i][j] = e2b / dyave / dyb;
-//					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-//					return;
-//				}
-//		}
-//
-//		if (i == I && b_x2geom[i][j] != 0) {  //right hand wall, not a conductor
-//			dxa = X[i][j].e1() - X[i - 1][j].e1();
-//			a_x1geom[i][j] = 2 * e1a / dxa / dxa;
-//			c_x1geom[i][j] = 0.0;
-//			b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
-//			if (j == 0) { // neumann neumann corner
-//				a_x2geom[i][j] = 0.0;
-//				c_x2geom[i][j] = e2b / dyb / dyb;
-//				b_x2geom[i][j] = -c_x2geom[i][j];
-//				return;
-//			}
-//			else
-//				if (j == J) { //neumann neumann corner
-//					dya = X[i][j].e2() - X[i][j - 1].e2();
-//					c_x2geom[i][j] = 0.0;
-//					a_x2geom[i][j] = e1b / dya / dya;
-//					b_x2geom[i][j] = -a_x2geom[i][j];
-//					return;
-//				}
-//				else {
-//					a_x2geom[i][j] = e2a / dyave / dya;
-//					c_x2geom[i][j] = e2b / dyave / dyb;
-//					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
-//					return;
-//				}
-//		}
-//		if (j == J && b_x2geom[i][j] != 0) {  //we already dealt with corners, no need to here
-//			c_x2geom[i][j] = 0.0;
-//			a_x2geom[i][j] = e1b / dya / dya;
-//			b_x2geom[i][j] = -a_x2geom[i][j];
-//		}
-//
-//		if (j == 0 && b_x2geom[i][j] != 0) {	// already dealt with corners, no need to here
-//			a_x2geom[i][j] = 0.0;
-//			c_x2geom[i][j] = e2b / dyb / dyb;
-//			b_x2geom[i][j] = -c_x2geom[i][j];
-//		}
-//		break;
-//	}
-//	case CYLINDRICAL_AXIS:
-//	{
-//		//meaningless in X-Y geometry
-//
-//		break;
-//	}
-//	default:
-//	{
-//		cout << "DADI doesn't know about this boundary condition type!\n;" << endl;
-//		cout << "(was either PERIODIC_BOUNDARY or SPATIAL_REGION_BOUNDARY)\n" << endl;
-//		//e_xit(1);
-//	}
-//	}
-//}
 
 
 /**********************************************************************/
@@ -581,8 +343,6 @@ int solve(double u_in[ZMAX][RMAX], double s[ZMAX][RMAX], int itermax, double tol
 	static double del_t = 0.0;
 	double del_td = 0, tptop = 0, tpbot = 0, ratio = 0;
 	double rnorm = 0, rsum = 0, res = 0, errchk = 0, dxdxutrm = 0, dydyutrm = 0;
-
-	init_solve();
 
 	rnorm = rsum = 0.0;
 	for (i = 0; i < ZMAX; i++)
@@ -892,43 +652,43 @@ void electric_field()
 			}
 			else if (i == 0 && j > 0  && j < (RMAX - 1))
 			{
-				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
 				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
 			}
 			else if (i == (ZMAX - 1) && j > 0 && j < (RMAX - 1))
 			{
-				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
+				Ez[i][j] = -(3 * phi[i][j] - 4 * phi[i - 1][j] + phi[i - 2][j]) / (2 * dz);
 				Er[i][j] = -(phi[i][j + 1] - phi[i][j - 1]) / (2 * dr);
 			}
 			else if (i > 0 && j == 0 && i < (ZMAX - 1))
 			{
 				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
-				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+				Er[i][j] = -(-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
 			}
 			else if (i > 0 && j == (RMAX - 1) && i < (ZMAX - 1))
 			{
 				Ez[i][j] = -(phi[i + 1][j] - phi[i - 1][j]) / (2 * dz);
-				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+				Er[i][j] = -(phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
 			}
 			else if (i == 0 && j == (RMAX - 1))
 			{
-				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
-				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+				Er[i][j] = -(phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
 			}
 			else if (i == 0 && j == 0)
 			{
-				Ez[i][j] = (-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
-				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i + 1][j] - phi[i + 2][j]) / (2 * dz);
+				Er[i][j] = -(-3 * phi[i][j] + 4 * phi[i][j + 1] - phi[i][j + 2]) / (2 * dr);
 			}
 			else if (i == (ZMAX - 1) && j == 0)
 			{
-				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
-				Er[i][j] = (-phi[i][j + 2] + 4 * phi[i][j + 1] - 3 * phi[i][j]) / (2 * dr);
+				Ez[i][j] = -(3 * phi[i][j] - 4 * phi[i - 1][j] + phi[i - 2][j]) / (2 * dz);
+				Er[i][j] = -(-3 * phi[i][j] + 4 * phi[i][j + 1] - phi[i][j + 2]) / (2 * dr);
 			}
 			else if (i == (ZMAX - 1) && j == (RMAX - 1))
 			{
-				Ez[i][j] = -(-3 * phi[i][j] + 4 * phi[i - 1][j] - phi[i - 2][j]) / (2 * dz);
-				Er[i][j] = (phi[i][j - 2] - 4 * phi[i][j - 1] + 3 * phi[i][j]) / (2 * dr);
+				Ez[i][j] = -(3 * phi[i][j] - 4 * phi[i - 1][j] + phi[i - 2][j]) / (2 * dz);
+				Er[i][j] = -(3 * phi[i][j] - 4 * phi[i][j - 1] + phi[i][j - 2]) / (2 * dr);
 
 			}
 		}
@@ -991,7 +751,7 @@ void potential_solve()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0;
+			rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
 			//rou[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE;
 		}
 	}
@@ -1000,4 +760,56 @@ void potential_solve()
 	//potential_boundary();
 
 	electric_field();
+}
+
+void mag_phi()
+{
+	register int i, j;
+	for (i = 1; i < nz - 1; i++)
+	{
+		for (j = 1; j < nr - 1; j++)
+		{
+			
+
+			if (i > 0 && j > 0 && i < (ZMAX - 1) && j < (RMAX - 1))
+			{
+				btheta[i][j] += dt * ((Ez[i][j + 1] - Ez[i][j - 1]) / (2 * dr) - (Er[i + 1][j] - Er[i - 1][j]) / (2 * dz));
+			}
+			else if (i == 0 && j > 0 && j < (RMAX - 1))
+			{
+				btheta[i][j] += dt * ((Ez[i][j + 1] - Ez[i][j - 1]) / (2 * dr) - (-3 * Er[i][j] + 4 * Er[i + 1][j] - Er[i + 2][j]) / (2 * dz));
+			}
+			else if (i == (ZMAX - 1) && j > 0 && j < (RMAX - 1))
+			{
+				btheta[i][j] += dt * ((Ez[i][j + 1] - Ez[i][j - 1]) / (2 * dr) - (3 * Er[i][j] - 4 * Er[i + 1][j] + Er[i - 2][j]) / (2 * dz));
+			}
+			else if (i > 0 && j == 0 && i < (ZMAX - 1))
+			{
+				btheta[i][j] += dt * ((-3 * Ez[i][j] + 4 * Ez[i][j + 1] - Ez[i][j + 2]) / (2 * dr) - (Er[i + 1][j] - Er[i - 1][j]) / (2 * dz));
+			}
+			else if (i > 0 && j == (RMAX - 1) && i < (ZMAX - 1))
+			{
+				btheta[i][j] += dt * (( 3 * Ez[i][j] - 4 * Ez[i][j - 1] + Ez[i][j - 2]) / (2 * dr) - (Er[i + 1][j] - Er[i - 1][j]) / (2 * dz));
+			}
+			else if (i == 0 && j == (RMAX - 1))
+			{
+				btheta[i][j] += dt * ((3 * Ez[i][j] - 4 * Ez[i][j - 1] + Ez[i][j - 2]) / (2 * dr) - (-3 * Er[i][j] + 4 * Er[i + 1][j] - Er[i + 2][j]) / (2 * dz));
+			}
+			else if (i == 0 && j == 0)
+			{
+				btheta[i][j] += dt * ((-3 * Ez[i][j] + 4 * Ez[i][j + 1] - Ez[i][j + 2]) / (2 * dr) - (-3 * Er[i][j] + 4 * Er[i + 1][j] - Er[i + 2][j]) / (2 * dz));
+			}
+			else if (i == (ZMAX - 1) && j == 0)
+			{
+				btheta[i][j] += dt * ((-3 * Ez[i][j] + 4 * Ez[i][j + 1] - Ez[i][j + 2]) / (2 * dr) - (3 * Er[i][j] - 4 * Er[i + 1][j] + Er[i - 2][j]) / (2 * dz));
+			}
+			else if (i == (ZMAX - 1) && j == (RMAX - 1))
+			{
+				btheta[i][j] += dt * ((3 * Ez[i][j] - 4 * Ez[i][j - 1] + Ez[i][j - 2]) / (2 * dr) - (-3 * Er[i][j] + 4 * Er[i + 1][j] - Er[i + 2][j]) / (2 * dz));
+
+			}
+		}
+	}
+
+
 }

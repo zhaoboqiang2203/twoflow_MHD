@@ -162,8 +162,9 @@ void move()
 			double dee = pre_ee - MPDT[i][j].ee;
 			double dei = MPDT[i][j].ei - pre_ei;
 
+
 			MPDT[i][j].delta_ei = dee;
-			MPDT[i][j].mu_ie = dei; // 看一下离子获得能量
+			//MPDT[i][j].mu_ie = dei; // 看一下离子获得能量
 			//if (i == 200 && j == 11)
 			//{
 			//	printf("ss\n");

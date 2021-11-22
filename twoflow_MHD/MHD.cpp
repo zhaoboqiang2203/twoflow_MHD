@@ -42,12 +42,12 @@ int main()
 {
 	nz = ZMAX;
 	nr = RMAX;
-	index = 12000;
+	index = 24000;
 	scale = ZMAX / 200;
 
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
-	dt = dr / 1e5;
+	dt = dr / 1e7;
 	//dt = 0.05 * ((dr * dr) + (dz * dz));
 	printf("dt = %e\n", dt);
 	initial();

@@ -20,16 +20,24 @@ double k2_0(double x, double y, double z)
 }
 double k2(double x, double y, double z)
 {
-    return k2_0(x, y, z) - eps * (k2_0(x, y, z) == 1);
+    if (k2_0(x, y, z) == 1)
+    {
+        return 1 - eps;
+    }
+    else
+    {
+        return k2_0(x, y, z);
+    }
 }
 
 double K1(double x, double y, double z)
 {
-    return PI / 2 * (1 + sqr(1 / 2) * k2(x, y, z) + sqr(1 / 2 * 3 / 4) * sqr(k2(x, y, z)) + sqr(1 / 2 * 3 / 4 * 5 / 6) * cube(k2(x, y, z)));
+    return PI / 2 * (1 + 0.25 * k2(x, y, z) + sqr(0.375) * sqr(k2(x, y, z)) + sqr(0.3125) * cube(k2(x, y, z)));
 }
 double E(double x, double y, double z)
 {
-    return PI / 2. * (1 - sqr(1 / 2) * k2(x, y, z) + sqr(1 / 2 * 3 / 4) * pow(k2(x, y, z), 2 / 3) - sqr(1 / 2 * 3 / 4 * 5 / 6) * pow(k2(x, y, z), 3 / 5));
+    double k2_rz = k2(x, y, z);
+    return PI / 2 * (1 - 0.25 * k2_rz + sqr(0.375) * sqr(k2_rz)/ 3.0 - sqr(0.3125) * cube(k2_rz)/ 5.0);
 }
 double a1(double x, double y, double z)
 {
@@ -37,11 +45,18 @@ double a1(double x, double y, double z)
 }
 double b1_0(double x, double y, double z)
 {
-    return sqr(a + rho1(x, y, z)) + sqr(z);
+    return sqr(a - rho1(x, y, z)) + sqr(z);
 }
 double b1(double x, double y, double z)
 {
-    return b1_0(x, y, z) + eps * (b1_0(x, y, z) == 0);
+    if (b1_0(x, y, z) == 0)
+    {
+        return eps;
+    }
+    else
+    {
+        return b1_0(x, y, z);
+    }
 }
 double b2(double x, double y, double z)
 {
@@ -53,7 +68,15 @@ double b3(double x, double y, double z)
 }
 double Brho(double x, double y, double z)
 {
-    return c0 * I * z  / ((rho1(x, y, z) + eps * (rho1(x, y, z) == 0)) * a1(x, y, z)) * (b2(x, y, z)  / b1(x, y, z) * E(x, y, z) - K1(x, y, z));
+    if (rho1(x, y, z) == 0)
+    {
+        return c0 * I * z / (eps * a1(x, y, z)) * (b2(x, y, z) / b1(x, y, z) * E(x, y, z) - K1(x, y, z));
+    }
+    else
+    {
+        return c0 * I * z / (rho1(x, y, z) * a1(x, y, z)) * (b2(x, y, z) / b1(x, y, z) * E(x, y, z) - K1(x, y, z));
+    }
+    
 }
 
 double Bscz(double x, double y, double z)
@@ -70,18 +93,18 @@ void magnetic_field_initial()
 {
     double bias;
     a = 0.1;
-
     bias = 0;
     for (int i = 0; i < nz; i++)
     {
         for (int j = 0; j < nr; j++)
         {
-            app_Br[i][j] = Brho(i * dr - bias, 0, j * dz);
-            app_Bz[i][j] = Bscz(i * dr - bias, 0, j * dz);
+            app_Br[i][j] = Brho(j * dr - bias, 0, i * dz);
+            app_Bz[i][j] = Bscz(j * dr - bias, 0, i * dz);
         }
     }
 
     matrix_to_csv((double**)app_Br, ZMAX, RMAX, RMAX, (char*)(".\\output\\app_Br.csv"));
     matrix_to_csv((double**)app_Bz, ZMAX, RMAX, RMAX, (char*)(".\\output\\app_Bz.csv"));
 
+   
 }

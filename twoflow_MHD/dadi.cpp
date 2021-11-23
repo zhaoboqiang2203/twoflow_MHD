@@ -242,13 +242,45 @@ void init_solve()
 			}
 			else if(ptype[i][j] == CATHODE_BOUNDARY || ptype[i][j] == INLET)
 			{
-				a_x1geom[i][j] = 1 / (dz * dz);
-				c_x1geom[i][j] = 1 / (dz * dz);
+				if (i == 0)
+				{
+					a_x1geom[i][j] = 0;
+				}
+				else
+				{
+					a_x1geom[i][j] = 1 / (dz * dz);
+				}
+
+				if (i == ZMAX - 1)
+				{
+					c_x1geom[i][j] = 0;
+				}
+				else
+				{
+					c_x1geom[i][j] = 1 / (dz * dz);
+				}
+
 				b_x1geom[i][j] = -(a_x1geom[i][j] + c_x1geom[i][j]);
 
-				a_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
-				c_x2geom[i][j] = 1 / (dr * dr) + 1 / (2 * j * dr * dr);
-				b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				if (j == 0)
+				{
+					a_x2geom[i][j] = 0;
+					c_x2geom[i][j] = 1 / (dr * dr) + 1 / (dr * dr);
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+				else if (j == RMAX - 1)
+				{
+					a_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
+					c_x2geom[i][j] = 0;
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+				else
+				{
+					a_x2geom[i][j] = 1 / (dr * dr) - 1 / (2 * j * dr * dr);
+					c_x2geom[i][j] = 1 / (dr * dr) + 1 / (2 * j * dr * dr);
+					b_x2geom[i][j] = -(a_x2geom[i][j] + c_x2geom[i][j]);
+				}
+
 			}
 			else if (ptype[i][j] == ANODE_BOUNDARY)
 			{
@@ -708,35 +740,35 @@ void electric_field()
 				i = 0;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
-					if (btype[i][j] == UP || btype[i][j] == DOWN)
+					int ti = (int)(boundary_array[k].start.z + ceil(i * ins_z));
+					if (btype[ti][j] == UP || btype[ti][j] == DOWN)
 					{
-						Er[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Er[ti][j] = -(MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
 					}
-					else if (btype[i][j] == LEFT || btype[i][j] == RIGHT)
+					else if (btype[ti][j] == LEFT || btype[ti][j] == RIGHT)
 					{
-						Ez[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Ez[ti][j] = -(MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
 					}
-					else if (btype[i][j] == (LEFT + UP))
+					else if (btype[ti][j] == (LEFT + UP))
 					{
-						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
-						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
+						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
 					}
 					else if (btype[i][j] == (LEFT + DOWN))
 					{
-						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
-						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
+						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
 					}
 					else if (btype[i][j] == (RIGHT + DOWN))
 					{
-						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
-						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
+						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
 					}
 					else if (btype[i][j] == (RIGHT + UP))
 					{
-						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
-						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
+						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
 					}
-
 					i++;
 				}
 			}
@@ -746,35 +778,35 @@ void electric_field()
 				j = 0;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
-					if (btype[i][j] == UP || btype[i][j] == DOWN)
+					int tj = (int)(boundary_array[k].start.r + ceil(j * ins_r));
+					if (btype[i][tj] == UP || btype[i][tj] == DOWN)
 					{
-						Er[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Er[i][tj] = -(MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
 					}
-					else if (btype[i][j] == LEFT || btype[i][j] == RIGHT)
+					else if (btype[i][tj] == LEFT || btype[i][tj] == RIGHT)
 					{
-						Ez[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Ez[i][tj] = -(MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
 					}
-					else if (btype[i][j] == (LEFT + UP))
+					else if (btype[i][tj] == (LEFT + UP))
 					{
-						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
-						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
+						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
 					}
 					else if (btype[i][j] == (LEFT + DOWN))
 					{
-						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
-						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
+						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
 					}
 					else if (btype[i][j] == (RIGHT + DOWN))
 					{
-						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
-						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
+						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
 					}
 					else if (btype[i][j] == (RIGHT + UP))
 					{
-						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
-						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
+						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
 					}
-
 					j++;
 				}
 			}

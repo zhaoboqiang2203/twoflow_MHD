@@ -639,6 +639,7 @@ void tridag(double* a, double* b, double* c, double* r, double* utri, double* ga
 
 void electric_field()
 {
+	int i, j, k;
 	for (int i = 0; i < ZMAX; i++)
 	{
 		for (int j = 0; j < RMAX; j++)
@@ -690,6 +691,92 @@ void electric_field()
 				Ez[i][j] = -(3 * phi[i][j] - 4 * phi[i - 1][j] + phi[i - 2][j]) / (2 * dz);
 				Er[i][j] = -(3 * phi[i][j] - 4 * phi[i][j - 1] + phi[i][j - 2]) / (2 * dr);
 
+			}
+		}
+	}
+
+	_for(k, 0, BND_NUM)
+	{
+		if (boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
+		{
+			double dr = boundary_array[k].end.r - boundary_array[k].start.r;
+			double dz = boundary_array[k].end.z - boundary_array[k].start.z;
+
+			if (dr > dz)
+			{
+				double ins_z = dz / dr;
+				i = 0;
+				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+				{
+					if (btype[i][j] == UP || btype[i][j] == DOWN)
+					{
+						Er[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+					else if (btype[i][j] == LEFT || btype[i][j] == RIGHT)
+					{
+						Ez[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+					else if (btype[i][j] == (LEFT + UP))
+					{
+						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+					else if (btype[i][j] == (LEFT + DOWN))
+					{
+						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+					else if (btype[i][j] == (RIGHT + DOWN))
+					{
+						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+					else if (btype[i][j] == (RIGHT + UP))
+					{
+						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+
+					i++;
+				}
+			}
+			else
+			{
+				double ins_r = dr / dz;
+				j = 0;
+				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+				{
+					if (btype[i][j] == UP || btype[i][j] == DOWN)
+					{
+						Er[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+					else if (btype[i][j] == LEFT || btype[i][j] == RIGHT)
+					{
+						Ez[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+					else if (btype[i][j] == (LEFT + UP))
+					{
+						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+					else if (btype[i][j] == (LEFT + DOWN))
+					{
+						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+					else if (btype[i][j] == (RIGHT + DOWN))
+					{
+						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+					else if (btype[i][j] == (RIGHT + UP))
+					{
+						Er[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+						Ez[i][j] = -0.7071 * (MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+					}
+
+					j++;
+				}
 			}
 		}
 	}

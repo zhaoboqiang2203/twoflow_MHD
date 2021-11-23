@@ -47,7 +47,7 @@ int main()
 
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
-	dt = dr / 1e7;
+	dt = dr / 1e5;
 	//dt = 0.05 * ((dr * dr) + (dz * dz));
 	printf("dt = %e\n", dt);
 	initial();

@@ -186,3 +186,4 @@ void output_u_all();
 void output_u(int n);
 
 void magnetic_field_initial();
+int judge_conner(int i, int j);

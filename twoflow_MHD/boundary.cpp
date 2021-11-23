@@ -156,6 +156,10 @@ int initial()
 			{
 				btype[i][j] = 1;
 			}
+			else if (world[i][j] == 110)
+			{
+				btype[i][j] = 110;
+			}
 			else if (btype[i][j] == (LEFT + UP) && (i != 0 && j != (RMAX - 1)))
 			{
 				btype[i][j] = 1;
@@ -188,12 +192,49 @@ int initial()
 			{
 				btype[i][j] = UP;
 			}
-			else if (world[i][j] == 110)
-			{
-				btype[i][j] = 110;
-			}
+
 		}
 	}
+
+
+	_for(k, 0, BND_NUM)
+	{
+		double dr = boundary_array[k].end.r - boundary_array[k].start.r;
+		double dz = boundary_array[k].end.z - boundary_array[k].start.z;
+
+		if (dr == 0 || dz == 0) continue;
+		if (dr > dz)
+		{
+			double ins_z = dz / dr;
+			i = 0;
+			_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+			{
+				
+				btype[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j] = judge_conner((int)(boundary_array[k].start.z + ceil(i * ins_z)), j);
+
+				i++;
+			}
+		}
+		else
+		{
+			double ins_r = dr / dz;
+			j = 0;
+			_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+			{
+				btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))] = judge_conner(i,(int)(boundary_array[k].start.r + ceil(j * ins_r)));
+				j++;
+			}
+		}
+
+	}
+	//for (int i = 0; i < nz; i++)
+	//{
+	//	for (int j = 0; j < nr; j++)
+	//	{
+	//		btype[i][j] = judge_conner(i, j);
+	//	}
+	//}
+
 #ifdef BOUNDARY_DEBUG
 	matrix_to_csv((double**)world, ZMAX, RMAX, RMAX, (char*)(".\\output\\world.csv"));
 	matrix_to_csv((double**)btype, ZMAX, RMAX, RMAX, (char*)(".\\output\\btype.csv"));
@@ -637,9 +678,9 @@ int judge_conner(int i,int j)
 	}
 	else
 	{
-		if (btype[i][j - 1] == 0 || btype[i - 1][j] == 110)
+		if (btype[i][j + 1] == 0 || btype[i][j + 1] == 110)
 		{
-			state += state_down;
+			state += state_up;
 		}
 	}
 
@@ -683,13 +724,13 @@ int judge_conner(int i,int j)
 	{
 		return RIGHT + DOWN;
 	}
-	else if (state == state_right + state_down + +state_up + state_left)
+	else if (state == 0)
 	{
 		return 1;
 	}
 	else
 	{
-		printf("boundary condition error");
+		printf("boundary condition error %d %d %d\n",state,i,j);
 		return 0;
 	}
 

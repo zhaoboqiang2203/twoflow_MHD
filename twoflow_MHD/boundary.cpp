@@ -456,9 +456,9 @@ void  boundary_condition()
 			{
 				double ins_z = dz / dr;
 				i = 0;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+				_for(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
-					if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
+					//if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j].ne += inter_e_den / scale;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne += inter_e_den / scale;
 					i++;
@@ -472,20 +472,20 @@ void  boundary_condition()
 				double den_step = (inter_e_den - 6.02e5) / num;
 				j = 0;
 
-				_feq(i, boundary_array[k].start.z, (boundary_array[k].start.z + boundary_array[k].end.z) / 2)
+				_for(i, boundary_array[k].start.z, (boundary_array[k].start.z + boundary_array[k].end.z) / 2)
 				{
-					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1] != 1) continue;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1].ne += bg_den / scale;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne += bg_den / scale;
-					j++;
-				}
-
-
-				_feq(i, (boundary_array[k].start.z + boundary_array[k].end.z) / 2, boundary_array[k].end.z - scale)
-				{
-					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1] != 1) continue;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1].ne += (bg_den + den_step) / scale;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne += (bg_den + den_step) / scale;
+					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))] == DOWN)
+					{
+						//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1] != 1) continue;
+						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1].ne += bg_den / scale;
+						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne += bg_den / scale;
+					}
+					else
+					{
+						//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
+						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne += bg_den / scale;
+						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne += bg_den / scale;
+					}
 					j++;
 				}
 			}

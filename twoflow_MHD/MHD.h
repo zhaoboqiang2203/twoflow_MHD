@@ -125,6 +125,7 @@ struct  node
 	double ei;
 	double mu_ie;       /*电子离子碰撞频率*/
 	double delta_ei;    /*电子向离子转移能量*/
+	double sigma_Q;     /*电子离子碰撞截面*/
 };
 
 
@@ -147,6 +148,7 @@ int fill_plasma(int tr, int tz, int fill_n);
 void output();
 
 const double EPS_0 = 8.85418782e-12;  	// C/(V*m), vacuum permittivity
+const double EPS_PLA = 1e-2;				//相对电导率
 const double QE = 1.602176565e-19;		// C, electron charge
 const double AMU = 1.660538921e-27;		// kg, atomic mass unit
 const double ME = 9.10938215e-31;		// kg, electron mass

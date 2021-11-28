@@ -743,31 +743,31 @@ void electric_field()
 					int ti = (int)(boundary_array[k].start.z + ceil(i * ins_z));
 					if (btype[ti][j] == UP || btype[ti][j] == DOWN)
 					{
-						Er[ti][j] = -(MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
+						Er[ti][j] = -(MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					else if (btype[ti][j] == LEFT || btype[ti][j] == RIGHT)
 					{
-						Ez[ti][j] = -(MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
+						Ez[ti][j] = -(MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					else if (btype[ti][j] == (LEFT + UP))
 					{
-						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
-						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
+						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					else if (btype[i][j] == (LEFT + DOWN))
 					{
-						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
-						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
+						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					else if (btype[i][j] == (RIGHT + DOWN))
 					{
-						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
-						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
+						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					else if (btype[i][j] == (RIGHT + UP))
 					{
-						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
-						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 / 40;
+						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					i++;
 				}
@@ -781,31 +781,31 @@ void electric_field()
 					int tj = (int)(boundary_array[k].start.r + ceil(j * ins_r));
 					if (btype[i][tj] == UP || btype[i][tj] == DOWN)
 					{
-						Er[i][tj] = -(MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
+						Er[i][tj] = -(MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					else if (btype[i][tj] == LEFT || btype[i][tj] == RIGHT)
 					{
-						Ez[i][tj] = -(MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
+						Ez[i][tj] = -(MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					else if (btype[i][tj] == (LEFT + UP))
 					{
-						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
-						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
+						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					else if (btype[i][j] == (LEFT + DOWN))
 					{
-						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
-						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
+						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					else if (btype[i][j] == (RIGHT + DOWN))
 					{
-						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
-						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
+						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					else if (btype[i][j] == (RIGHT + UP))
 					{
-						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
-						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 / 40;
+						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
 					}
 					j++;
 				}
@@ -870,7 +870,7 @@ void potential_solve()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 / 40;
+			rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 * EPS_PLA;
 			//rou[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE;
 		}
 	}

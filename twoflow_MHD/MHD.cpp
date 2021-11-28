@@ -42,7 +42,7 @@ int main()
 {
 	nz = ZMAX;
 	nr = RMAX;
-	index = 24000;
+	index = 40000;
 	scale = ZMAX / 200;
 
 	dr = 0.001 / scale;
@@ -344,6 +344,17 @@ void output()
 	sprintf_s(fname, (".\\output\\delta_ei\\delta_ei_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
+	//电子离子碰撞截面
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].sigma_Q;
+		}
+	}
+
+	sprintf_s(fname, (".\\output\\sigma\\sigma_Q_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 }
 
 

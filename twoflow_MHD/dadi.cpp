@@ -727,91 +727,91 @@ void electric_field()
 		}
 	}
 
-	_for(k, 0, BND_NUM)
-	{
-		if (boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
-		{
-			double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-			double dz = boundary_array[k].end.z - boundary_array[k].start.z;
+	//_for(k, 0, BND_NUM)
+	//{
+	//	if (boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
+	//	{
+	//		double dr = boundary_array[k].end.r - boundary_array[k].start.r;
+	//		double dz = boundary_array[k].end.z - boundary_array[k].start.z;
 
-			if (dr > dz)
-			{
-				double ins_z = dz / dr;
-				i = 0;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
-				{
-					int ti = (int)(boundary_array[k].start.z + ceil(i * ins_z));
-					if (btype[ti][j] == UP || btype[ti][j] == DOWN)
-					{
-						Er[ti][j] = -(MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					else if (btype[ti][j] == LEFT || btype[ti][j] == RIGHT)
-					{
-						Ez[ti][j] = -(MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					else if (btype[ti][j] == (LEFT + UP))
-					{
-						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
-						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					else if (btype[i][j] == (LEFT + DOWN))
-					{
-						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
-						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					else if (btype[i][j] == (RIGHT + DOWN))
-					{
-						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
-						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					else if (btype[i][j] == (RIGHT + UP))
-					{
-						Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
-						Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					i++;
-				}
-			}
-			else
-			{
-				double ins_r = dr / dz;
-				j = 0;
-				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
-				{
-					int tj = (int)(boundary_array[k].start.r + ceil(j * ins_r));
-					if (btype[i][tj] == UP || btype[i][tj] == DOWN)
-					{
-						Er[i][tj] = -(MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					else if (btype[i][tj] == LEFT || btype[i][tj] == RIGHT)
-					{
-						Ez[i][tj] = -(MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					else if (btype[i][tj] == (LEFT + UP))
-					{
-						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
-						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					else if (btype[i][j] == (LEFT + DOWN))
-					{
-						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
-						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					else if (btype[i][j] == (RIGHT + DOWN))
-					{
-						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
-						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					else if (btype[i][j] == (RIGHT + UP))
-					{
-						Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
-						Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
-					}
-					j++;
-				}
-			}
-		}
-	}
+	//		if (dr > dz)
+	//		{
+	//			double ins_z = dz / dr;
+	//			i = 0;
+	//			_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
+	//			{
+	//				int ti = (int)(boundary_array[k].start.z + ceil(i * ins_z));
+	//				if (btype[ti][j] == UP || btype[ti][j] == DOWN)
+	//				{
+	//					Er[ti][j] = -(MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				else if (btype[ti][j] == LEFT || btype[ti][j] == RIGHT)
+	//				{
+	//					Ez[ti][j] = -(MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				else if (btype[ti][j] == (LEFT + UP))
+	//				{
+	//					Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+	//					Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				else if (btype[ti][j] == (LEFT + DOWN))
+	//				{
+	//					Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+	//					Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				else if (btype[ti][j] == (RIGHT + DOWN))
+	//				{
+	//					Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+	//					Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				else if (btype[ti][j] == (RIGHT + UP))
+	//				{
+	//					Er[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+	//					Ez[ti][j] = -0.7071 * (MPDT[ti][j].ni - MPDT[ti][j].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				i++;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			double ins_r = dr / dz;
+	//			j = 0;
+	//			_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
+	//			{
+	//				int tj = (int)(boundary_array[k].start.r + ceil(j * ins_r));
+	//				if (btype[i][tj] == UP || btype[i][tj] == DOWN)
+	//				{
+	//					Er[i][tj] = -(MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				else if (btype[i][tj] == LEFT || btype[i][tj] == RIGHT)
+	//				{
+	//					Ez[i][tj] = -(MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				else if (btype[i][tj] == (LEFT + UP))
+	//				{
+	//					Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+	//					Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				else if (btype[i][tj] == (LEFT + DOWN))
+	//				{
+	//					Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+	//					Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				else if (btype[i][tj] == (RIGHT + DOWN))
+	//				{
+	//					Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+	//					Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				else if (btype[i][tj] == (RIGHT + UP))
+	//				{
+	//					Er[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+	//					Ez[i][tj] = -0.7071 * (MPDT[i][tj].ni - MPDT[i][tj].ne) * QE / EPS_0 * EPS_PLA;
+	//				}
+	//				j++;
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void potential_boundary()
@@ -871,7 +871,7 @@ void potential_solve()
 		for (int j = 0; j < RMAX; j++)
 		{
 			rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 * EPS_PLA;
-			//rou[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE;
+			rou[i][j] = (MPDT[i][j].ni - MPDT[i][j].ne);
 		}
 	}
 	solve(phi, rho, 50, 0.01);

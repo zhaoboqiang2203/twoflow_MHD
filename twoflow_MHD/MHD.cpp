@@ -47,9 +47,19 @@ int main()
 
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
-	dt = dr / 1e5;
+	dt = dr / 1e6;
+
+	//根据背景压强，通气流量，电流密度计算
+	bg_den = 1e-3 / (K * 300) * 1e-9;
+	inter_e_den = 300 * dt / QE / 360 / 50 ;
+	inter_pla_den = 0.04 * dt / 40 * NA / 360 / 20 ;
+
+
 	//dt = 0.05 * ((dr * dr) + (dz * dz));
 	printf("dt = %e\n", dt);
+	printf("inter_e_den = %e\n", inter_e_den);
+	printf("inter_pla_den = %e\n", inter_pla_den);
+
 	initial();
 	magnetic_field_initial();
 	//dadi initial
@@ -65,8 +75,8 @@ int main()
 		move();
 
 		mag_phi();
-		if (index % 100 == 0)
-		//if(index < 11790)
+		//if (index % 10 == 0)
+		//if(index < 39750)
 		{
 			output();
 		}
@@ -201,7 +211,7 @@ void output()
 	//matrix_to_csv((double**)phi1, ZMAX, RMAX, RMAX, fname);
 
 	sprintf_s(fname, (".\\output\\rho\\rho_%d.csv"), index);
-	matrix_to_csv((double**)rho, ZMAX, RMAX, RMAX, fname);
+	matrix_to_csv((double**)rou, ZMAX, RMAX, RMAX, fname);
 	// 输出磁场分布
 
 	//输出电子压强分布

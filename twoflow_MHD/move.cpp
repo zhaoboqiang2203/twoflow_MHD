@@ -80,7 +80,7 @@ void move()
 			//MPDT[i][j].ver = -QE * Er[i][j] / ME * dt;
 			//MPDT[i][j].vez = -QE * Ez[i][j] / ME * dt;
 
-			//MPDT[i][j].ee = 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+			MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 			//MPDT[i][j].pe = 0.5 * MPDT[i][j].ee / (dr * j * dz * PI / 180);
 			//MPDT[i][j].pe = 0.5 * MPDT[i][j].ee / (dr * j * dz * PI / 180);
 			//MPDT[i][j].ee /= 2;
@@ -111,7 +111,7 @@ void move()
 			//MPDT[i][j].vir = QE * Er[i][j] / MI * dt;
 			//MPDT[i][j].viz = QE * Ez[i][j] / MI * dt;
 
-			//MPDT[i][j].ei = 0.5 *  MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz) / QE; 
+			MPDT[i][j].ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz); 
 			//MPDT[i][j].pi = MPDT[i][j].ni * MPDT[i][j].ei;
 
 
@@ -157,8 +157,8 @@ void move()
 			//能量守恒验证
 			double pre_ee = MPDT[i][j].ee;
 			double pre_ei = MPDT[i][j].ei;
-			MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez) / QE;
-			MPDT[i][j].ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz) / QE;
+			MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez) ;
+			MPDT[i][j].ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz) ;
 
 			double dee = pre_ee - MPDT[i][j].ee;
 			double dei = MPDT[i][j].ei - pre_ei;
@@ -182,6 +182,65 @@ void move()
 	}
 }
 
+void move_q()
+{
+	double q_half;
+	double hrho, htheta, hz, h2;
+	double srho, stheta, sz;
+	double urho, utheta, uz;
+	double urho_half, utheta_half, uz_half;
+	for (int i = 0; i < nz; i++)
+	{
+		for (int j = 0; j < nr; j++)
+		{
+			if (ptype[i][j] == VACCUM_BOUNDARY) continue;
+			if (MPDT[i][j].neq == 0 || MPDT[i][j].peq == 0) continue;
+
+			//计算多余电子运动
+			q_half = -dt * QE / ME / 2;
+			hrho = q_half * app_Br[i][j];
+			htheta = 0;
+			hz = q_half * app_Bz[i][j];
+			h2 = sqr(hrho) + sqr(hz);
+
+			srho = 2 * hrho / (1 + h2);
+			stheta = 2 * htheta / (1 + h2);
+			sz = 2 * hz / (1 + h2);
+			urho = MPDT[i][j].vnqr + q_half * Er[i][j];
+			utheta = MPDT[i][j].vnqtheta;
+			uz = MPDT[i][j].vnqz + q_half * Ez[i][j];
+			urho_half = urho + (utheta * sz - uz * stheta) + ((uz * hrho - urho * hz) * sz - (urho * htheta - utheta * hrho) * stheta);
+			utheta_half = utheta + (uz * srho - urho * sz) + ((urho * htheta - utheta * hrho) * srho - (utheta * hz - uz * htheta) * sz);
+			uz_half = uz + (urho * stheta - utheta * srho) + ((utheta * hz - uz * htheta) * stheta - (uz * hrho - urho * hz) * srho);
+			MPDT[i][j].vnqr = urho_half + q_half * Er[i][j];
+			MPDT[i][j].vnqtheta = utheta_half;
+			MPDT[i][j].vnqz = uz_half + q_half * Ez[i][j];
+
+			
+
+
+			q_half = dt * QE / ME / 2;
+			hrho = q_half * app_Br[i][j];
+			htheta = 0;
+			hz = q_half * app_Bz[i][j];
+			h2 = sqr(hrho) + sqr(hz);
+
+			srho = 2 * hrho / (1 + h2);
+			stheta = 2 * htheta / (1 + h2);
+			sz = 2 * hz / (1 + h2);
+			urho = MPDT[i][j].vpqr + q_half * Er[i][j];
+			utheta = MPDT[i][j].vpqtheta;
+			uz = MPDT[i][j].vpqz + q_half * Ez[i][j];
+			urho_half = urho + (utheta * sz - uz * stheta) + ((uz * hrho - urho * hz) * sz - (urho * htheta - utheta * hrho) * stheta);
+			utheta_half = utheta + (uz * srho - urho * sz) + ((urho * htheta - utheta * hrho) * srho - (utheta * hz - uz * htheta) * sz);
+			uz_half = uz + (urho * stheta - utheta * srho) + ((utheta * hz - uz * htheta) * stheta - (uz * hrho - urho * hz) * srho);
+			MPDT[i][j].vpqr = urho_half + q_half * Er[i][j];
+			MPDT[i][j].vpqtheta = utheta_half;
+			MPDT[i][j].vpqz = uz_half + q_half * Ez[i][j];
+
+		}
+	}
+}
 
 void plasma_para()
 {

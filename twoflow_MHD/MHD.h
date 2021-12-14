@@ -71,37 +71,14 @@ struct Boundary
 struct _U
 {
 	int r, z;
-	double u1;
-	double u2;
-	double u3;
-	double u4;
-	double u5;
-	double u6;
-	double u7;
-	double u8;
-	double u9;
-	double u10;
-	double u11;
-	double u12;
-	double u13;
+	double u[13];
 };
 
 struct _F
 {
 	int r, z;
-	double f1;
-	double f2;
-	double f3;
-	double f4;
-	double f5;
-	double f6;
-	double f7;
-	double f8;
-	double f9;
-	double f10;
-	double f11;
-	double f12;
-	double f13;
+	double f[13];
+
 };
 
 /* node interface with plasma information */
@@ -126,6 +103,17 @@ struct  node
 	double mu_ie;       /*电子离子碰撞频率*/
 	double delta_ei;    /*电子向离子转移能量*/
 	double sigma_Q;     /*电子离子碰撞截面*/
+
+	double neq;       /*发射电子密度*/
+	double vnqr;
+	double vnqz;
+	double vnqtheta;
+
+	double peq;       /*发射的虚拟电子密度*/
+	double vpqr;
+	double vpqz;
+	double vpqtheta;
+	
 };
 
 
@@ -178,6 +166,12 @@ extern struct _U U[ZMAX][RMAX], U_bar[ZMAX][RMAX], U_bar2[ZMAX][RMAX];
 extern struct _F Fr[ZMAX][RMAX], Fr_bar[ZMAX][RMAX], Fr_bar2[ZMAX][RMAX];
 extern struct _F Fz[ZMAX][RMAX], Fz_bar[ZMAX][RMAX], Fz_bar2[ZMAX][RMAX];
 extern struct _F s[ZMAX][RMAX], s_bar[ZMAX][RMAX], s_bar2[ZMAX][RMAX];
+
+extern struct _U Uq[ZMAX][RMAX], Uq_bar[ZMAX][RMAX], Uq_bar2[ZMAX][RMAX];
+extern struct _F Fqr[ZMAX][RMAX], Fqr_bar[ZMAX][RMAX], Fqr_bar2[ZMAX][RMAX];
+extern struct _F Fqz[ZMAX][RMAX], Fqz_bar[ZMAX][RMAX], Fqz_bar2[ZMAX][RMAX];
+extern struct _F sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
+
 extern double app_Bz[ZMAX][RMAX];
 extern double app_Br[ZMAX][RMAX];
 
@@ -186,6 +180,7 @@ extern double inter_e_den;
 extern double inter_pla_den;
 
 void move();
+void move_q();
 
 int solveGS();
 void test_sor_code();

@@ -16,6 +16,12 @@ struct _U U[ZMAX][RMAX], U_bar[ZMAX][RMAX], U_bar2[ZMAX][RMAX];
 struct _F Fr[ZMAX][RMAX], Fr_bar[ZMAX][RMAX], Fr_bar2[ZMAX][RMAX];
 struct _F Fz[ZMAX][RMAX], Fz_bar[ZMAX][RMAX], Fz_bar2[ZMAX][RMAX];
 struct _F s[ZMAX][RMAX], s_bar[ZMAX][RMAX], s_bar2[ZMAX][RMAX];
+
+struct _U Uq[ZMAX][RMAX], Uq_bar[ZMAX][RMAX], Uq_bar2[ZMAX][RMAX];
+struct _F Fqr[ZMAX][RMAX], Fqr_bar[ZMAX][RMAX], Fqr_bar2[ZMAX][RMAX];
+struct _F Fqz[ZMAX][RMAX], Fqz_bar[ZMAX][RMAX], Fqz_bar2[ZMAX][RMAX];
+struct _F sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
+
 double phi[ZMAX][RMAX];
 double rho[ZMAX][RMAX];
 
@@ -50,9 +56,9 @@ int main()
 	dt = dr / 1e6;
 
 	//根据背景压强，通气流量，电流密度计算
-	bg_den = 1e-3 / (K * 300) * 1e-9;
-	inter_e_den = 300 * dt / QE / 360 / 50 ;
-	inter_pla_den = 0.04 * dt / 40 * NA / 360 / 20 ;
+	bg_den = 1e-3 / (K * 300);
+	inter_e_den = 300 * dt / QE / 360 / 50 * 1e9;
+	inter_pla_den = 0.04 * dt / 40 * NA / 360 / 20 * 1e9;
 
 
 	//dt = 0.05 * ((dr * dr) + (dz * dz));
@@ -71,12 +77,13 @@ int main()
 		boundary_condition();
 		electron_flow();
 		//ion_flow();
+		Q_fluid();
 		potential_solve();
 		move();
-
+		//move_q();
 		mag_phi();
-		//if (index % 10 == 0)
-		//if(index < 39750)
+		//if (index % 100 == 0)
+		//if(index < 39450)
 		{
 			output();
 		}
@@ -365,266 +372,4 @@ void output()
 
 	sprintf_s(fname, (".\\output\\sigma\\sigma_Q_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-}
-
-
-void output_u(int n)
-{
-
-	if (n == 1)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u1;
-			}
-		}
-	}
-	else if (n == 2)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u2;
-			}
-		}
-	}
-	else if (n == 3)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u3;
-			}
-		}
-	}
-	else if (n == 4)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u4;
-			}
-		}
-	}
-	else if (n == 5)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u5;
-			}
-		}
-	}
-	else if (n == 6)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u6;
-			}
-		}
-	}
-	else if (n == 7)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u7;
-			}
-		}
-	}
-	else if (n == 8)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u8;
-			}
-		}
-	}
-	else if (n == 9)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u9;
-			}
-		}
-	}
-	else if (n == 10)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u10;
-			}
-		}
-	}
-	else if (n == 11)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u11;
-			}
-		}
-	}
-	else if (n == 12)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u12;
-			}
-		}
-	}
-	else if (n == 13)
-	{
-		for (int i = 0; i < ZMAX; i++)
-		{
-			for (int j = 0; j < RMAX; j++)
-			{
-				res_out[i][j] = U[i][j].u13;
-			}
-		}
-	}
-
-
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\test U.csv"));
-}
-
-void output_u_all()
-{
-	
-
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u1;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U1.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u2;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U2.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u3;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U3.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u4;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U4.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u5;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U5.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u6;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U6.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u7;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U7.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u8;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U8.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u9;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U9.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u10;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U10.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u11;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U11.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u12;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U12.csv"));
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = U[i][j].u13;
-		}
-	}
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, (char*)(".\\output\\U13.csv"));
 }

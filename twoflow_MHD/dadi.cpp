@@ -870,16 +870,16 @@ void potential_solve()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			if (MPDT[i][j].peq > MPDT[i][j].neq)
-			{
-				MPDT[i][j].peq -= MPDT[i][j].neq;
-				MPDT[i][j].neq = 0;
-			}
-			else
-			{
-				MPDT[i][j].neq -= MPDT[i][j].peq;
-				MPDT[i][j].peq = 0;
-			}
+			//if (MPDT[i][j].peq > MPDT[i][j].neq)
+			//{
+			//	MPDT[i][j].peq -= MPDT[i][j].neq;
+			//	MPDT[i][j].neq = 0;
+			//}
+			//else
+			//{
+			//	MPDT[i][j].neq -= MPDT[i][j].peq;
+			//	MPDT[i][j].peq = 0;
+			//}
 
 			//rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 * EPS_PLA;
 			rho[i][j] = -(MPDT[i][j].peq - MPDT[i][j].neq) * QE / EPS_0 * EPS_PLA;
@@ -887,6 +887,19 @@ void potential_solve()
 		}
 	}
 	solve(phi, rho, 50, 0.01);
+
+	max_phi = 0;
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			if (abs(phi[i][j]) > max_phi)
+			{
+				max_phi = abs(phi[i][j]);
+			}
+		}
+	}
+	printf("max phi = %lf\n", max_phi);
 	//solveGS();
 	//potential_boundary();
 

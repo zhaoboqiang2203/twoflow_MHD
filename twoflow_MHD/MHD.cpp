@@ -44,16 +44,20 @@ double denJ[ZMAX][RMAX];
 double res_out[ZMAX][RMAX];
 
 double btheta[ZMAX][RMAX];
+
+double max_phi;
+double set_phi;
 int main()
 {
 	nz = ZMAX;
 	nr = RMAX;
-	index = 40000;
+	index = 40001;
+	set_phi = 160;
 	scale = ZMAX / 200;
 
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
-	dt = dr / 1e6;
+	dt = dr / 1e7;
 
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
@@ -77,20 +81,25 @@ int main()
 		boundary_condition();
 		electron_flow();
 		//ion_flow();
-		Q_fluid();
-		potential_solve();
+
+		if (index % 100 == 0)
+		{
+			Q_fluid();
+			potential_solve();
+			move_q();
+		}
+		
 		move();
-		//move_q();
 		mag_phi();
-		//if (index % 100 == 0)
-		//if(index < 39450)
+		if (index % 100 == 0)
+		//if(index < 36000)
 		{
 			output();
 		}
 		
 	}
 
-	//scanf_s("%c", &a);
+
 	return 0;
 }
 
@@ -249,7 +258,7 @@ void output()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			res_out[i][j] = MPDT[i][j].ee;
+			res_out[i][j] = MPDT[i][j].ee / QE;
 		}
 	}
 
@@ -260,7 +269,7 @@ void output()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			res_out[i][j] = MPDT[i][j].ei;
+			res_out[i][j] = MPDT[i][j].ei / QE;
 		}
 	}
 
@@ -371,5 +380,28 @@ void output()
 	}
 
 	sprintf_s(fname, (".\\output\\sigma\\sigma_Q_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	//多余电荷密度
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].peq;
+		}
+	}
+
+	sprintf_s(fname, (".\\output\\peq\\peq_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].neq;
+		}
+	}
+
+	sprintf_s(fname, (".\\output\\neq\\neq_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 }

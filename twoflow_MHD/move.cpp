@@ -81,12 +81,35 @@ void move()
 			//MPDT[i][j].vez = -QE * Ez[i][j] / ME * dt;
 
 			MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-			//MPDT[i][j].pe = 0.5 * MPDT[i][j].ee / (dr * j * dz * PI / 180);
-			//MPDT[i][j].pe = 0.5 * MPDT[i][j].ee / (dr * j * dz * PI / 180);
-			//MPDT[i][j].ee /= 2;
-			//MPDT[i][j].ver = 0;
-			//MPDT[i][j].vetheta = 0;
-			//MPDT[i][j].vez = 0;
+
+			if (MPDT[i][j].ver > 1.8e6)
+			{
+				MPDT[i][j].ver = 1.8e6;
+
+				//double tmp = MPDT[i][j].ee;
+				//MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+				//MPDT[i][j].pe = (tmp - MPDT[i][j].ee) / (dz * dr * dr);
+			}
+
+			if (MPDT[i][j].vetheta > 1.8e6)
+			{
+				MPDT[i][j].vetheta = 1.8e6;
+
+				//double tmp = MPDT[i][j].ee;
+				//MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+				//MPDT[i][j].pe = (tmp - MPDT[i][j].ee) / (dz * dr * dr);
+			}
+
+			if (MPDT[i][j].vez > 1.8e6)
+			{
+				MPDT[i][j].vez = 1.8e6;
+
+				//double tmp = MPDT[i][j].ee;
+				//MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+				//MPDT[i][j].pe = (tmp - MPDT[i][j].ee) / (dz * dr * dr);
+			}
+
+			
 			
 
 			q_half = dt * QE / MI / 2;
@@ -115,7 +138,7 @@ void move()
 			//MPDT[i][j].pi = MPDT[i][j].ni * MPDT[i][j].ei;
 
 
-			double Q_ei = 1.4e-25;//电子离子碰撞截面
+			double Q_ei = 1.4e-20;//电子离子碰撞截面
 			//double sigma_q = PI * pow(QE, 4) / (128 * sqr(EPS_0) * sqr(ME) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 4));
 			MPDT[i][j].sigma_Q = PI * pow(QE, 4) / (128 * sqr(EPS_0) * sqr(ME) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 4));
 			MPDT[i][j].mu_ie = MPDT[i][j].ni * Q_ei * sqrt((12 * MPDT[i][j].ee) / (PI * ME));
@@ -216,7 +239,20 @@ void move_q()
 			MPDT[i][j].vnqtheta = utheta_half;
 			MPDT[i][j].vnqz = uz_half + q_half * Ez[i][j];
 
-			
+			if (MPDT[i][j].vnqr > 1.8e1)
+			{
+				MPDT[i][j].vnqr = 1.8e1;
+			}
+
+			if (MPDT[i][j].vnqr > 1.8e1)
+			{
+				MPDT[i][j].vnqtheta = 1.8e1;
+			}
+
+			if (MPDT[i][j].vnqz > 1.8e1)
+			{
+				MPDT[i][j].vnqz = 1.8e1;
+			}
 
 
 			q_half = dt * QE / ME / 2;
@@ -238,6 +274,20 @@ void move_q()
 			MPDT[i][j].vpqtheta = utheta_half;
 			MPDT[i][j].vpqz = uz_half + q_half * Ez[i][j];
 
+			if (MPDT[i][j].vpqr > 1.8e1)
+			{
+				MPDT[i][j].vpqr = 1.8e1;
+			}
+
+			if (MPDT[i][j].vpqr > 1.8e1)
+			{
+				MPDT[i][j].vpqtheta = 1.8e1;
+			}
+
+			if (MPDT[i][j].vpqz > 1.8e1)
+			{
+				MPDT[i][j].vpqz = 1.8e1;
+			}
 		}
 	}
 }

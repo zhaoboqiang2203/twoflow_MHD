@@ -178,7 +178,8 @@ extern double app_Br[ZMAX][RMAX];
 extern double bg_den;
 extern double inter_e_den;
 extern double inter_pla_den;
-
+extern double max_phi;
+extern double set_phi;
 void move();
 void move_q();
 

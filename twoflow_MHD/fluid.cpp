@@ -1394,7 +1394,7 @@ void Q_fluid()
 				Qz = arti_q_vis(MPDT[i + 1][j], MPDT[i][j], MPDT[i - 1][j]);
 				Qr = arti_q_vis(MPDT[i][j + 1], MPDT[i][j], MPDT[i][j - 1]);
 
-				Uq[i][j].u[0] = Uq_bar2[i][j].u[0] + Qr.u[0] / 4 * (MPDT[i][j + 1].neq - 2 * MPDT[i][j].neq + MPDT[i][j - 1].neq) + Qz.u[0] / 4 * (MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
+				Uq[i][j].u[0] = Uq_bar2[i][j].u[0] + Qr.u[0] / 4 * (MPDT[i][j + 1].neq - 2 * MPDT[i][j].neq + MPDT[i][j - 1].neq) + Qz.u[0] / 4 * (MPDT[i + 1][j].neq - 2 * MPDT[i][j].neq + MPDT[i - 1][j].neq);
 				Uq[i][j].u[1] = Uq_bar2[i][j].u[1] + Qr.u[1] / 4 * (MPDT[i][j + 1].peq - 2 * MPDT[i][j].peq + MPDT[i][j - 1].peq) + Qz.u[1] / 4 * (MPDT[i + 1][j].peq - 2 * MPDT[i][j].peq + MPDT[i - 1][j].peq);
 				Uq[i][j].u[2] = Uq_bar2[i][j].u[2] + Qr.u[2] / 4 * (MPDT[i][j + 1].vnqr - 2 * MPDT[i][j].vnqr + MPDT[i][j - 1].vnqr) + Qz.u[2] / 4 * (MPDT[i + 1][j].vnqr - 2 * MPDT[i][j].vnqr + MPDT[i - 1][j].vnqr);
 				Uq[i][j].u[3] = Uq_bar2[i][j].u[3] + Qr.u[3] / 4 * (MPDT[i][j + 1].vnqtheta - 2 * MPDT[i][j].vnqtheta + MPDT[i][j - 1].vnqtheta) + Qz.u[3] / 4 * (MPDT[i + 1][j].vnqtheta - 2 * MPDT[i][j].vnqtheta + MPDT[i - 1][j].vnqtheta);

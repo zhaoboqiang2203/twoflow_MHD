@@ -6,8 +6,8 @@ using namespace std;
 
 int nr;
 int nz;
-double dr, dz;
-double dt;
+double dr, dz, dtheta;
+double dt, dtq;
 
 int index;
 
@@ -47,6 +47,9 @@ double btheta[ZMAX][RMAX];
 
 double max_phi;
 double set_phi;
+
+
+
 int main()
 {
 	nz = ZMAX;
@@ -57,11 +60,12 @@ int main()
 
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
-	dt = dr / 1e7;
-
+	dtheta = PI / 180;
+	dt = dr / 1e6 / 3;
+	dtq = 100 * dt;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
-	inter_e_den = 300 * dt / QE / 360 / 50 * 1e9;
+	inter_e_den = 750 * dt / QE / 360 / 50 * 1e9 ;
 	inter_pla_den = 0.04 * dt / 40 * NA / 360 / 20 * 1e9;
 
 
@@ -79,10 +83,10 @@ int main()
 	{
 		printf("index %d\n", index);
 		boundary_condition();
-		electron_flow();
+		electron_flow_v2();
 		//ion_flow();
 
-		if (index % 100 == 0)
+		if (index % int(dtq / dt) == 0)
 		{
 			Q_fluid();
 			potential_solve();
@@ -91,8 +95,10 @@ int main()
 		
 		move();
 		mag_phi();
+
+		out_judge();
 		if (index % 100 == 0)
-		//if(index < 36000)
+			//if(index < 36000)
 		{
 			output();
 		}
@@ -102,6 +108,29 @@ int main()
 
 	return 0;
 }
+
+void matrix_int_to_csv(int** a, int N, int M, int array_size, char* filename)
+{
+	//fstream myfile(".\\output\\test_data.csv", ios::out);
+	//fstream myfile(filename, ios::app);
+	fstream myfile(filename, ios::out);
+	if (!myfile.is_open())
+	{
+		cout << "未成功打开文件" << endl;
+	}
+
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < M; j++)
+		{
+			//cout << *((double*)a + (array_size * i + j)) << endl;
+			myfile << *((int*)a + (array_size * i + j)) << ",";
+		}
+		myfile << endl;
+	}
+	myfile.close();
+}
+
 
 void matrix_to_csv(double** a, int N, int M, int array_size, char* filename)
 {
@@ -404,4 +433,85 @@ void output()
 
 	sprintf_s(fname, (".\\output\\neq\\neq_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+}
+
+void out_judge()
+{
+	int i, j;
+	int err_flag = 0;
+	for (i = 0; i < ZMAX; i++)
+	{
+		for (j = 0; j < RMAX; j++)
+		{
+			if (btype[i][j] != 1) continue;
+			if (MPDT[i][j].ne != MPDT[i][j].ne || MPDT[i][j].ne < 0)
+			{
+				err_flag = 1;
+				break;
+			}
+
+			if (MPDT[i][j].ni != MPDT[i][j].ni || MPDT[i][j].ni < 0)
+			{
+				err_flag = 1;
+				break;
+			}
+
+			if (MPDT[i][j].ver != MPDT[i][j].ver)
+			{
+				err_flag = 1;
+				break;
+			}
+
+			if (MPDT[i][j].vetheta != MPDT[i][j].vetheta)
+			{
+				err_flag = 1;
+				break;
+			}
+			if (MPDT[i][j].vez != MPDT[i][j].vez)
+			{
+				err_flag = 1;
+				break;
+			}
+
+			if (MPDT[i][j].vir != MPDT[i][j].vir)
+			{
+				err_flag = 1;
+				break;
+			}
+
+			if (MPDT[i][j].vitheta != MPDT[i][j].vitheta)
+			{
+				err_flag = 1;
+				break;
+			}
+			if (MPDT[i][j].viz != MPDT[i][j].viz)
+			{
+				err_flag = 1;
+				break;
+			}
+
+			if (MPDT[i][j].ee != MPDT[i][j].ee)
+			{
+				err_flag = 1;
+				break;
+			}
+
+			if (MPDT[i][j].ei != MPDT[i][j].ei)
+			{
+				err_flag = 1;
+				break;
+			}
+		}
+
+		if (err_flag == 1)
+		{
+			break;
+		}
+	}
+
+	if (err_flag == 1)
+	{
+		output();
+		printf("i = %d j = %d\n", i, j);
+	}
 }

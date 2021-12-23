@@ -44,6 +44,8 @@ Others:                   // 其它说明
 
 *************************************************/
 
+double max_q_speed = 1e-5;
+
 void move()
 {
 	double q_half;
@@ -55,9 +57,9 @@ void move()
 	{
 		for (int j = 0; j < nr; j++)
 		{
-			if (ptype[i][j] == VACCUM_BOUNDARY) continue;
+			if ((ptype[i][j] & VACCUM_BOUNDARY) != 0) continue;
 			if (MPDT[i][j].ne == 0 || MPDT[i][j].ni == 0) continue;
-
+			if ((ptype[i][j] & ANODE_BOUNDARY) != 0 || (ptype[i][j] & CATHODE_BOUNDARY) != 0 ) continue;
 			q_half = -dt * QE / ME / 2;
 			hrho = q_half * app_Br[i][j];
 			htheta = 0;
@@ -82,35 +84,34 @@ void move()
 
 			MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 
-			if (MPDT[i][j].ver > 1.8e6)
-			{
-				MPDT[i][j].ver = 1.8e6;
+			//if (MPDT[i][j].ver > 1.8e6)
+			//{
+			//	MPDT[i][j].ver = 1.8e6;
+			//}
+			//else if (MPDT[i][j].ver < -1.8e6)
+			//{
+			//	MPDT[i][j].ver = -1.8e6;
+			//}
 
-				//double tmp = MPDT[i][j].ee;
-				//MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-				//MPDT[i][j].pe = (tmp - MPDT[i][j].ee) / (dz * dr * dr);
-			}
+			//if (abs(MPDT[i][j].vetheta) > 1.8e6)
+			//{
+			//	MPDT[i][j].vetheta = 1.8e6;
+			//}
+			//else if (MPDT[i][j].vetheta < -1.8e6)
+			//{
+			//	MPDT[i][j].vetheta = -1.8e6;
+			//}
 
-			if (MPDT[i][j].vetheta > 1.8e6)
-			{
-				MPDT[i][j].vetheta = 1.8e6;
+			//if (MPDT[i][j].vez > 1.8e6)
+			//{
+			//	MPDT[i][j].vez = 1.8e6;
 
-				//double tmp = MPDT[i][j].ee;
-				//MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-				//MPDT[i][j].pe = (tmp - MPDT[i][j].ee) / (dz * dr * dr);
-			}
+			//}
+			//else if (MPDT[i][j].vez < -1.8e6)
+			//{
+			//	MPDT[i][j].vez = -1.8e6;
+			//}
 
-			if (MPDT[i][j].vez > 1.8e6)
-			{
-				MPDT[i][j].vez = 1.8e6;
-
-				//double tmp = MPDT[i][j].ee;
-				//MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-				//MPDT[i][j].pe = (tmp - MPDT[i][j].ee) / (dz * dr * dr);
-			}
-
-			
-			
 
 			q_half = dt * QE / MI / 2;
 			hrho = q_half * app_Br[i][j];
@@ -138,7 +139,7 @@ void move()
 			//MPDT[i][j].pi = MPDT[i][j].ni * MPDT[i][j].ei;
 
 
-			double Q_ei = 1.4e-20;//电子离子碰撞截面
+			double Q_ei = 1.4e-22;//电子离子碰撞截面
 			//double sigma_q = PI * pow(QE, 4) / (128 * sqr(EPS_0) * sqr(ME) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 4));
 			MPDT[i][j].sigma_Q = PI * pow(QE, 4) / (128 * sqr(EPS_0) * sqr(ME) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 4));
 			MPDT[i][j].mu_ie = MPDT[i][j].ni * Q_ei * sqrt((12 * MPDT[i][j].ee) / (PI * ME));
@@ -166,28 +167,41 @@ void move()
 
 			double pre_eng = MPDT[i][j].ei + MPDT[i][j].ee;
 
+			//if (MPDT[i][j].ne != 0 && MPDT[i][j].ni != 0)
+			//{
+			//	MPDT[i][j].ver -= m_eir / (MPDT[i][j].ne * ME);
+			//	MPDT[i][j].vir += m_eir / (MPDT[i][j].ni * MI);
+			//	MPDT[i][j].vetheta -= m_eitheta / (MPDT[i][j].ne * ME);
+			//	MPDT[i][j].vitheta += m_eitheta / (MPDT[i][j].ni * MI);
+			//	MPDT[i][j].vez -= m_eiz / (MPDT[i][j].ne * ME);
+			//	MPDT[i][j].viz += m_eiz / (MPDT[i][j].ni * MI);
+			//}
+
 			if (MPDT[i][j].ne != 0 && MPDT[i][j].ni != 0)
 			{
-				MPDT[i][j].ver -= m_eir / (MPDT[i][j].ne * ME);
+				MPDT[i][j].ver = 0;
 				MPDT[i][j].vir += m_eir / (MPDT[i][j].ni * MI);
-				MPDT[i][j].vetheta -= m_eitheta / (MPDT[i][j].ne * ME);
+				MPDT[i][j].vetheta = 0;
 				MPDT[i][j].vitheta += m_eitheta / (MPDT[i][j].ni * MI);
-				MPDT[i][j].vez -= m_eiz / (MPDT[i][j].ne * ME);
+				MPDT[i][j].vez = 0;
 				MPDT[i][j].viz += m_eiz / (MPDT[i][j].ni * MI);
 			}
+
+
 
 
 			//能量守恒验证
 			double pre_ee = MPDT[i][j].ee;
 			double pre_ei = MPDT[i][j].ei;
-			MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez) ;
+			//MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez) ;
 			MPDT[i][j].ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz) ;
 
 			double dee = pre_ee - MPDT[i][j].ee;
 			double dei = MPDT[i][j].ei - pre_ei;
 
-
-			MPDT[i][j].delta_ei = dee;
+			MPDT[i][j].pe = MPDT[i][j].ne * (pre_ee - dei);
+			MPDT[i][j].ee = pre_ee - dei;
+			MPDT[i][j].delta_ei = dei;
 			//MPDT[i][j].mu_ie = dei; // 看一下离子获得能量
 			//if (i == 200 && j == 11)
 			//{
@@ -216,11 +230,11 @@ void move_q()
 	{
 		for (int j = 0; j < nr; j++)
 		{
-			if (ptype[i][j] == VACCUM_BOUNDARY) continue;
+			if ((ptype[i][j] & VACCUM_BOUNDARY) != 0) continue;
 			if (MPDT[i][j].neq == 0 || MPDT[i][j].peq == 0) continue;
 
 			//计算多余电子运动
-			q_half = -dt * QE / ME / 2;
+			q_half = -dtq * QE / ME / 2;
 			hrho = q_half * app_Br[i][j];
 			htheta = 0;
 			hz = q_half * app_Bz[i][j];
@@ -239,23 +253,35 @@ void move_q()
 			MPDT[i][j].vnqtheta = utheta_half;
 			MPDT[i][j].vnqz = uz_half + q_half * Ez[i][j];
 
-			if (MPDT[i][j].vnqr > 1.8e1)
+			if (MPDT[i][j].vnqr > max_q_speed)
 			{
-				MPDT[i][j].vnqr = 1.8e1;
+				MPDT[i][j].vnqr = max_q_speed;
+			}
+			else if (MPDT[i][j].vnqr < -max_q_speed)
+			{
+				MPDT[i][j].vnqr = -max_q_speed;
+			}
+			
+			if (MPDT[i][j].vnqtheta > max_q_speed)
+			{
+				MPDT[i][j].vnqtheta = max_q_speed;
+			}
+			else if (MPDT[i][j].vnqtheta < -max_q_speed)
+			{
+				MPDT[i][j].vnqtheta = -max_q_speed;
 			}
 
-			if (MPDT[i][j].vnqr > 1.8e1)
+			if (MPDT[i][j].vnqz > max_q_speed)
 			{
-				MPDT[i][j].vnqtheta = 1.8e1;
+				MPDT[i][j].vnqz = max_q_speed;
+			}
+			else if (MPDT[i][j].vnqz < -max_q_speed)
+			{
+				MPDT[i][j].vnqz = -max_q_speed;
 			}
 
-			if (MPDT[i][j].vnqz > 1.8e1)
-			{
-				MPDT[i][j].vnqz = 1.8e1;
-			}
 
-
-			q_half = dt * QE / ME / 2;
+			q_half = dtq * QE / ME / 2;
 			hrho = q_half * app_Br[i][j];
 			htheta = 0;
 			hz = q_half * app_Bz[i][j];
@@ -274,19 +300,32 @@ void move_q()
 			MPDT[i][j].vpqtheta = utheta_half;
 			MPDT[i][j].vpqz = uz_half + q_half * Ez[i][j];
 
-			if (MPDT[i][j].vpqr > 1.8e1)
+			
+			if (MPDT[i][j].vpqr > max_q_speed)
 			{
-				MPDT[i][j].vpqr = 1.8e1;
+				MPDT[i][j].vpqr = max_q_speed;
+			}
+			else if (MPDT[i][j].vpqr < -max_q_speed)
+			{
+				MPDT[i][j].vpqr = -max_q_speed;
 			}
 
-			if (MPDT[i][j].vpqr > 1.8e1)
+			if (MPDT[i][j].vpqtheta > max_q_speed)
 			{
-				MPDT[i][j].vpqtheta = 1.8e1;
+				MPDT[i][j].vpqtheta = max_q_speed;
+			}
+			else if (MPDT[i][j].vpqtheta < -max_q_speed)
+			{
+				MPDT[i][j].vpqtheta = -max_q_speed;
 			}
 
-			if (MPDT[i][j].vpqz > 1.8e1)
+			if (MPDT[i][j].vpqz > max_q_speed)
 			{
-				MPDT[i][j].vpqz = 1.8e1;
+				MPDT[i][j].vpqz = max_q_speed;
+			}
+			else if (MPDT[i][j].vpqz < -max_q_speed)
+			{
+				MPDT[i][j].vpqz = -max_q_speed;
 			}
 		}
 	}

@@ -14,6 +14,7 @@
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)
+#define sgn(a) (a >= 0 ? 1 : -1)
 
 //	macros
 #define MIN(a,b)			((a<b) ? (a) : (b))
@@ -22,7 +23,7 @@
 #define cube(a)       ((a)*(a)*(a))
 
 
-#define RMAX 401
+#define RMAX 288
 #define ZMAX 1001
 
 #define R_DIR 0
@@ -33,7 +34,7 @@
 #define RIGHT 32
 #define DOWN 128
 
-#define BND_NUM  10
+#define BND_NUM  7
 
 
 enum PTypes {
@@ -114,6 +115,15 @@ struct  node
 	double vpqz;
 	double vpqtheta;
 	
+	int f_left;
+	int f_right;
+	int f_down;
+	int f_up;
+
+	int f_cathode;
+	int f_cathode2;
+	int f_anode;
+	int f_anode2;
 };
 
 
@@ -121,22 +131,23 @@ struct  node
 
 extern Boundary boundary_array[BND_NUM];
 extern int nr, nz;
-extern double dr, dz;
-extern double dt;
+extern double dr, dz, dtheta;
+extern double dt, dtq;
 extern int scale;
 extern int index;
 
-extern double world[ZMAX][RMAX];
-extern double btype[ZMAX][RMAX];
-extern double ptype[ZMAX][RMAX];
+extern int world[ZMAX][RMAX];
+extern int btype[ZMAX][RMAX];
+extern int ptype[ZMAX][RMAX];
 int initial();
 void  boundary_condition();
 void matrix_to_csv(double** a, int N, int M, int array_size, char* filename);
+void matrix_int_to_csv(int** a, int N, int M, int array_size, char* filename);
 int fill_plasma(int tr, int tz, int fill_n);
 void output();
 
 const double EPS_0 = 8.85418782e-12;  	// C/(V*m), vacuum permittivity
-const double EPS_PLA = 1e-2;				//相对电导率
+const double EPS_PLA = 1;				//相对电导率
 const double QE = 1.602176565e-19;		// C, electron charge
 const double AMU = 1.660538921e-27;		// kg, atomic mass unit
 const double ME = 9.10938215e-31;		// kg, electron mass
@@ -186,8 +197,7 @@ void move_q();
 int solveGS();
 void test_sor_code();
 void outputcsv();
-void output_u_all();
-void output_u(int n);
+void out_judge();
 
 void magnetic_field_initial();
 int judge_conner(int i, int j);

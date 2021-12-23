@@ -439,6 +439,242 @@ void electron_flow()
 	return;
 }
 
+void electron_flow_v2()
+{
+	struct _U Qr;
+	struct _U Qz;
+	register int i, j, k;
+	for (i = 0; i < nz; i++)
+	{
+		for (j = 0; j < nr; j++)
+		{
+
+			U[i][j] = cal_u(i, j);
+			Fr[i][j] = cal_fr(U[i][j]);
+			Fz[i][j] = cal_fz(U[i][j]);
+			s[i][j] = cal_s(U[i][j]);
+
+			U_bar[i][j].z = i;
+			U_bar[i][j].r = j;
+			U_bar2[i][j].z = i;
+			U_bar2[i][j].r = j;
+
+		}
+	}
+
+	for (i = 0; i < nz; i++)
+	{
+		for (j = 0; j < nr; j++)
+		{
+			if (btype[i][j] == 1)
+			{
+				for (k = 0; k < 13; k++)
+				{
+					U_bar[i][j].u[k] = U[i][j].u[k] - dt / dr * (Fr[i][j + 1].f[k] - Fr[i][j].f[k]) - dt / dz * (Fz[i + 1][j].f[k] - Fz[i][j].f[k]) + dt * s[i][j].f[k];
+				}
+#ifdef FLUID_DEBUG
+				if (i == row && j == col)
+				{
+					printf("U[i][j].u1 = %.5e\n", U[i][j].u1);
+					printf("Fr[i][j + 1].f1 = %.5e\n", Fr[i][j + 1].f1);
+					printf("Fr[i][j].f1 = %.5e\n", Fr[i][j].f1);
+					printf("Fz[i + 1][j].f1 = %.5e\n", Fz[i + 1][j].f1);
+					printf("Fz[i][j].f1 = %.5e\n", Fz[i][j].f1);
+					printf("s[i][j].f1 = %.5e\n", s[i][j].f1);
+					printf("U_bar[i][j].u1 = %.5e\n", U_bar[i][j].u1);
+
+					printf("U[i][j].u3 = %.5e\n", U[i][j].u3);
+					printf("Fr[i][j + 1].f3 = %.5e\n", Fr[i][j + 1].f3);
+					printf("Fr[i][j].f3 = %.5e\n", Fr[i][j].f3);
+					printf("Fz[i + 1][j].f3 = %.5e\n", Fz[i + 1][j].f3);
+					printf("Fz[i][j].f3 = %.5e\n", Fz[i][j].f3);
+					printf("s[i][j].f3 = %.5e\n", s[i][j].f3);
+					printf("U_bar[i][j].u3 = %.5e\n", U_bar[i][j].u3);
+				}
+#endif// FLUID_DEBUG
+			}
+			else if (btype[i][j] == 0)
+			{
+				for (k = 0; k < 13; k++)
+				{
+					U_bar[i][j].u[k] = 0;
+				}
+			}
+			else
+			{
+				for (k = 0; k < 13; k++)
+				{
+					U_bar[i][j].u[k] = U[i][j].u[k];
+				}
+			}
+
+			Fr_bar[i][j] = cal_fr(U_bar[i][j]);
+			Fz_bar[i][j] = cal_fz(U_bar[i][j]);
+			s_bar[i][j] = cal_s(U_bar[i][j]);
+		}
+	}
+
+	//矫正步
+	for (i = 0; i < nz; i++)
+	{
+		for (j = 0; j < nr; j++)
+		{
+			if (btype[i][j] == 1)
+			{
+				for (k = 0; k < 13; k++)
+				{
+					U_bar2[i][j].u[k] = 0.5 * (U[i][j].u[k] + U_bar[i][j].u[k] - dt / dr * (Fr_bar[i][j].f[k] - Fr_bar[i][j - 1].f[k]) - dt / dz * (Fz_bar[i][j].f[k] - Fz_bar[i - 1][j].f[k]) + dt * s_bar[i][j].f[k]);
+				}
+#ifdef FLUID_DEBUG
+				if (i == row && j == col)
+				{
+					printf("Fr_bar[i][j].f[0] = %.5e\n", Fr_bar[i][j].f[0]);
+					printf("Fr_bar[i][j - 1].f[0] = %.5e\n", Fr_bar[i][j - 1].f[0]);
+					printf("Fz_bar[i][j].f[0] = %.5e\n", Fz_bar[i][j].f[0]);
+					printf("Fz_bar[i - 1][j].f[0] = %.5e\n", Fz_bar[i - 1][j].f[0]);
+					printf("s_bar[i][j].f[0] = %.5e\n", s_bar[i][j].f[0]);
+					printf("U_bar2[i][j].u[0] = %.5e\n", U_bar2[i][j].u[0]);
+
+					printf("Fr_bar[i][j].f3 = %.5e\n", Fr_bar[i][j].f3);
+					printf("Fr_bar[i][j - 1].f3 = %.5e\n", Fr_bar[i][j - 1].f3);
+					printf("Fz_bar[i][j].f3 = %.5e\n", Fz_bar[i][j].f3);
+					printf("Fz_bar[i - 1][j].f3 = %.5e\n", Fz_bar[i - 1][j].f3);
+					printf("s_bar[i][j].f3 = %.5e\n", s_bar[i][j].f3);
+					printf("U_bar2[i][j].u3 = %.5e\n", U_bar2[i][j].u3);
+
+				}
+#endif// FLUID_DEBUG				
+
+			}
+			else if (btype[i][j] == 0)
+			{
+				for (k = 0; k < 13; k++)
+				{
+					U_bar2[i][j].u[k] = 0;
+				}
+			}
+			else
+			{
+				for (k = 0; k < 13; k++)
+				{
+					U_bar2[i][j].u[k] = U_bar[i][j].u[k];
+				}
+			}
+
+		}
+	}
+
+	//计算				
+
+	for (i = 0; i < nz; i++)
+	{
+		for (j = 0; j < nr; j++)
+		{
+			if (btype[i][j] == 1)
+			{
+				Qz = arti_vis(MPDT[i + 1][j], MPDT[i][j], MPDT[i - 1][j]);
+				Qr = arti_vis(MPDT[i][j + 1], MPDT[i][j], MPDT[i][j - 1]);
+
+				U[i][j].u[0] = U_bar2[i][j].u[0] + Qr.u[0] / 4 * (MPDT[i][j + 1].ne - 2 * MPDT[i][j].ne + MPDT[i][j - 1].ne) + Qz.u[0] / 4 * (MPDT[i + 1][j].ne - 2 * MPDT[i][j].ne + MPDT[i - 1][j].ne);
+				U[i][j].u[1] = U_bar2[i][j].u[1] + Qr.u[1] / 4 * (MPDT[i][j + 1].ni - 2 * MPDT[i][j].ni + MPDT[i][j - 1].ni) + Qz.u[1] / 4 * (MPDT[i + 1][j].ni - 2 * MPDT[i][j].ni + MPDT[i - 1][j].ni);
+				U[i][j].u[2] = U_bar2[i][j].u[2] + Qr.u[2] / 4 * (MPDT[i][j + 1].ver - 2 * MPDT[i][j].ver + MPDT[i][j - 1].ver) + Qz.u[2] / 4 * (MPDT[i + 1][j].ver - 2 * MPDT[i][j].ver + MPDT[i - 1][j].ver);
+				U[i][j].u[3] = U_bar2[i][j].u[3] + Qr.u[3] / 4 * (MPDT[i][j + 1].vetheta - 2 * MPDT[i][j].vetheta + MPDT[i][j - 1].vetheta) + Qz.u[3] / 4 * (MPDT[i + 1][j].vetheta - 2 * MPDT[i][j].vetheta + MPDT[i - 1][j].vetheta);
+				U[i][j].u[4] = U_bar2[i][j].u[4] + Qr.u[4] / 4 * (MPDT[i][j + 1].vez - 2 * MPDT[i][j].vez + MPDT[i][j - 1].vez) + Qz.u[4] / 4 * (MPDT[i + 1][j].vez - 2 * MPDT[i][j].vez + MPDT[i - 1][j].vez);
+				U[i][j].u[5] = U_bar2[i][j].u[5] + Qr.u[5] / 4 * (MPDT[i][j + 1].vir - 2 * MPDT[i][j].vir + MPDT[i][j - 1].vir) + Qz.u[5] / 4 * (MPDT[i + 1][j].vir - 2 * MPDT[i][j].vir + MPDT[i - 1][j].vir);
+				U[i][j].u[6] = U_bar2[i][j].u[6] + Qr.u[6] / 4 * (MPDT[i][j + 1].vitheta - 2 * MPDT[i][j].vitheta + MPDT[i][j - 1].vitheta) + Qz.u[6] / 4 * (MPDT[i + 1][j].vitheta - 2 * MPDT[i][j].vitheta + MPDT[i - 1][j].vitheta);
+				U[i][j].u[7] = U_bar2[i][j].u[7] + Qr.u[7] / 4 * (MPDT[i][j + 1].viz - 2 * MPDT[i][j].viz + MPDT[i][j - 1].viz) + Qz.u[7] / 4 * (MPDT[i + 1][j].viz - 2 * MPDT[i][j].viz + MPDT[i - 1][j].viz);
+				U[i][j].u[8] = U_bar2[i][j].u[8] + Qr.u[8] / 4 * (MPDT[i][j + 1].br - 2 * MPDT[i][j].br + MPDT[i][j - 1].br) + Qz.u[8] / 4 * (MPDT[i + 1][j].br - 2 * MPDT[i][j].br + MPDT[i - 1][j].br);
+				U[i][j].u[9] = U_bar2[i][j].u[9] + Qr.u[9] / 4 * (MPDT[i][j + 1].btheta - 2 * MPDT[i][j].btheta + MPDT[i][j - 1].btheta) + Qz.u[9] / 4 * (MPDT[i + 1][j].btheta - 2 * MPDT[i][j].btheta + MPDT[i - 1][j].btheta);
+				U[i][j].u[10] = U_bar2[i][j].u[10] + Qr.u[10] / 4 * (MPDT[i][j + 1].bz - 2 * MPDT[i][j].bz + MPDT[i][j - 1].bz) + Qz.u[10] / 4 * (MPDT[i + 1][j].bz - 2 * MPDT[i][j].bz + MPDT[i - 1][j].bz);
+				U[i][j].u[11] = U_bar2[i][j].u[11] + Qr.u[11] / 4 * (MPDT[i][j + 1].pe - 2 * MPDT[i][j].pe + MPDT[i][j - 1].pe) + Qz.u[11] / 4 * (MPDT[i + 1][j].pe - 2 * MPDT[i][j].pe + MPDT[i - 1][j].pe);
+				U[i][j].u[12] = U_bar2[i][j].u[12] + Qr.u[12] / 4 * (MPDT[i][j + 1].pi - 2 * MPDT[i][j].pi + MPDT[i][j - 1].pi) + Qz.u[12] / 4 * (MPDT[i + 1][j].pi - 2 * MPDT[i][j].pi + MPDT[i - 1][j].pi);
+
+#ifdef FLUID_DEBUG
+				if (i == row && j == col)
+				{
+					//cout << "final U[i][j].u1 = " << U[i][j].u1 << endl;
+					printf("final U[i][j].u1 = %.5e\n", U[i][j].u1);
+					printf("U_bar2[i][j + 1].u1 = %.5e\n", U_bar2[i][j + 1].u1);
+					printf("U_bar2[i][j - 1].u1 = %.5e\n", U_bar2[i][j - 1].u1);
+					printf("U_bar2[i + 1][j].u1 = %.5e\n", U_bar2[i + 1][j].u1);
+					printf("U_bar2[i - 1][j].u1 = %.5e\n", U_bar2[i - 1][j].u1);
+
+					printf("final U[i][j].u3 = %.5e\n", U[i][j].u3);
+					printf("U_bar2[i][j + 1].u3 = %.5e\n", U_bar2[i][j + 1].u3);
+					printf("U_bar2[i][j - 1].u3 = %.5e\n", U_bar2[i][j - 1].u3);
+					printf("U_bar2[i + 1][j].u3 = %.5e\n", U_bar2[i + 1][j].u3);
+					printf("U_bar2[i - 1][j].u3 = %.5e\n", U_bar2[i - 1][j].u3);
+
+				}
+#endif// FLUID_DEBUG	
+
+			}
+			else //if (btype[i][j] == 0)
+			{
+				for (k = 0; k < 13; k++)
+				{
+					U[i][j].u[k] = U_bar2[i][j].u[k];
+				}
+			}
+		}
+	}
+
+	//更新边界信息
+
+
+
+	for (i = 0; i < nz; i++)
+	{
+		for (j = 0; j < nr; j++)
+		{
+			//if (U[i][j].u[0] > 0)
+			//{
+			//	MPDT[i][j].ne = U[i][j].u[0];
+			//}
+			//else
+			//{
+			//	MPDT[i][j].ne = 0;
+			//}
+
+			//if (U[i][j].u2 > 0)
+			//{
+			//	MPDT[i][j].ni = U[i][j].u2;
+			//}
+			//else
+			//{
+			//	MPDT[i][j].ni = 0;
+			//}
+
+			MPDT[i][j].ne = U[i][j].u[0];
+			MPDT[i][j].ni = U[i][j].u[1];
+			MPDT[i][j].ver = U[i][j].u[2];
+			MPDT[i][j].vetheta = U[i][j].u[3];
+			MPDT[i][j].vez = U[i][j].u[4];
+
+
+			MPDT[i][j].vir = U[i][j].u[5];
+			MPDT[i][j].vitheta = U[i][j].u[6];
+			MPDT[i][j].viz = U[i][j].u[7];
+
+
+			MPDT[i][j].br = U[i][j].u[8];
+			MPDT[i][j].btheta = U[i][j].u[9];
+			MPDT[i][j].bz = U[i][j].u[10];
+
+			MPDT[i][j].pe = U[i][j].u[11];
+			MPDT[i][j].pi = U[i][j].u[12];
+
+			MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) + 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+			MPDT[i][j].ei = MPDT[i][j].pi / (gamma - 1) + 0.5 * MPDT[i][j].ni * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
+
+		}
+	}
+
+
+	return;
+}
+
+
 //边界条件的第二个版本
 void ion_flow()
 {
@@ -1231,63 +1467,63 @@ void Q_fluid()
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dt / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dt / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dt * sq[i][j].f[k];
+					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dtq / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dtq / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dtq * sq[i][j].f[k];
 				}
 			}
 			else if (btype[i][j] == LEFT)//左边的边界，复制右边的参数
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dt / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dt / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dt * sq[i][j].f[k];
+					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dtq / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dtq / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dtq * sq[i][j].f[k];
 				}
 			}
 			else if (btype[i][j] == RIGHT)
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dt / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dt / dz * (Fqz[i][j].f[k] - Fqz[i - 1][j].f[k]) + dt * sq[i][j].f[k];
+					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dtq / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dtq / dz * (Fqz[i][j].f[k] - Fqz[i - 1][j].f[k]) + dtq * sq[i][j].f[k];
 				}
 			}
 			else if (btype[i][j] == UP)
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dt / dr * (Fqr[i][j].f[k] - Fqr[i][j - 1].f[k]) - dt / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dt * sq[i][j].f[k];
+					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dtq / dr * (Fqr[i][j].f[k] - Fqr[i][j - 1].f[k]) - dtq / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dtq * sq[i][j].f[k];
 				}
 			}
 			else if (btype[i][j] == DOWN)
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dt / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dt / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dt * sq[i][j].f[k];
+					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dtq / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dtq / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dtq * sq[i][j].f[k];
 				}
 			}
 			else if (btype[i][j] == (LEFT + UP))
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dt / dr * (Fqr[i][j].f[k] - Fqr[i][j - 1].f[k]) - dt / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dt * sq[i][j].f[k];
+					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dtq / dr * (Fqr[i][j].f[k] - Fqr[i][j - 1].f[k]) - dtq / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dtq * sq[i][j].f[k];
 				}
 			}
 			else if (btype[i][j] == (LEFT + DOWN))
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dt / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dt / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dt * sq[i][j].f[k];
+					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dtq / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dtq / dz * (Fqz[i + 1][j].f[k] - Fqz[i][j].f[k]) + dtq * sq[i][j].f[k];
 				}
 			}
 			else if (btype[i][j] == (RIGHT + DOWN))
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dt / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dt / dz * (Fqz[i][j].f[k] - Fqz[i - 1][j].f[k]) + dt * sq[i][j].f[k];
+					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dtq / dr * (Fqr[i][j + 1].f[k] - Fqr[i][j].f[k]) - dtq / dz * (Fqz[i][j].f[k] - Fqz[i - 1][j].f[k]) + dtq * sq[i][j].f[k];
 				}
 			}
 			else if (btype[i][j] == (RIGHT + UP))
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dt / dr * (Fqr[i][j].f[k] - Fqr[i][j - 1].f[k]) - dt / dz * (Fqz[i][j].f[k] - Fqz[i - 1][j].f[k]) + dt * sq[i][j].f[k];
+					Uq_bar[i][j].u[k] = Uq[i][j].u[k] - dtq / dr * (Fqr[i][j].f[k] - Fqr[i][j - 1].f[k]) - dtq / dz * (Fqz[i][j].f[k] - Fqz[i - 1][j].f[k]) + dtq * sq[i][j].f[k];
 				}
 			}
 			else if (btype[i][j] == 0)
@@ -1313,63 +1549,63 @@ void Q_fluid()
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dt / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dt / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dt * sq_bar[i][j].f[k]);
+					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dtq / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dtq / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dtq * sq_bar[i][j].f[k]);
 				}
 			}
 			else if (btype[i][j] == LEFT)//左侧边界
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dt / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dt / dz * (Fqz_bar[i + 1][j].f[k] - Fqz_bar[i][j].f[k]) + dt * sq_bar[i][j].f[k]);
+					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dtq / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dtq / dz * (Fqz_bar[i + 1][j].f[k] - Fqz_bar[i][j].f[k]) + dtq * sq_bar[i][j].f[k]);
 				}
 			}
 			else if (btype[i][j] == RIGHT)
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dt / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dt / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dt * sq_bar[i][j].f[k]);
+					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dtq / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dtq / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dtq * sq_bar[i][j].f[k]);
 				}
 			}
 			else if (btype[i][j] == UP)
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dt / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dt / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dt * sq_bar[i][j].f[k]);
+					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dtq / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dtq / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dtq * sq_bar[i][j].f[k]);
 				}
 			}
 			else if (btype[i][j] == DOWN)
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dt / dr * (Fqr_bar[i][j + 1].f[k] - Fqr_bar[i][j].f[k]) - dt / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dt * sq_bar[i][j].f[k]);
+					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dtq / dr * (Fqr_bar[i][j + 1].f[k] - Fqr_bar[i][j].f[k]) - dtq / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dtq * sq_bar[i][j].f[k]);
 				}
 			}
 			else if (btype[i][j] == (LEFT + UP))
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dt / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dt / dz * (Fqz_bar[i + 1][j].f[k] - Fqz_bar[i][j].f[k]) + dt * sq_bar[i][j].f[k]);
+					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dtq / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dtq / dz * (Fqz_bar[i + 1][j].f[k] - Fqz_bar[i][j].f[k]) + dtq * sq_bar[i][j].f[k]);
 				}
 			}
 			else if (btype[i][j] == (LEFT + DOWN))
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dt / dr * (Fqr_bar[i][j + 1].f[k] - Fqr_bar[i][j].f[k]) - dt / dz * (Fqz_bar[i + 1][j].f[k] - Fqz_bar[i][j].f[k]) + dt * sq_bar[i][j].f[k]);
+					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dtq / dr * (Fqr_bar[i][j + 1].f[k] - Fqr_bar[i][j].f[k]) - dtq / dz * (Fqz_bar[i + 1][j].f[k] - Fqz_bar[i][j].f[k]) + dtq * sq_bar[i][j].f[k]);
 				}
 			}
 			else if (btype[i][j] == (RIGHT + DOWN))
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dt / dr * (Fqr_bar[i][j + 1].f[k] - Fqr_bar[i][j].f[k]) - dt / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dt * sq_bar[i][j].f[k]);
+					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dtq / dr * (Fqr_bar[i][j + 1].f[k] - Fqr_bar[i][j].f[k]) - dtq / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dtq * sq_bar[i][j].f[k]);
 				}
 			}
 			else if (btype[i][j] == (RIGHT + UP))
 			{
 				for (k = 0; k < 13; k++)
 				{
-					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dt / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dt / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dt * sq_bar[i][j].f[k]);
+					Uq_bar2[i][j].u[k] = 0.5 * (Uq[i][j].u[k] + Uq_bar[i][j].u[k] - dtq / dr * (Fqr_bar[i][j].f[k] - Fqr_bar[i][j - 1].f[k]) - dtq / dz * (Fqz_bar[i][j].f[k] - Fqz_bar[i - 1][j].f[k]) + dtq * sq_bar[i][j].f[k]);
 				}
 			}
 			else if (btype[i][j] == 0)

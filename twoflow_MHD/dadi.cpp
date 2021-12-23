@@ -183,7 +183,7 @@ void init_solve()
 {
 	register int i, j, k;
 
-	del_t0 = 0.1 * ((dr * dr) + (dz * dz));
+	del_t0 = dtq;
 	for (i = 0; i < ZMAX; i++)
 	{
 		for (j = 0; j < RMAX; j++)

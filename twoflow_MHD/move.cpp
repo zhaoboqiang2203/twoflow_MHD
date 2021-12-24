@@ -82,7 +82,8 @@ void move()
 			//MPDT[i][j].ver = -QE * Er[i][j] / ME * dt;
 			//MPDT[i][j].vez = -QE * Ez[i][j] / ME * dt;
 
-			MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+			//电磁场加速之后电子流体动能密度
+			double pre_ee =  0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 
 			//if (MPDT[i][j].ver > 1.8e6)
 			//{
@@ -132,11 +133,6 @@ void move()
 			MPDT[i][j].vitheta = utheta_half;
 			MPDT[i][j].viz = uz_half + q_half * Ez[i][j];
 
-			//MPDT[i][j].vir = QE * Er[i][j] / MI * dt;
-			//MPDT[i][j].viz = QE * Ez[i][j] / MI * dt;
-
-			MPDT[i][j].ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz); 
-			//MPDT[i][j].pi = MPDT[i][j].ni * MPDT[i][j].ei;
 
 
 			double Q_ei = 1.4e-22;//电子离子碰撞截面
@@ -177,44 +173,35 @@ void move()
 			//	MPDT[i][j].viz += m_eiz / (MPDT[i][j].ni * MI);
 			//}
 
-			if (MPDT[i][j].ne != 0 && MPDT[i][j].ni != 0)
+			if (MPDT[i][j].ni != 0)
 			{
-				MPDT[i][j].ver = 0;
 				MPDT[i][j].vir += m_eir / (MPDT[i][j].ni * MI);
-				MPDT[i][j].vetheta = 0;
 				MPDT[i][j].vitheta += m_eitheta / (MPDT[i][j].ni * MI);
-				MPDT[i][j].vez = 0;
 				MPDT[i][j].viz += m_eiz / (MPDT[i][j].ni * MI);
 			}
 
+			MPDT[i][j].ver = MPDT[i][j].vir;
+			MPDT[i][j].vetheta = MPDT[i][j].vitheta;
+			MPDT[i][j].vez = MPDT[i][j].viz;
 
+			//离子速度和磁场夹角
+			MPDT[i][j].angle_b_vi = magnetic_vec_angle(app_Br[i][j], app_Bz[i][j], MPDT[i][j].vir, MPDT[i][j].viz);
 
+			//碰撞之后电子流体能量
+			double alter_ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 
-			//能量守恒验证
-			double pre_ee = MPDT[i][j].ee;
 			double pre_ei = MPDT[i][j].ei;
-			//MPDT[i][j].ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez) ;
+			double ev = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez) ;
 			MPDT[i][j].ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz) ;
 
-			double dee = pre_ee - MPDT[i][j].ee;
+			double dee = pre_ee - alter_ee;
 			double dei = MPDT[i][j].ei - pre_ei;
 
-			MPDT[i][j].pe = MPDT[i][j].ne * (pre_ee - dei);
-			MPDT[i][j].ee = pre_ee - dei;
+			MPDT[i][j].pe += MPDT[i][j].ne * ME * (pre_ee - alter_ee) * (gamma - 1);
+			MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne * ME) + 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 			MPDT[i][j].delta_ei = dei;
-			//MPDT[i][j].mu_ie = dei; // 看一下离子获得能量
-			//if (i == 200 && j == 11)
-			//{
-			//	printf("ss\n");
-			//}
-			//if (pre_eng - MPDT[i][j].ee - MPDT[i][j].ei < 1e-5)
-			//{
-			//	printf(" OK \n");
-			//}
-			//else 
-			//{
-			//	printf("pre_eng - MPDT[i][j].ee - MPDT[i][j].ei = %e\n", pre_eng - MPDT[i][j].ee - MPDT[i][j].ei);
-			//}
+			
+
 		}
 	}
 }
@@ -233,53 +220,52 @@ void move_q()
 			if ((ptype[i][j] & VACCUM_BOUNDARY) != 0) continue;
 			if (MPDT[i][j].neq == 0 || MPDT[i][j].peq == 0) continue;
 
-			//计算多余电子运动
-			q_half = -dtq * QE / ME / 2;
-			hrho = q_half * app_Br[i][j];
-			htheta = 0;
-			hz = q_half * app_Bz[i][j];
-			h2 = sqr(hrho) + sqr(hz);
+			//判断电子电荷和离子电荷是否分离
+			if (is_electron_ion_separation(MPDT[i][j].angle_b_vi) == true)
+			{
+				//计算多余电子运动
+				q_half = -dtq * QE / ME / 2;
+				hrho = q_half * app_Br[i][j];
+				htheta = 0;
+				hz = q_half * app_Bz[i][j];
+				h2 = sqr(hrho) + sqr(hz);
 
-			srho = 2 * hrho / (1 + h2);
-			stheta = 2 * htheta / (1 + h2);
-			sz = 2 * hz / (1 + h2);
-			urho = MPDT[i][j].vnqr + q_half * Er[i][j];
-			utheta = MPDT[i][j].vnqtheta;
-			uz = MPDT[i][j].vnqz + q_half * Ez[i][j];
-			urho_half = urho + (utheta * sz - uz * stheta) + ((uz * hrho - urho * hz) * sz - (urho * htheta - utheta * hrho) * stheta);
-			utheta_half = utheta + (uz * srho - urho * sz) + ((urho * htheta - utheta * hrho) * srho - (utheta * hz - uz * htheta) * sz);
-			uz_half = uz + (urho * stheta - utheta * srho) + ((utheta * hz - uz * htheta) * stheta - (uz * hrho - urho * hz) * srho);
-			MPDT[i][j].vnqr = urho_half + q_half * Er[i][j];
-			MPDT[i][j].vnqtheta = utheta_half;
-			MPDT[i][j].vnqz = uz_half + q_half * Ez[i][j];
+				srho = 2 * hrho / (1 + h2);
+				stheta = 2 * htheta / (1 + h2);
+				sz = 2 * hz / (1 + h2);
+				urho = MPDT[i][j].vnqr + q_half * Er[i][j];
+				utheta = MPDT[i][j].vnqtheta;
+				uz = MPDT[i][j].vnqz + q_half * Ez[i][j];
+				urho_half = urho + (utheta * sz - uz * stheta) + ((uz * hrho - urho * hz) * sz - (urho * htheta - utheta * hrho) * stheta);
+				utheta_half = utheta + (uz * srho - urho * sz) + ((urho * htheta - utheta * hrho) * srho - (utheta * hz - uz * htheta) * sz);
+				uz_half = uz + (urho * stheta - utheta * srho) + ((utheta * hz - uz * htheta) * stheta - (uz * hrho - urho * hz) * srho);
+				MPDT[i][j].vnqr = urho_half + q_half * Er[i][j];
+				MPDT[i][j].vnqtheta = utheta_half;
+				MPDT[i][j].vnqz = uz_half + q_half * Ez[i][j];
 
-			if (MPDT[i][j].vnqr > max_q_speed)
-			{
-				MPDT[i][j].vnqr = max_q_speed;
-			}
-			else if (MPDT[i][j].vnqr < -max_q_speed)
-			{
-				MPDT[i][j].vnqr = -max_q_speed;
-			}
-			
-			if (MPDT[i][j].vnqtheta > max_q_speed)
-			{
-				MPDT[i][j].vnqtheta = max_q_speed;
-			}
-			else if (MPDT[i][j].vnqtheta < -max_q_speed)
-			{
-				MPDT[i][j].vnqtheta = -max_q_speed;
-			}
+				urho = MPDT[i][j].vnqr;
+				utheta = MPDT[i][j].vnqtheta;
+				uz = MPDT[i][j].vnqz;
 
-			if (MPDT[i][j].vnqz > max_q_speed)
-			{
-				MPDT[i][j].vnqz = max_q_speed;
-			}
-			else if (MPDT[i][j].vnqz < -max_q_speed)
-			{
-				MPDT[i][j].vnqz = -max_q_speed;
-			}
 
+				if (is_large_max_speed(urho, utheta, uz, max_q_speed) == true)
+				{
+					double tu = sqrt(sqr(urho) + sqr(utheta) + sqr(uz));
+					MPDT[i][j].vnqr = urho / tu * max_q_speed;
+					MPDT[i][j].vnqtheta = utheta / tu * max_q_speed;
+					MPDT[i][j].vnqz = uz / tu * max_q_speed;
+				}
+			}
+			else
+			{
+				if (is_large_max_speed(MPDT[i][j].vir, MPDT[i][j].vitheta, MPDT[i][j].viz, max_q_speed) == true)
+				{
+					double tu = sqrt(sqr(MPDT[i][j].vir) + sqr(MPDT[i][j].vitheta) + sqr(MPDT[i][j].viz));
+					MPDT[i][j].vnqr = MPDT[i][j].vir / tu * max_q_speed;
+					MPDT[i][j].vnqtheta = MPDT[i][j].vitheta / tu * max_q_speed;
+					MPDT[i][j].vnqz = MPDT[i][j].viz / tu * max_q_speed;
+				}
+			}
 
 			q_half = dtq * QE / ME / 2;
 			hrho = q_half * app_Br[i][j];
@@ -301,32 +287,18 @@ void move_q()
 			MPDT[i][j].vpqz = uz_half + q_half * Ez[i][j];
 
 			
-			if (MPDT[i][j].vpqr > max_q_speed)
-			{
-				MPDT[i][j].vpqr = max_q_speed;
-			}
-			else if (MPDT[i][j].vpqr < -max_q_speed)
-			{
-				MPDT[i][j].vpqr = -max_q_speed;
-			}
+			urho = MPDT[i][j].vpqr;
+			utheta = MPDT[i][j].vpqtheta;
+			uz = MPDT[i][j].vpqz;
 
-			if (MPDT[i][j].vpqtheta > max_q_speed)
+			if (is_large_max_speed(urho, utheta, uz, max_q_speed) == true)
 			{
-				MPDT[i][j].vpqtheta = max_q_speed;
+				double tu = sqrt(sqr(urho) + sqr(utheta) + sqr(uz));
+				MPDT[i][j].vpqr = urho / tu * max_q_speed;
+				MPDT[i][j].vpqtheta = utheta / tu * max_q_speed;
+				MPDT[i][j].vpqz = uz / tu * max_q_speed;
 			}
-			else if (MPDT[i][j].vpqtheta < -max_q_speed)
-			{
-				MPDT[i][j].vpqtheta = -max_q_speed;
-			}
-
-			if (MPDT[i][j].vpqz > max_q_speed)
-			{
-				MPDT[i][j].vpqz = max_q_speed;
-			}
-			else if (MPDT[i][j].vpqz < -max_q_speed)
-			{
-				MPDT[i][j].vpqz = -max_q_speed;
-			}
+			
 		}
 	}
 }
@@ -340,4 +312,21 @@ void plasma_para()
 void collision()
 {
 	
+}
+
+double  magnetic_vec_angle(double var,double vaz,double vbr,double vbz)
+{
+	double tmp = (var * vbr + vaz * vbz) / (sqrt(sqr(var) + sqr(vaz)) * sqrt(sqr(vbr) + sqr(vbz)));
+	return acos(tmp) * 180 / PI;
+}
+
+bool is_electron_ion_separation(double angle)
+{
+	
+	return angle > 10;
+}
+
+bool is_large_max_speed(double ur, double utheta, double uz, double max_speed)
+{
+	return sqr(ur) + sqr(utheta) + sqr(uz) > sqr(max_speed);
 }

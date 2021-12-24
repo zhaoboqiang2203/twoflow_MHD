@@ -114,6 +114,8 @@ struct  node
 	double vpqr;
 	double vpqz;
 	double vpqtheta;
+
+	double angle_b_vi;
 	
 	int f_left;
 	int f_right;
@@ -191,8 +193,15 @@ extern double inter_e_den;
 extern double inter_pla_den;
 extern double max_phi;
 extern double set_phi;
+
+/// <summary>
+/// move.cpp º¯ÊýÉùÃ÷
+/// </summary>
 void move();
 void move_q();
+double  magnetic_vec_angle(double var, double vaz, double vbr, double vbz);
+bool is_electron_ion_separation();
+bool is_large_max_speed(double ur, double utheta, double uz, double max_speed);
 
 int solveGS();
 void test_sor_code();

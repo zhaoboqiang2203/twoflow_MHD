@@ -67,7 +67,7 @@ int initial()
 	boundary_array[3].bnd_dir = Z_DIR;
 	boundary_array[3].boundary_type = UP;
 
-	boundary_array[4].physics_type = INLET;
+	boundary_array[4].physics_type = DIELECTRIC_SURFACE_BOUNDARY;
 	boundary_array[4].start.r = 6.4 * scale;
 	boundary_array[4].start.z = 0 * scale;
 	boundary_array[4].end.r = 57.4 * scale;

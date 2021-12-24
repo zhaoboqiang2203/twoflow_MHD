@@ -433,6 +433,17 @@ void output()
 
 	sprintf_s(fname, (".\\output\\neq\\neq_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			res_out[i][j] = MPDT[i][j].angle_b_vi;
+		}
+	}
+
+	sprintf_s(fname, (".\\output\\angle\\angle_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 }
 
 void out_judge()

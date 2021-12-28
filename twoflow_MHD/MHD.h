@@ -104,6 +104,7 @@ struct  node
 	double mu_ie;       /*电子离子碰撞频率*/
 	double delta_ei;    /*电子向离子转移能量*/
 	double sigma_Q;     /*电子离子碰撞截面*/
+	double tau_ei;      /*电子离子弛豫时间*/
 
 	double neq;       /*发射电子密度*/
 	double vnqr;
@@ -200,7 +201,7 @@ extern double set_phi;
 void move();
 void move_q();
 double  magnetic_vec_angle(double var, double vaz, double vbr, double vbz);
-bool is_electron_ion_separation();
+bool is_electron_ion_separation(double angle);
 bool is_large_max_speed(double ur, double utheta, double uz, double max_speed);
 
 int solveGS();

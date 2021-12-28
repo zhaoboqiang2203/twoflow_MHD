@@ -96,8 +96,8 @@ int main()
 		move();
 		mag_phi();
 
-		out_judge();
-		if (index % 100 == 0)
+		//out_judge();
+		//if (index % 100 == 0)
 			//if(index < 36000)
 		{
 			output();

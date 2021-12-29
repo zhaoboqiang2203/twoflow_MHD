@@ -203,6 +203,8 @@ void move_q();
 double  magnetic_vec_angle(double var, double vaz, double vbr, double vbz);
 bool is_electron_ion_separation(double angle);
 bool is_large_max_speed(double ur, double utheta, double uz, double max_speed);
+void ionization_collisions(int i, int j);
+void coulomb_collision(int i, int j);
 
 int solveGS();
 void test_sor_code();

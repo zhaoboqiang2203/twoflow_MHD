@@ -61,11 +61,11 @@ int main()
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
 	dtheta = PI / 180;
-	dt = dr / 1e6 / 3;
+	dt = dr / 1e7 / 3;
 	dtq = 100 * dt;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
-	inter_e_den = 750 * dt / QE / 360 / 50 * 1e9 ;
+	inter_e_den = 750 * dt / QE / 360 / 7 * 1e9 ;
 	inter_pla_den = 0.04 * dt / 40 * NA / 360 / 20 * 1e9;
 
 
@@ -74,6 +74,8 @@ int main()
 	printf("inter_e_den = %e\n", inter_e_den);
 	printf("inter_pla_den = %e\n", inter_pla_den);
 
+	//printf("%lf\n", 1 - exp(-1e19 * 100 * 1e-20 * dt));
+	//exit(0);
 	initial();
 	magnetic_field_initial();
 	//dadi initial
@@ -96,8 +98,8 @@ int main()
 		move();
 		mag_phi();
 
-		//out_judge();
-		//if (index % 100 == 0)
+		out_judge();
+		if (index % 100 == 0)
 			//if(index < 36000)
 		{
 			output();

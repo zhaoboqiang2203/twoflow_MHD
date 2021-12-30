@@ -141,38 +141,38 @@ int initial()
 			{
 				btype[i][j] = 110;
 			}
-			else if (btype[i][j] == (LEFT + UP) && (i != 0 && j != (RMAX - 1)))
-			{
-				btype[i][j] = 1;
-			}
-			else if (btype[i][j] == (LEFT + DOWN) && (i != 0 && j != 0))
-			{
-				btype[i][j] = 1;
-			}
-			else if (btype[i][j] == (RIGHT + DOWN) && (i != (ZMAX - 1) && j != 0))
-			{
-				btype[i][j] = 1;
-			}
-			else if (btype[i][j] == (RIGHT + UP) && (i != (ZMAX - 1) && j != (RMAX - 1)))
-			{
-				btype[i][j] = 1;
-			}
-			else if (btype[i][j] == (LEFT + LEFT))
-			{
-				btype[i][j] = LEFT;
-			}
-			else if (btype[i][j] == (DOWN + DOWN))
-			{
-				btype[i][j] = DOWN;
-			}
-			else if (btype[i][j] == (RIGHT + RIGHT))
-			{
-				btype[i][j] = RIGHT;
-			}
-			else if (btype[i][j] == (UP + UP))
-			{
-				btype[i][j] = UP;
-			}
+			//else if (btype[i][j] == (LEFT + UP) && (i != 0 && j != (RMAX - 1)))
+			//{
+			//	btype[i][j] = 1;
+			//}
+			//else if (btype[i][j] == (LEFT + DOWN) && (i != 0 && j != 0))
+			//{
+			//	btype[i][j] = 1;
+			//}
+			//else if (btype[i][j] == (RIGHT + DOWN) && (i != (ZMAX - 1) && j != 0))
+			//{
+			//	btype[i][j] = 1;
+			//}
+			//else if (btype[i][j] == (RIGHT + UP) && (i != (ZMAX - 1) && j != (RMAX - 1)))
+			//{
+			//	btype[i][j] = 1;
+			//}
+			//else if (btype[i][j] == (LEFT + LEFT))
+			//{
+			//	btype[i][j] = LEFT;
+			//}
+			//else if (btype[i][j] == (DOWN + DOWN))
+			//{
+			//	btype[i][j] = DOWN;
+			//}
+			//else if (btype[i][j] == (RIGHT + RIGHT))
+			//{
+			//	btype[i][j] = RIGHT;
+			//}
+			//else if (btype[i][j] == (UP + UP))
+			//{
+			//	btype[i][j] = UP;
+			//}
 
 		}
 	}
@@ -1028,10 +1028,10 @@ int judge_conner(int i,int j)
 	{
 		return RIGHT + DOWN;
 	}
-	else if (state == 0)
-	{
-		return 1;
-	}
+	//else if (state == 0)
+	//{
+	//	return 1;
+	//}
 	else
 	{
 		printf("boundary condition error %d %d %d\n",state,i,j);

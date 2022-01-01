@@ -1,7 +1,7 @@
 ﻿#include "fluid.h"
 using namespace std;
 
-int row = 106, col = 2;
+int row = 386, col = 1;
 
 void electron_flow()
 {
@@ -39,21 +39,21 @@ void electron_flow()
 #ifdef FLUID_DEBUG
 				if (i == row && j == col)
 				{
-					printf("U[i][j].u1 = %.5e\n", U[i][j].u1);
-					printf("Fr[i][j + 1].f1 = %.5e\n", Fr[i][j + 1].f1);
-					printf("Fr[i][j].f1 = %.5e\n", Fr[i][j].f1);
-					printf("Fz[i + 1][j].f1 = %.5e\n", Fz[i + 1][j].f1);
-					printf("Fz[i][j].f1 = %.5e\n", Fz[i][j].f1);
-					printf("s[i][j].f1 = %.5e\n", s[i][j].f1);
-					printf("U_bar[i][j].u1 = %.5e\n", U_bar[i][j].u1);
+					printf("U[i][j].u1 = %.5e\n", U[i][j].u[0]);
+					printf("Fr[i][j + 1].f1 = %.5e\n", Fr[i][j + 1].f[0]);
+					printf("Fr[i][j].f1 = %.5e\n", Fr[i][j].f[0]);
+					printf("Fz[i + 1][j].f1 = %.5e\n", Fz[i + 1][j].f[0]);
+					printf("Fz[i][j].f1 = %.5e\n", Fz[i][j].f[0]);
+					printf("s[i][j].f1 = %.5e\n", s[i][j].f[0]);
+					printf("U_bar[i][j].u1 = %.5e\n", U_bar[i][j].u[0]);
 
-					printf("U[i][j].u3 = %.5e\n", U[i][j].u3);
-					printf("Fr[i][j + 1].f3 = %.5e\n", Fr[i][j + 1].f3);
-					printf("Fr[i][j].f3 = %.5e\n", Fr[i][j].f3);
-					printf("Fz[i + 1][j].f3 = %.5e\n", Fz[i + 1][j].f3);
-					printf("Fz[i][j].f3 = %.5e\n", Fz[i][j].f3);
-					printf("s[i][j].f3 = %.5e\n", s[i][j].f3);
-					printf("U_bar[i][j].u3 = %.5e\n", U_bar[i][j].u3);
+					printf("U[i][j].u3 = %.5e\n", U[i][j].u[2]);
+					printf("Fr[i][j + 1].f3 = %.5e\n", Fr[i][j + 1].f[2]);
+					printf("Fr[i][j].f3 = %.5e\n", Fr[i][j].f[2]);
+					printf("Fz[i + 1][j].f3 = %.5e\n", Fz[i + 1][j].f[2]);
+					printf("Fz[i][j].f3 = %.5e\n", Fz[i][j].f[2]);
+					printf("s[i][j].f3 = %.5e\n", s[i][j].f[2]);
+					printf("U_bar[i][j].u3 = %.5e\n", U_bar[i][j].u[2]);
 			}
 #endif// FLUID_DEBUG
 		}
@@ -148,12 +148,12 @@ void electron_flow()
 					printf("s_bar[i][j].f[0] = %.5e\n", s_bar[i][j].f[0]);
 					printf("U_bar2[i][j].u[0] = %.5e\n", U_bar2[i][j].u[0]);
 
-					printf("Fr_bar[i][j].f3 = %.5e\n", Fr_bar[i][j].f3);
-					printf("Fr_bar[i][j - 1].f3 = %.5e\n", Fr_bar[i][j - 1].f3);
-					printf("Fz_bar[i][j].f3 = %.5e\n", Fz_bar[i][j].f3);
-					printf("Fz_bar[i - 1][j].f3 = %.5e\n", Fz_bar[i - 1][j].f3);
-					printf("s_bar[i][j].f3 = %.5e\n", s_bar[i][j].f3);
-					printf("U_bar2[i][j].u3 = %.5e\n", U_bar2[i][j].u3);
+					printf("Fr_bar[i][j].f3 = %.5e\n", Fr_bar[i][j].f[2]);
+					printf("Fr_bar[i][j - 1].f3 = %.5e\n", Fr_bar[i][j - 1].f[2]);
+					printf("Fz_bar[i][j].f3 = %.5e\n", Fz_bar[i][j].f[2]);
+					printf("Fz_bar[i - 1][j].f3 = %.5e\n", Fz_bar[i - 1][j].f[2]);
+					printf("s_bar[i][j].f3 = %.5e\n", s_bar[i][j].f[2]);
+					printf("U_bar2[i][j].u3 = %.5e\n", U_bar2[i][j].u[2]);
 
 				}
 #endif// FLUID_DEBUG				
@@ -255,17 +255,17 @@ void electron_flow()
 				if (i == row && j == col)
 				{
 					//cout << "final U[i][j].u1 = " << U[i][j].u1 << endl;
-					printf("final U[i][j].u1 = %.5e\n", U[i][j].u1);
-					printf("U_bar2[i][j + 1].u1 = %.5e\n", U_bar2[i][j + 1].u1);
-					printf("U_bar2[i][j - 1].u1 = %.5e\n", U_bar2[i][j - 1].u1);
-					printf("U_bar2[i + 1][j].u1 = %.5e\n", U_bar2[i + 1][j].u1);
-					printf("U_bar2[i - 1][j].u1 = %.5e\n", U_bar2[i - 1][j].u1);
+					printf("final U[i][j].u1 = %.5e\n", U[i][j].u[0]);
+					printf("U_bar2[i][j + 1].u1 = %.5e\n", U_bar2[i][j + 1].u[0]);
+					printf("U_bar2[i][j - 1].u1 = %.5e\n", U_bar2[i][j - 1].u[0]);
+					printf("U_bar2[i + 1][j].u1 = %.5e\n", U_bar2[i + 1][j].u[0]);
+					printf("U_bar2[i - 1][j].u1 = %.5e\n", U_bar2[i - 1][j].u[0]);
 
-					printf("final U[i][j].u3 = %.5e\n", U[i][j].u3);
-					printf("U_bar2[i][j + 1].u3 = %.5e\n", U_bar2[i][j + 1].u3);
-					printf("U_bar2[i][j - 1].u3 = %.5e\n", U_bar2[i][j - 1].u3);
-					printf("U_bar2[i + 1][j].u3 = %.5e\n", U_bar2[i + 1][j].u3);
-					printf("U_bar2[i - 1][j].u3 = %.5e\n", U_bar2[i - 1][j].u3);
+					printf("final U[i][j].u3 = %.5e\n", U[i][j].u[2]);
+					printf("U_bar2[i][j + 1].u3 = %.5e\n", U_bar2[i][j + 1].u[2]);
+					printf("U_bar2[i][j - 1].u3 = %.5e\n", U_bar2[i][j - 1].u[2]);
+					printf("U_bar2[i + 1][j].u3 = %.5e\n", U_bar2[i + 1][j].u[2]);
+					printf("U_bar2[i - 1][j].u3 = %.5e\n", U_bar2[i - 1][j].u[2]);
 
 				}
 #endif// FLUID_DEBUG	
@@ -435,7 +435,7 @@ void electron_flow()
 		}
 	}
 
-
+	smooth_ne(i, j);
 	return;
 }
 
@@ -475,21 +475,21 @@ void electron_flow_v2()
 #ifdef FLUID_DEBUG
 				if (i == row && j == col)
 				{
-					printf("U[i][j].u1 = %.5e\n", U[i][j].u1);
-					printf("Fr[i][j + 1].f1 = %.5e\n", Fr[i][j + 1].f1);
-					printf("Fr[i][j].f1 = %.5e\n", Fr[i][j].f1);
-					printf("Fz[i + 1][j].f1 = %.5e\n", Fz[i + 1][j].f1);
-					printf("Fz[i][j].f1 = %.5e\n", Fz[i][j].f1);
-					printf("s[i][j].f1 = %.5e\n", s[i][j].f1);
-					printf("U_bar[i][j].u1 = %.5e\n", U_bar[i][j].u1);
+					printf("U[i][j].u1 = %.5e\n", U[i][j].u[0]);
+					printf("Fr[i][j + 1].f1 = %.5e\n", Fr[i][j + 1].f[0]);
+					printf("Fr[i][j].f1 = %.5e\n", Fr[i][j].f[0]);
+					printf("Fz[i + 1][j].f1 = %.5e\n", Fz[i + 1][j].f[0]);
+					printf("Fz[i][j].f1 = %.5e\n", Fz[i][j].f[0]);
+					printf("s[i][j].f1 = %.5e\n", s[i][j].f[0]);
+					printf("U_bar[i][j].u1 = %.5e\n", U_bar[i][j].u[0]);
 
-					printf("U[i][j].u3 = %.5e\n", U[i][j].u3);
-					printf("Fr[i][j + 1].f3 = %.5e\n", Fr[i][j + 1].f3);
-					printf("Fr[i][j].f3 = %.5e\n", Fr[i][j].f3);
-					printf("Fz[i + 1][j].f3 = %.5e\n", Fz[i + 1][j].f3);
-					printf("Fz[i][j].f3 = %.5e\n", Fz[i][j].f3);
-					printf("s[i][j].f3 = %.5e\n", s[i][j].f3);
-					printf("U_bar[i][j].u3 = %.5e\n", U_bar[i][j].u3);
+					printf("U[i][j].u3 = %.5e\n", U[i][j].u[2]);
+					printf("Fr[i][j + 1].f3 = %.5e\n", Fr[i][j + 1].f[2]);
+					printf("Fr[i][j].f3 = %.5e\n", Fr[i][j].f[2]);
+					printf("Fz[i + 1][j].f3 = %.5e\n", Fz[i + 1][j].f[2]);
+					printf("Fz[i][j].f3 = %.5e\n", Fz[i][j].f[2]);
+					printf("s[i][j].f3 = %.5e\n", s[i][j].f[2]);
+					printf("U_bar[i][j].u3 = %.5e\n", U_bar[i][j].u[2]);
 				}
 #endif// FLUID_DEBUG
 			}
@@ -543,12 +543,12 @@ void electron_flow_v2()
 					printf("s_bar[i][j].f[0] = %.5e\n", s_bar[i][j].f[0]);
 					printf("U_bar2[i][j].u[0] = %.5e\n", U_bar2[i][j].u[0]);
 
-					printf("Fr_bar[i][j].f3 = %.5e\n", Fr_bar[i][j].f3);
-					printf("Fr_bar[i][j - 1].f3 = %.5e\n", Fr_bar[i][j - 1].f3);
-					printf("Fz_bar[i][j].f3 = %.5e\n", Fz_bar[i][j].f3);
-					printf("Fz_bar[i - 1][j].f3 = %.5e\n", Fz_bar[i - 1][j].f3);
-					printf("s_bar[i][j].f3 = %.5e\n", s_bar[i][j].f3);
-					printf("U_bar2[i][j].u3 = %.5e\n", U_bar2[i][j].u3);
+					printf("Fr_bar[i][j].f3 = %.5e\n", Fr_bar[i][j].f[2]);
+					printf("Fr_bar[i][j - 1].f3 = %.5e\n", Fr_bar[i][j - 1].f[2]);
+					printf("Fz_bar[i][j].f3 = %.5e\n", Fz_bar[i][j].f[2]);
+					printf("Fz_bar[i - 1][j].f3 = %.5e\n", Fz_bar[i - 1][j].f[2]);
+					printf("s_bar[i][j].f3 = %.5e\n", s_bar[i][j].f[2]);
+					printf("U_bar2[i][j].u3 = %.5e\n", U_bar2[i][j].u[2]);
 
 				}
 #endif// FLUID_DEBUG				
@@ -609,17 +609,17 @@ void electron_flow_v2()
 				if (i == row && j == col)
 				{
 					//cout << "final U[i][j].u1 = " << U[i][j].u1 << endl;
-					printf("final U[i][j].u1 = %.5e\n", U[i][j].u1);
-					printf("U_bar2[i][j + 1].u1 = %.5e\n", U_bar2[i][j + 1].u1);
-					printf("U_bar2[i][j - 1].u1 = %.5e\n", U_bar2[i][j - 1].u1);
-					printf("U_bar2[i + 1][j].u1 = %.5e\n", U_bar2[i + 1][j].u1);
-					printf("U_bar2[i - 1][j].u1 = %.5e\n", U_bar2[i - 1][j].u1);
+					printf("final U[i][j].u1 = %.5e\n", U[i][j].u[0]);
+					printf("U_bar2[i][j + 1].u1 = %.5e\n", U_bar2[i][j + 1].u[0]);
+					printf("U_bar2[i][j - 1].u1 = %.5e\n", U_bar2[i][j - 1].u[0]);
+					printf("U_bar2[i + 1][j].u1 = %.5e\n", U_bar2[i + 1][j].u[0]);
+					printf("U_bar2[i - 1][j].u1 = %.5e\n", U_bar2[i - 1][j].u[0]);
 
-					printf("final U[i][j].u3 = %.5e\n", U[i][j].u3);
-					printf("U_bar2[i][j + 1].u3 = %.5e\n", U_bar2[i][j + 1].u3);
-					printf("U_bar2[i][j - 1].u3 = %.5e\n", U_bar2[i][j - 1].u3);
-					printf("U_bar2[i + 1][j].u3 = %.5e\n", U_bar2[i + 1][j].u3);
-					printf("U_bar2[i - 1][j].u3 = %.5e\n", U_bar2[i - 1][j].u3);
+					printf("final U[i][j].u3 = %.5e\n", U[i][j].u[2]);
+					printf("U_bar2[i][j + 1].u3 = %.5e\n", U_bar2[i][j + 1].u[2]);
+					printf("U_bar2[i][j - 1].u3 = %.5e\n", U_bar2[i][j - 1].u[2]);
+					printf("U_bar2[i + 1][j].u3 = %.5e\n", U_bar2[i + 1][j].u[2]);
+					printf("U_bar2[i - 1][j].u3 = %.5e\n", U_bar2[i - 1][j].u[2]);
 
 				}
 #endif// FLUID_DEBUG	
@@ -703,12 +703,13 @@ void electron_flow_v2()
 			MPDT[i][j].pe = U[i][j].u[11];
 			MPDT[i][j].pi = U[i][j].u[12];
 
-			MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) + 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-			MPDT[i][j].ei = MPDT[i][j].pi / (gamma - 1) + 0.5 * MPDT[i][j].ni * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
+			//MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) + 0.5 * MPDT[i][j].ne * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+			//MPDT[i][j].ei = MPDT[i][j].pi / (gamma - 1) + 0.5 * MPDT[i][j].ni * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
 
 		}
 	}
 
+	//smooth_ne(i, j);
 
 	return;
 }
@@ -751,21 +752,21 @@ void ion_flow()
 #ifdef FLUID_DEBUG
 				if (i == row && j == col)
 				{
-					printf("U[i][j].u1 = %.5e\n", U[i][j].u1);
-					printf("Fr[i][j + 1].f1 = %.5e\n", Fr[i][j + 1].f1);
-					printf("Fr[i][j].f1 = %.5e\n", Fr[i][j].f1);
-					printf("Fz[i + 1][j].f1 = %.5e\n", Fz[i + 1][j].f1);
-					printf("Fz[i][j].f1 = %.5e\n", Fz[i][j].f1);
-					printf("s[i][j].f1 = %.5e\n", s[i][j].f1);
-					printf("U_bar[i][j].u1 = %.5e\n", U_bar[i][j].u1);
+					printf("U[i][j].u1 = %.5e\n", U[i][j].u[0]);
+					printf("Fr[i][j + 1].f1 = %.5e\n", Fr[i][j + 1].f[0]);
+					printf("Fr[i][j].f1 = %.5e\n", Fr[i][j].f[0]);
+					printf("Fz[i + 1][j].f1 = %.5e\n", Fz[i + 1][j].f[0]);
+					printf("Fz[i][j].f1 = %.5e\n", Fz[i][j].f[0]);
+					printf("s[i][j].f1 = %.5e\n", s[i][j].f[0]);
+					printf("U_bar[i][j].u1 = %.5e\n", U_bar[i][j].u[0]);
 
-					printf("U[i][j].u3 = %.5e\n", U[i][j].u3);
-					printf("Fr[i][j + 1].f3 = %.5e\n", Fr[i][j + 1].f3);
-					printf("Fr[i][j].f3 = %.5e\n", Fr[i][j].f3);
-					printf("Fz[i + 1][j].f3 = %.5e\n", Fz[i + 1][j].f3);
-					printf("Fz[i][j].f3 = %.5e\n", Fz[i][j].f3);
-					printf("s[i][j].f3 = %.5e\n", s[i][j].f3);
-					printf("U_bar[i][j].u3 = %.5e\n", U_bar[i][j].u3);
+					printf("U[i][j].u3 = %.5e\n", U[i][j].u[2]);
+					printf("Fr[i][j + 1].f3 = %.5e\n", Fr[i][j + 1].f[2]);
+					printf("Fr[i][j].f3 = %.5e\n", Fr[i][j].f[2]);
+					printf("Fz[i + 1][j].f3 = %.5e\n", Fz[i + 1][j].f[2]);
+					printf("Fz[i][j].f3 = %.5e\n", Fz[i][j].f[2]);
+					printf("s[i][j].f3 = %.5e\n", s[i][j].f[2]);
+					printf("U_bar[i][j].u3 = %.5e\n", U_bar[i][j].u[2]);
 				}
 #endif// FLUID_DEBUG
 			}
@@ -860,12 +861,12 @@ void ion_flow()
 					printf("s_bar[i][j].f[0] = %.5e\n", s_bar[i][j].f[0]);
 					printf("U_bar2[i][j].u[0] = %.5e\n", U_bar2[i][j].u[0]);
 
-					printf("Fr_bar[i][j].f3 = %.5e\n", Fr_bar[i][j].f3);
-					printf("Fr_bar[i][j - 1].f3 = %.5e\n", Fr_bar[i][j - 1].f3);
-					printf("Fz_bar[i][j].f3 = %.5e\n", Fz_bar[i][j].f3);
-					printf("Fz_bar[i - 1][j].f3 = %.5e\n", Fz_bar[i - 1][j].f3);
-					printf("s_bar[i][j].f3 = %.5e\n", s_bar[i][j].f3);
-					printf("U_bar2[i][j].u3 = %.5e\n", U_bar2[i][j].u3);
+					printf("Fr_bar[i][j].f3 = %.5e\n", Fr_bar[i][j].f[2]);
+					printf("Fr_bar[i][j - 1].f3 = %.5e\n", Fr_bar[i][j - 1].f[2]);
+					printf("Fz_bar[i][j].f3 = %.5e\n", Fz_bar[i][j].f[2]);
+					printf("Fz_bar[i - 1][j].f3 = %.5e\n", Fz_bar[i - 1][j].f[2]);
+					printf("s_bar[i][j].f3 = %.5e\n", s_bar[i][j].f[2]);
+					printf("U_bar2[i][j].u3 = %.5e\n", U_bar2[i][j].u[2]);
 
 				}
 #endif// FLUID_DEBUG				
@@ -967,17 +968,17 @@ void ion_flow()
 				if (i == row && j == col)
 				{
 					//cout << "final U[i][j].u1 = " << U[i][j].u1 << endl;
-					printf("final U[i][j].u1 = %.5e\n", U[i][j].u1);
-					printf("U_bar2[i][j + 1].u1 = %.5e\n", U_bar2[i][j + 1].u1);
-					printf("U_bar2[i][j - 1].u1 = %.5e\n", U_bar2[i][j - 1].u1);
-					printf("U_bar2[i + 1][j].u1 = %.5e\n", U_bar2[i + 1][j].u1);
-					printf("U_bar2[i - 1][j].u1 = %.5e\n", U_bar2[i - 1][j].u1);
+					printf("final U[i][j].u1 = %.5e\n", U[i][j].u[0]);
+					printf("U_bar2[i][j + 1].u1 = %.5e\n", U_bar2[i][j + 1].u[0]);
+					printf("U_bar2[i][j - 1].u1 = %.5e\n", U_bar2[i][j - 1].u[0]);
+					printf("U_bar2[i + 1][j].u1 = %.5e\n", U_bar2[i + 1][j].u[0]);
+					printf("U_bar2[i - 1][j].u1 = %.5e\n", U_bar2[i - 1][j].u[0]);
 
-					printf("final U[i][j].u3 = %.5e\n", U[i][j].u3);
-					printf("U_bar2[i][j + 1].u3 = %.5e\n", U_bar2[i][j + 1].u3);
-					printf("U_bar2[i][j - 1].u3 = %.5e\n", U_bar2[i][j - 1].u3);
-					printf("U_bar2[i + 1][j].u3 = %.5e\n", U_bar2[i + 1][j].u3);
-					printf("U_bar2[i - 1][j].u3 = %.5e\n", U_bar2[i - 1][j].u3);
+					printf("final U[i][j].u3 = %.5e\n", U[i][j].u[2]);
+					printf("U_bar2[i][j + 1].u3 = %.5e\n", U_bar2[i][j + 1].u[2]);
+					printf("U_bar2[i][j - 1].u3 = %.5e\n", U_bar2[i][j - 1].u[2]);
+					printf("U_bar2[i + 1][j].u3 = %.5e\n", U_bar2[i + 1][j].u[2]);
+					printf("U_bar2[i - 1][j].u3 = %.5e\n", U_bar2[i - 1][j].u[2]);
 
 				}
 #endif// FLUID_DEBUG	
@@ -1104,14 +1105,11 @@ void ion_flow()
 	{
 		for (j = 0; j < nr; j++)
 		{
-			//if (U[i][j].u[0] > 0)
-			//{
-			//	MPDT[i][j].ne = U[i][j].u[0];
-			//}
-			//else
-			//{
-			//	MPDT[i][j].ne = 0;
-			//}
+			if (U[i][j].u[0] < 0)
+			{
+				printf("fluid i = %d j = %d\n", i, j);
+			}
+
 
 			//if (U[i][j].u2 > 0)
 			//{
@@ -1146,6 +1144,8 @@ void ion_flow()
 
 		}
 	}
+
+	smooth_ne(i, j);
 	return;
 }
 
@@ -1683,17 +1683,17 @@ void Q_fluid()
 				if (i == row && j == col)
 				{
 					//cout << "final U[i][j].u1 = " << U[i][j].u1 << endl;
-					printf("final U[i][j].u1 = %.5e\n", U[i][j].u1);
-					printf("U_bar2[i][j + 1].u1 = %.5e\n", U_bar2[i][j + 1].u1);
-					printf("U_bar2[i][j - 1].u1 = %.5e\n", U_bar2[i][j - 1].u1);
-					printf("U_bar2[i + 1][j].u1 = %.5e\n", U_bar2[i + 1][j].u1);
-					printf("U_bar2[i - 1][j].u1 = %.5e\n", U_bar2[i - 1][j].u1);
+					printf("final U[i][j].u1 = %.5e\n", U[i][j].u[0]);
+					printf("U_bar2[i][j + 1].u1 = %.5e\n", U_bar2[i][j + 1].u[0]);
+					printf("U_bar2[i][j - 1].u1 = %.5e\n", U_bar2[i][j - 1].u[0]);
+					printf("U_bar2[i + 1][j].u1 = %.5e\n", U_bar2[i + 1][j].u[0]);
+					printf("U_bar2[i - 1][j].u1 = %.5e\n", U_bar2[i - 1][j].u[0]);
 
-					printf("final U[i][j].u3 = %.5e\n", U[i][j].u3);
-					printf("U_bar2[i][j + 1].u3 = %.5e\n", U_bar2[i][j + 1].u3);
-					printf("U_bar2[i][j - 1].u3 = %.5e\n", U_bar2[i][j - 1].u3);
-					printf("U_bar2[i + 1][j].u3 = %.5e\n", U_bar2[i + 1][j].u3);
-					printf("U_bar2[i - 1][j].u3 = %.5e\n", U_bar2[i - 1][j].u3);
+					printf("final U[i][j].u3 = %.5e\n", U[i][j].u[2]);
+					printf("U_bar2[i][j + 1].u3 = %.5e\n", U_bar2[i][j + 1].u[2]);
+					printf("U_bar2[i][j - 1].u3 = %.5e\n", U_bar2[i][j - 1].u[2]);
+					printf("U_bar2[i + 1][j].u3 = %.5e\n", U_bar2[i + 1][j].u[2]);
+					printf("U_bar2[i - 1][j].u3 = %.5e\n", U_bar2[i - 1][j].u[2]);
 
 				}
 #endif// FLUID_DEBUG	
@@ -2007,4 +2007,121 @@ struct _U arti_q_vis(struct  node np, struct  node n, struct  node nn)
 	Q.u[12] = Q.u[1];
 
 	return Q;
+}
+
+
+void smooth_ne(int i, int j)
+{
+	int is, js, je, ie;
+
+	for (i = 0; i < nz; i++)
+	{
+		for (j = 0; j < nr; j++)
+		{
+			if (MPDT[i][j].ne < 0)
+			{
+				if (i == 0)
+				{
+					is = i;
+					ie = i + 2;
+				}
+				else if (i == nz - 1)
+				{
+					ie = i;
+					is = i - 2;
+				}
+				else
+				{
+					ie = i + 1;
+					is = i - 1;
+				}
+
+				if (j == 0)
+				{
+					js = j;
+					je = j + 2;
+				}
+				else if (i == nz - 1)
+				{
+					js = j - 2;
+					je = j;
+				}
+				else
+				{
+					js = j - 1;
+					je = j + 1;
+				}
+				double tsum = 0;
+				double cn = 0;
+				for (int id = is; id <= ie; id++)
+				{
+					for (int jd = js; jd <= je; jd++)
+					{
+						if (MPDT[id][jd].ne > 0)
+						{
+							tsum += MPDT[id][jd].ne;
+							cn++;
+						}
+					}
+				}
+
+				MPDT[i][j].ne = tsum / cn;
+			}
+		}
+	}
+}
+
+void smooth_pe(int i, int j)
+{
+	int is, js, je, ie;
+
+	if (MPDT[i][j].pe < 0)
+	{
+		if (i == 0)
+		{
+			is = i;
+			ie = i + 2;
+		}
+		else if (i == nz - 1)
+		{
+			ie = i;
+			is = i - 2;
+		}
+		else
+		{
+			ie = i + 1;
+			is = i - 1;
+		}
+
+		if (j == 0)
+		{
+			js = j;
+			je = j + 2;
+		}
+		else if (i == nz - 1)
+		{
+			js = j - 2;
+			je = j;
+		}
+		else
+		{
+			js = j - 1;
+			je = j + 1;
+		}
+		double tsum = 0;
+		double cn = 0;
+		for (int id = is; id <= ie; id++)
+		{
+			for (int jd = js; jd <= je; jd++)
+			{
+				if (MPDT[id][jd].pe > 0)
+				{
+					tsum += MPDT[id][jd].pe;
+					cn++;
+				}
+			}
+		}
+
+		MPDT[i][j].pe = tsum / cn;
+	}
 }

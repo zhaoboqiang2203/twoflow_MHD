@@ -54,18 +54,18 @@ int main()
 {
 	nz = ZMAX;
 	nr = RMAX;
-	index = 40001;
+	index = 140001;
 	set_phi = 160;
 	scale = ZMAX / 200;
 
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
 	dtheta = PI / 180;
-	dt = dr / 1e7 / 3;
+	dt = dr / 1e6 / 3;
 	dtq = 100 * dt;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
-	inter_e_den = 750 * dt / QE / 360 / 7 * 1e9 ;
+	inter_e_den = 750 * dt / QE / 360 / 60 * 1e9 ;
 	inter_pla_den = 0.04 * dt / 40 * NA / 360 / 20 * 1e9;
 
 
@@ -88,7 +88,24 @@ int main()
 		electron_flow_v2();
 		//ion_flow();
 
-		if (index % int(dtq / dt) == 0)
+		//int fla = 0;
+		//for (int i = 0; i < nz; i++)
+		//{
+		//	for (int j = 0; j < nr; j++)
+		//	{
+		//		if (MPDT[i][j].ne < 0)
+		//		{
+		//			fla = 1;
+		//			printf("fluid 1 i = %d j = %d\n", i, j);
+		//		}
+		//	}
+		//	if (fla == 1)
+		//	{
+		//		break;
+		//	}
+		//}
+
+		if (index % int(dtq / dt) == 0 && max_phi < 140)
 		{
 			Q_fluid();
 			potential_solve();

@@ -20,3 +20,6 @@ struct _F cal_fqz(struct _U uij);
 struct _F cal_qs(struct _U uij);
 
 struct _U arti_q_vis(struct  node np, struct  node n, struct  node nn);
+
+void smooth_ne(int i, int j);
+void smooth_pe(int i, int j);

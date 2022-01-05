@@ -212,4 +212,6 @@ void outputcsv();
 void out_judge();
 
 void magnetic_field_initial();
+void magnetic_display();
+
 int judge_conner(int i, int j);

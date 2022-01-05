@@ -473,6 +473,7 @@ void ionization_collisions(int i, int j)
 void coulomb_collision(int i, int j)
 {
 	double ur, utheta, uz;
+	double ur1, utheta1, uz1;
 	double pre_ee, pre_ei;
 	double ep;
 	double ne = MPDT[i][j].ne + MPDT[i][j].neq  - MPDT[i][j].peq;
@@ -487,13 +488,23 @@ void coulomb_collision(int i, int j)
 	ep = pre_ee + pre_ei - 0.5 * (ME + MI) * (sqr(ur) + sqr(utheta) + sqr(uz));
 	//MPDT[i][j].pe = ne * ep * (gamma - 1);
 
-	MPDT[i][j].vir = ur;
-	MPDT[i][j].vitheta = utheta;
-	MPDT[i][j].viz = uz;
+	ur1 = sqrt(sqr(ur) + sqr(utheta) + sqr(uz));
 
-	MPDT[i][j].ver = ur;
-	MPDT[i][j].vetheta = utheta;
-	MPDT[i][j].vez = uz;
+	MPDT[i][j].vir = ur + 0.01 * (ur1 - ur);
+	MPDT[i][j].vitheta = utheta + 0.01 * (ur1 - utheta);
+	MPDT[i][j].viz = uz + 0.01 * (ur1 - uz);
+
+	MPDT[i][j].ver = MPDT[i][j].vir;
+	MPDT[i][j].vetheta = MPDT[i][j].vitheta;
+	MPDT[i][j].vez = MPDT[i][j].viz;
+
+	//MPDT[i][j].vir = ur;
+	//MPDT[i][j].vitheta = utheta;
+	//MPDT[i][j].viz = uz;
+
+	//MPDT[i][j].ver = ur;
+	//MPDT[i][j].vetheta = utheta;
+	//MPDT[i][j].vez = uz;
 	
 	MPDT[i][j].ee += ep;
 
@@ -505,4 +516,14 @@ void coulomb_collision(int i, int j)
 	//MPDT[i][j].ee = ep + 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 	MPDT[i][j].ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
 	return;
+}
+
+void recombination_collision()
+{
+	
+}
+
+void radiation()
+{
+
 }

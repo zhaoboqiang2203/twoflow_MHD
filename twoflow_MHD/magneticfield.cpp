@@ -89,22 +89,76 @@ double Btheta(double x, double y, double z)
     return 0;
 }
 
+//void magnetic_field_initial()
+//{
+//    double bias;
+//    a = 0.1;
+//    bias = 0.01;
+//    for (int i = 0; i < nz; i++)
+//    {
+//        for (int j = 0; j < nr; j++)
+//        {
+//            app_Br[i][j] = Brho(j * dr, 0, i * dz - bias);
+//            app_Bz[i][j] = Bscz(j * dr, 0, i * dz - bias);
+//        }
+//    }
+//
+//    matrix_to_csv((double**)app_Br, ZMAX, RMAX, RMAX, (char*)(".\\output\\app_Br.csv"));
+//    matrix_to_csv((double**)app_Bz, ZMAX, RMAX, RMAX, (char*)(".\\output\\app_Bz.csv"));
+//
+//   
+//}
+
 void magnetic_field_initial()
 {
-    double bias;
-    a = 0.1;
-    bias = 0;
+    double length;
+    double weith;
+
+    length = 0.076;
+    weith = 0.001;
+    double orgin_a = 0.076;
+    double orgin_I = 18000;
+    double nd = 0.001;
+    double wth = 0;
+    double lth = 0;
+
     for (int i = 0; i < nz; i++)
     {
         for (int j = 0; j < nr; j++)
         {
-            app_Br[i][j] = Brho(j * dr - bias, 0, i * dz);
-            app_Bz[i][j] = Bscz(j * dr - bias, 0, i * dz);
+            app_Br[i][j] = 0;
+            app_Bz[i][j] = 0;
         }
+    }
+
+    I = orgin_I / (length / nd * weith / nd);
+
+    while (wth < weith)
+    {
+        a = orgin_a + wth;
+        while (lth < length)
+        {
+            for (int i = 0; i < nz; i++)
+            {
+                for (int j = 0; j < nr; j++)
+                {
+                    app_Br[i][j] += Brho(j * dr, 0, i * dz - lth);
+                    app_Bz[i][j] += Bscz(j * dr, 0, i * dz - lth);
+                }
+            }
+
+            lth += nd;
+        }
+
+        wth += nd;
     }
 
     matrix_to_csv((double**)app_Br, ZMAX, RMAX, RMAX, (char*)(".\\output\\app_Br.csv"));
     matrix_to_csv((double**)app_Bz, ZMAX, RMAX, RMAX, (char*)(".\\output\\app_Bz.csv"));
 
-   
+}
+
+void magnetic_display()
+{
+
 }

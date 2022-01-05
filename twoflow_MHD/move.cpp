@@ -488,7 +488,7 @@ void coulomb_collision(int i, int j)
 	ep = pre_ee + pre_ei - 0.5 * (ME + MI) * (sqr(ur) + sqr(utheta) + sqr(uz));
 	//MPDT[i][j].pe = ne * ep * (gamma - 1);
 
-	ur1 = sqrt(sqr(ur) + sqr(utheta) + sqr(uz));
+	ur1 = sqrt((sqr(ur) + sqr(utheta) + sqr(uz)) / 3.0);
 
 	MPDT[i][j].vir = ur + 0.01 * (ur1 - ur);
 	MPDT[i][j].vitheta = utheta + 0.01 * (ur1 - utheta);

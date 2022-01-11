@@ -3,10 +3,14 @@
 #include <memory.h>
 #include <fstream>
 #include <iostream>
-
+#include <iomanip>
 #include <string> 
 #include <queue>
 #include <cmath>
+
+#include <fstream>
+#include <string>
+#include <sstream>
 
 //#define DADI_DEBUG
 //#define FLUID_DEBUG
@@ -209,8 +213,13 @@ void coulomb_collision(int i, int j);
 int solveGS();
 void test_sor_code();
 void outputcsv();
+void read_csv();
 void out_judge();
+void wirte_datfile();
+void read_datfile();
+bool is_read_datfile();
 
+void judge_bit();
 void magnetic_field_initial();
 void magnetic_display();
 

@@ -61,35 +61,51 @@ int initial()
 
 	boundary_array[3].physics_type = ANODE_BOUNDARY;
 	boundary_array[3].start.r = 57.4 * scale;
-	boundary_array[3].start.z = 0 * scale;
+	boundary_array[3].start.z = 38 * scale;
 	boundary_array[3].end.r = 57.4 * scale;
 	boundary_array[3].end.z = 76 * scale;
 	boundary_array[3].bnd_dir = Z_DIR;
 	boundary_array[3].boundary_type = UP;
 
 	boundary_array[4].physics_type = DIELECTRIC_SURFACE_BOUNDARY;
-	boundary_array[4].start.r = 6.4 * scale;
+	boundary_array[4].start.r = 57.4 * scale;
 	boundary_array[4].start.z = 0 * scale;
 	boundary_array[4].end.r = 57.4 * scale;
-	boundary_array[4].end.z = 0 * scale;
-	boundary_array[4].bnd_dir = R_DIR;
-	boundary_array[4].boundary_type = LEFT;
+	boundary_array[4].end.z = 38 * scale;
+	boundary_array[4].bnd_dir = Z_DIR;
+	boundary_array[4].boundary_type = UP;
 
-	boundary_array[5].physics_type = CATHODE_BOUNDARY;
+	boundary_array[5].physics_type = DIELECTRIC_SURFACE_BOUNDARY;
 	boundary_array[5].start.r = 6.4 * scale;
 	boundary_array[5].start.z = 0 * scale;
-	boundary_array[5].end.r = 6.4 * scale;
-	boundary_array[5].end.z = 76 * scale;
-	boundary_array[5].bnd_dir = Z_DIR;
-	boundary_array[5].boundary_type = DOWN;
+	boundary_array[5].end.r = 57.4 * scale;
+	boundary_array[5].end.z = 0 * scale;
+	boundary_array[5].bnd_dir = R_DIR;
+	boundary_array[5].boundary_type = LEFT;
 
-	boundary_array[6].physics_type = CATHODE_BOUNDARY;
-	boundary_array[6].start.r = 0 * scale;
-	boundary_array[6].start.z = 76 * scale;
+	boundary_array[6].physics_type = DIELECTRIC_SURFACE_BOUNDARY;
+	boundary_array[6].start.r = 6.4 * scale;
+	boundary_array[6].start.z = 0 * scale;
 	boundary_array[6].end.r = 6.4 * scale;
-	boundary_array[6].end.z = 76 * scale;
-	boundary_array[6].bnd_dir = R_DIR;
-	boundary_array[6].boundary_type = LEFT;
+	boundary_array[6].end.z = 38 * scale;
+	boundary_array[6].bnd_dir = Z_DIR;
+	boundary_array[6].boundary_type = DOWN;
+
+	boundary_array[7].physics_type = CATHODE_BOUNDARY;
+	boundary_array[7].start.r = 6.4 * scale;
+	boundary_array[7].start.z = 38 * scale;
+	boundary_array[7].end.r = 6.4 * scale;
+	boundary_array[7].end.z = 76 * scale;
+	boundary_array[7].bnd_dir = Z_DIR;
+	boundary_array[7].boundary_type = DOWN;
+
+	boundary_array[8].physics_type = CATHODE_BOUNDARY;
+	boundary_array[8].start.r = 0 * scale;
+	boundary_array[8].start.z = 76 * scale;
+	boundary_array[8].end.r = 6.4 * scale;
+	boundary_array[8].end.z = 76 * scale;
+	boundary_array[8].bnd_dir = R_DIR;
+	boundary_array[8].boundary_type = LEFT;
 
 	memset(world, 0, sizeof(world));
 	memset(btype, 0, sizeof(world));
@@ -190,9 +206,7 @@ int initial()
 			i = 0;
 			_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 			{
-				
 				btype[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j] = judge_conner((int)(boundary_array[k].start.z + ceil(i * ins_z)), j);
-
 				i++;
 			}
 		}
@@ -208,20 +222,12 @@ int initial()
 		}
 
 	}
-	//for (int i = 0; i < nz; i++)
-	//{
-	//	for (int j = 0; j < nr; j++)
-	//	{
-	//		btype[i][j] = judge_conner(i, j);
-	//	}
-	//}
 
 	cathod_cell = 0;
 	anode_cell = 0;
 	//计算阴阳极网格数
 	_for(k, 0, BND_NUM)
 	{
-
 		if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
 		{
 			double dr = boundary_array[k].end.r - boundary_array[k].start.r;

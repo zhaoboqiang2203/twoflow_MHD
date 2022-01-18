@@ -1149,6 +1149,10 @@ void ion_flow()
 	return;
 }
 
+void atom_flow()
+{
+	
+}
 
 struct _U cal_u(int i, int j)
 {

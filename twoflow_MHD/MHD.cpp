@@ -57,7 +57,7 @@ int main()
 	int nq;
 	nz = ZMAX;
 	nr = RMAX;
-	index = 140001;
+	index = 140000;
 	set_phi = 160;
 	scale = ZMAX / 200;
 
@@ -69,7 +69,7 @@ int main()
 	dtq = nq * dt;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
-	inter_e_den = 750 * dr / 1e6 / 3 / QE / 360 / 60 * 1e9 ;
+	inter_e_den = 2000 * dr / 1e6 / 3 / QE / 360 / 60 * 1e9 ;
 	inter_pla_den = 0.04 * dt / 40 * NA / 360 / 20 * 1e9;
 
 
@@ -77,7 +77,6 @@ int main()
 	printf("dt = %e\n", dt);
 	printf("inter_e_den = %e\n", inter_e_den);
 	printf("inter_pla_den = %e\n", inter_pla_den);
-
 
 	initial();
 	magnetic_field_initial();
@@ -101,25 +100,28 @@ int main()
 
 		if (index % nq == 0 && max_phi < 140)
 		{
-			Q_fluid();
+			
 			potential_solve();
-			move_q();
-
-
-			wirte_datfile();
-			//read_datfile();
+			
 		}
-		
+
+		Q_fluid();
+		move_q();
+
 		move();
 		mag_phi();
 
 		out_judge();
 		if (index % 100 == 0)
+		{
+			wirte_datfile();
+		}
+
+		if (index % 100 == 0)
 			//if(index < 36000)
 		{
 			output();
-			
-			//read_csv();
+
 		}
 
 	}
@@ -130,8 +132,6 @@ int main()
 
 void matrix_int_to_csv(int** a, int N, int M, int array_size, char* filename)
 {
-	//fstream myfile(".\\output\\test_data.csv", ios::out);
-	//fstream myfile(filename, ios::app);
 	fstream myfile(filename, ios::out);
 	if (!myfile.is_open())
 	{
@@ -153,8 +153,6 @@ void matrix_int_to_csv(int** a, int N, int M, int array_size, char* filename)
 
 void matrix_to_csv(double** a, int N, int M, int array_size, char* filename)
 {
-	//fstream myfile(".\\output\\test_data.csv", ios::out);
-	//fstream myfile(filename, ios::app);
 	fstream myfile(filename, ios::out);
 	if (!myfile.is_open())
 	{
@@ -200,9 +198,6 @@ void output()
 	}
 	sprintf_s(fname, (".\\output\\electron density\\electron_density_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-	//sprintf_s(fname, (".\\output\\electron density\\electron_density_%d.dat"), index);
-	//matrix_to_binary((char*)res_out, sizeof(res_out), fname);
-
 
 	//输出电子速度
 
@@ -215,8 +210,6 @@ void output()
 	}
 	sprintf_s(fname, (".\\output\\electron ver\\electron_ver_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-	//sprintf_s(fname, (".\\output\\electron ver\\electron_ver_%d.dat"), index);
-	//matrix_to_binary((char*)res_out, sizeof(res_out), fname);
 
 	for (int i = 0; i < ZMAX; i++)
 	{
@@ -227,8 +220,7 @@ void output()
 	}
 	sprintf_s(fname, (".\\output\\electron vez\\electron_vez_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-	//sprintf_s(fname, (".\\output\\electron vez\\electron_vez_%d.dat"), index);
-	//matrix_to_binary((char*)res_out, sizeof(res_out), fname);
+
 	for (int i = 0; i < ZMAX; i++)
 	{
 		for (int j = 0; j < RMAX; j++)
@@ -239,8 +231,7 @@ void output()
 
 	sprintf_s(fname, (".\\output\\electron vetheta\\electron_vetheta_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-	sprintf_s(fname, (".\\output\\electron vetheta\\electron_vetheta_%d.dat"), index);
-	matrix_to_binary((char*)res_out, sizeof(res_out), fname);
+
 
 	//输出离子密度
 	for (int i = 0; i < ZMAX; i++)
@@ -409,7 +400,7 @@ void output()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			res_out[i][j] = (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE / dt;
+			res_out[i][j] = (MPDT[i][j].peq * MPDT[i][j].vpqr - MPDT[i][j].neq * MPDT[i][j].vnqr) * QE / dt;
 		}
 	}
 
@@ -421,7 +412,7 @@ void output()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			res_out[i][j] = (MPDT[i][j].ni * MPDT[i][j].viz - MPDT[i][j].ne * MPDT[i][j].vez) * QE / dt;
+			res_out[i][j] = (MPDT[i][j].peq * MPDT[i][j].vpqz - MPDT[i][j].neq * MPDT[i][j].vnqz) * QE / dt;
 		}
 	}
 

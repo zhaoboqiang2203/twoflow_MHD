@@ -870,16 +870,16 @@ void potential_solve()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			//if (MPDT[i][j].peq > MPDT[i][j].neq)
-			//{
-			//	MPDT[i][j].peq -= MPDT[i][j].neq;
-			//	MPDT[i][j].neq = 0;
-			//}
-			//else
-			//{
-			//	MPDT[i][j].neq -= MPDT[i][j].peq;
-			//	MPDT[i][j].peq = 0;
-			//}
+			if (MPDT[i][j].peq > MPDT[i][j].neq)
+			{
+				MPDT[i][j].peq -= MPDT[i][j].neq;
+				MPDT[i][j].neq = 0;
+			}
+			else
+			{
+				MPDT[i][j].neq -= MPDT[i][j].peq;
+				MPDT[i][j].peq = 0;
+			}
 
 			//rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / EPS_0 * EPS_PLA;
 			rho[i][j] = -(MPDT[i][j].peq - MPDT[i][j].neq) * QE / EPS_0 * EPS_PLA;

@@ -21,10 +21,10 @@
 #define sgn(a) (a >= 0 ? 1 : -1)
 
 //	macros
-#define MIN(a,b)			((a<b) ? (a) : (b))
-#define MAX(a,b)			((a>b) ? (a) : (b))
-#define sqr(a)	      ((a)*(a))
-#define cube(a)       ((a)*(a)*(a))
+#define MIN(a,b)		((a < b) ? (a) : (b))
+#define MAX(a,b)		((a > b) ? (a) : (b))
+#define sqr(a)	        ((a) * (a))
+#define cube(a)         ((a) * (a) * (a))
 
 
 #define RMAX 288
@@ -38,7 +38,7 @@
 #define RIGHT 32
 #define DOWN 128
 
-#define BND_NUM  7
+#define BND_NUM  9
 
 
 enum PTypes {

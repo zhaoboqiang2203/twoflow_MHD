@@ -404,7 +404,13 @@ void ionization_collisions(int i, int j)
 	double tuz;
 
 	double tu2;
-	double nn = (1e20 - MPDT[i][j].ne);
+	double nn = (1e21 - MPDT[i][j].ne);
+
+	if (nn < 0)
+	{
+		return;
+	}
+
 	double nee = MPDT[i][j].ee + 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 	double p = 1 - exp( -nn * sqrt(2 * nee / ME / 3) * 1e-20 * dt);
 

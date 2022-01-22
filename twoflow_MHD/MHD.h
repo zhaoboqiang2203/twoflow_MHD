@@ -198,6 +198,11 @@ extern double inter_e_den;
 extern double inter_pla_den;
 extern double max_phi;
 extern double set_phi;
+extern double max_q_speed;
+extern double orgin_I;
+extern double orgin_a;
+
+
 
 /// <summary>
 /// move.cpp º¯ÊýÉùÃ÷
@@ -218,6 +223,7 @@ void out_judge();
 void wirte_datfile();
 void read_datfile();
 bool is_read_datfile();
+void parameter_read();
 
 void judge_bit();
 void magnetic_field_initial();

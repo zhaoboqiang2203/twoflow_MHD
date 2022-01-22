@@ -1983,7 +1983,7 @@ struct _F cal_qs(struct _U uij)
 struct _U arti_q_vis(struct  node np, struct  node n, struct  node nn)
 {
 	struct _U Q;
-	double eta = 0.5;
+	double eta = 0;
 
 	for (int k = 0; k < 13; k++)
 	{

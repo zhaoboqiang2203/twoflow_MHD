@@ -50,17 +50,26 @@ double btheta[ZMAX][RMAX];
 double max_phi;
 double set_phi;
 
-
-
+double phi_sigma;
+double orgin_I = 18000;
+double orgin_a = 0.076;
+double cathode_I;
 int main()
 {
 	int nq;
 	nz = ZMAX;
 	nr = RMAX;
-	index = 140000;
-	set_phi = 160;
-	scale = ZMAX / 200;
 
+	parameter_read();
+
+	
+	index = 140001;
+
+	//set_phi = 160; 
+	
+	//仿真参数定义区
+
+	scale = ZMAX / 200;
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
 	dtheta = PI / 180;
@@ -69,8 +78,11 @@ int main()
 	dtq = nq * dt;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
-	inter_e_den = 2000 * dr / 1e6 / 3 / QE / 360 / 60 * 1e9 ;
+	max_q_speed = 1e3;
+	phi_sigma = 1e9 / 360 / 300 / max_q_speed;
+	inter_e_den = cathode_I * dtq / QE * phi_sigma;
 	inter_pla_den = 0.04 * dt / 40 * NA / 360 / 20 * 1e9;
+
 
 
 	//dt = 0.05 * ((dr * dr) + (dz * dz));
@@ -97,35 +109,31 @@ int main()
 		boundary_condition();
 		electron_flow_v2();
 
-
-		if (index % nq == 0 && max_phi < 140)
+		if (index % nq == 0)
 		{
-			
 			potential_solve();
-			
+			Q_fluid();
+			move_q();
 		}
 
-		Q_fluid();
-		move_q();
 
 		move();
 		mag_phi();
 
 		out_judge();
+
 		if (index % 100 == 0)
 		{
 			wirte_datfile();
 		}
 
-		if (index % 100 == 0)
+		if (index % 1000 == 0)
 			//if(index < 36000)
 		{
 			output();
 
 		}
-
 	}
-
 
 	return 0;
 }
@@ -1130,4 +1138,56 @@ void judge_bit()
 
 		}
 	}
+}
+
+void parameter_read()
+{
+
+	string ss;
+	fstream infile;
+	double num = 0;
+	string number;
+	istringstream readstr;
+	infile.open("parameter.txt", ios::in);
+	if (!infile.is_open())
+	{
+		cout << "未成功打开文件" << endl;
+	}
+
+	getline(infile, ss);
+	//string数据流化
+	readstr.clear(); // 重设状态
+	readstr.rdbuf()->str(ss);
+	readstr.seekg(0, ios::beg); // 重设读取位置
+	//读取线圈电流
+	getline(readstr, number, ':'); //循环读取数据
+	getline(readstr, number);
+	orgin_I = atof(number.c_str());
+
+	getline(infile, ss);
+	//string数据流化
+	readstr.clear(); // 重设状态
+	readstr.rdbuf()->str(ss);
+	readstr.seekg(0, ios::beg); // 重设读取位置
+	//读取线圈半径
+	getline(readstr, number, ':'); //循环读取数据
+	getline(readstr, number);
+	orgin_a = atof(number.c_str());
+
+	getline(infile, ss);
+	//string数据流化
+	readstr.clear(); // 重设状态
+	readstr.rdbuf()->str(ss);
+	readstr.seekg(0, ios::beg); // 重设读取位置
+	//读取线圈半径
+	getline(readstr, number, ':'); //循环读取数据
+	getline(readstr, number);
+	cathode_I = atof(number.c_str());
+
+	printf("orgin_I = %lf\n", orgin_I);
+	printf("orgin_a = %lf\n", orgin_a);
+	printf("cathode_I = %lf\n", cathode_I);
+
+	//printf("ne i = %d\n", i);
+	infile.close();
 }

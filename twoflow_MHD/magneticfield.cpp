@@ -116,8 +116,8 @@ void magnetic_field_initial()
 
     length = 0.076;
     weith = 0.001;
-    double orgin_a = 0.076;
-    double orgin_I = 18000;
+    
+
     double nd = 0.001;
     double wth = 0;
     double lth = 0;

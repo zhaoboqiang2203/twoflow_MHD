@@ -1,0 +1,3 @@
+magnetic coil current:0
+magnetic coil dadius:0.076
+current:2000

@@ -381,8 +381,8 @@ double  magnetic_vec_angle(double var,double vaz,double vbr,double vbz)
 
 bool is_electron_ion_separation(double angle)
 {
-	
-	return angle > 10;
+	return true;
+	//return angle > 10;
 }
 
 bool is_large_max_speed(double ur, double utheta, double uz, double max_speed)
@@ -404,7 +404,7 @@ void ionization_collisions(int i, int j)
 	double tuz;
 
 	double tu2;
-	double nn = (1e21 - MPDT[i][j].ne);
+	double nn = (1e21 - MPDT[i][j].ne - MPDT[i][j].neq + MPDT[i][j].peq);
 
 	if (nn < 0)
 	{

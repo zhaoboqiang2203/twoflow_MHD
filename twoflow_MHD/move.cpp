@@ -273,7 +273,7 @@ void move_q()
 				if (is_electron_ion_separation(MPDT[i][j].angle_b_vi) == true)
 				{
 					//计算多余电子运动
-					q_half = -dtq * QE / ME / 2;
+					q_half = -dt * QE / ME / 2;
 					hrho = q_half * app_Br[i][j];
 					htheta = 0;
 					hz = q_half * app_Bz[i][j];
@@ -325,7 +325,7 @@ void move_q()
 
 			if (MPDT[i][j].peq != 0)
 			{
-				q_half = dtq * QE / ME / 2;
+				q_half = dt * QE / ME / 2;
 				hrho = q_half * app_Br[i][j];
 				htheta = 0;
 				hz = q_half * app_Bz[i][j];
@@ -541,5 +541,69 @@ void recombination_collision()
 
 void radiation()
 {
+
+}
+
+void current_caulate()
+{
+	int start_r = 0, end_r = 0, pos_z = 0;
+	int start_z = 0, end_z = 0, pos_r = 0;
+	register int i, j;
+
+	pos_r = 34;
+	start_z = 0;
+	end_z = 382;
+
+	pos_z = 382;
+	start_r = 0;
+	end_r = 34;
+
+	current_I = 0;
+
+	j = pos_r;
+
+	for(i = start_z; i < end_z; i++)
+	{
+		current_I += (MPDT[i][j].peq * MPDT[i][j].vpqr - MPDT[i][j].neq * MPDT[i][j].vnqr) * QE  * dr * dtheta * j * dz /dt;
+		//current_I += (MPDT[i][j].peq * MPDT[i][j].vpqz - MPDT[i][j].neq * MPDT[i][j].vnqz) * QE ;
+	}
+	i = pos_z;
+
+	for (j = start_r; j < end_r; j++)
+	{
+		//current_I += (MPDT[i][j].peq * MPDT[i][j].vpqr - MPDT[i][j].neq * MPDT[i][j].vnqr) * QE 
+		if (j != 0) 
+		{
+			current_I += (MPDT[i][j].peq * MPDT[i][j].vpqz - MPDT[i][j].neq * MPDT[i][j].vnqz) * QE  * sqr(dr) * dtheta * (2 * j - 1) / dt;
+		}
+		
+	}
+
+	printf("current = %lf\n", current_I);
+}
+
+
+void current_control()
+{
+	pid.err = pid.set_current - (-current_I);
+	pid.integral += pid.err;
+
+	if (pid.err > 50 || pid.err < -50)
+	{
+		pid.ne_density = pid.Kp * pid.err + pid.Kd * (pid.err - pid.err_last);
+	}
+	else
+	{
+		pid.ne_density = pid.Kp * pid.err + pid.Ki * pid.integral + pid.Kd * (pid.err - pid.err_last);
+	}
+
+	pid.err_last = pid.err;
+	inter_e_den += pid.ne_density;
+
+	if (inter_e_den < 0)
+	{
+		inter_e_den = 0;
+	}
+	out_e_den = inter_e_den * cathod_cell / anode_cell;
 
 }

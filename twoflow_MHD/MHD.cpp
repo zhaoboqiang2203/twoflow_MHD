@@ -7,7 +7,7 @@ using namespace std;
 int nr;
 int nz;
 double dr, dz, dtheta;
-double dt, dtq;
+double dt;
 
 int index;
 
@@ -22,6 +22,8 @@ struct _U Uq[ZMAX][RMAX], Uq_bar[ZMAX][RMAX], Uq_bar2[ZMAX][RMAX];
 struct _F Fqr[ZMAX][RMAX], Fqr_bar[ZMAX][RMAX], Fqr_bar2[ZMAX][RMAX];
 struct _F Fqz[ZMAX][RMAX], Fqz_bar[ZMAX][RMAX], Fqz_bar2[ZMAX][RMAX];
 struct _F sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
+
+struct _pid pid;
 
 double phi[ZMAX][RMAX];
 double rho[ZMAX][RMAX];
@@ -41,7 +43,10 @@ double vithera[ZMAX][RMAX];
 
 double app_Bz[ZMAX][RMAX];
 double app_Br[ZMAX][RMAX];
-double denJ[ZMAX][RMAX];
+
+double Jz[ZMAX][RMAX];
+double Jr[ZMAX][RMAX];
+
 double res_out[ZMAX][RMAX];
 double res_out1[ZMAX][RMAX];
 
@@ -54,6 +59,9 @@ double phi_sigma;
 double orgin_I = 18000;
 double orgin_a = 0.076;
 double cathode_I;
+double current_I;
+double para_p, para_i, para_d;
+
 int main()
 {
 	int nq;
@@ -63,7 +71,7 @@ int main()
 	parameter_read();
 
 	
-	index = 140001;
+	//index = 140001;
 
 	//set_phi = 160; 
 	
@@ -75,15 +83,17 @@ int main()
 	dtheta = PI / 180;
 	dt = dr / 1e5 / 3;
 	nq = 100;
-	dtq = nq * dt;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
-	max_q_speed = 1e3;
-	phi_sigma = 1e9 / 360 / 300 / max_q_speed;
-	inter_e_den = cathode_I * dtq / QE * phi_sigma;
+	max_q_speed = 6e3;
+	phi_sigma = 1e9 / 360 / 300 / max_q_speed / 1e2;
+	inter_e_den = cathode_I * dt / QE * phi_sigma;
 	inter_pla_den = 0.04 * dt / 40 * NA / 360 / 20 * 1e9;
 
-
+	pid.set_current = cathode_I;
+	pid.Kp = 2e11;
+	pid.Ki = 1e3;
+	pid.Kd = 1e5;
 
 	//dt = 0.05 * ((dr * dr) + (dz * dz));
 	printf("dt = %e\n", dt);
@@ -105,24 +115,27 @@ int main()
 	
 	while (index--)
 	{
-		printf("index %d\n", index);
+		//printf("index %d\n", index);
 		boundary_condition();
 		electron_flow_v2();
 
 		if (index % nq == 0)
 		{
+			printf("index %d\n", index);
 			potential_solve();
-			Q_fluid();
-			move_q();
+			current_caulate();
+			current_control();
 		}
 
+		Q_fluid();
+		move_q();
 
 		move();
 		mag_phi();
 
 		out_judge();
 
-		if (index % 100 == 0)
+		if (index % 1000 == 0)
 		{
 			wirte_datfile();
 		}
@@ -1183,6 +1196,16 @@ void parameter_read()
 	getline(readstr, number, ':'); //循环读取数据
 	getline(readstr, number);
 	cathode_I = atof(number.c_str());
+
+	getline(infile, ss);
+	//string数据流化
+	readstr.clear(); // 重设状态
+	readstr.rdbuf()->str(ss);
+	readstr.seekg(0, ios::beg); // 重设读取位置
+	//读取初始序号
+	getline(readstr, number, ':'); //循环读取数据
+	getline(readstr, number);
+	index = atof(number.c_str());
 
 	printf("orgin_I = %lf\n", orgin_I);
 	printf("orgin_a = %lf\n", orgin_a);

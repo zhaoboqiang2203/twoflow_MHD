@@ -9,9 +9,7 @@ Boundary boundary_array[BND_NUM];
 double bg_den = 2.41e8 * 1e9;
 double inter_e_den = 1.1905e8 * 1e9;
 double inter_pla_den = 6.68e7 * 1e9;
-//double bg_den = 2.41e8;
-//double inter_e_den = 1.1905e8;
-//double inter_pla_den = 6.68e7;
+
 
 double cathod_cell;
 double anode_cell;
@@ -247,9 +245,6 @@ int initial()
 			else
 			{
 				double ins_r = dr / dz;
-
-				int num = dz / 2;
-				double den_step = (inter_e_den - 6.02e5) / num;
 				j = 0;
 
 				_for(i, (boundary_array[k].start.z + boundary_array[k].end.z) / 2, boundary_array[k].end.z, )
@@ -567,17 +562,14 @@ void  boundary_condition()
 					//if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
 					//MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j].neq = inter_e_den / scale;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].neq = inter_e_den / scale;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vnqz = 0.2 * max_q_speed;
 					i++;
 				}
 			}
 			else
 			{
 				double ins_r = dr / dz;
-
-				int num = dz / 2;
-				double den_step = (inter_e_den - 6.02e5) / num;
 				j = 0;
-
 				_for(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
 					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))] == DOWN)
@@ -585,12 +577,14 @@ void  boundary_condition()
 						//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1] != 1) continue;
 						//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1].neq = inter_e_den / scale;
 						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].neq = inter_e_den / scale;
+						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vnqr = 0.2 * max_q_speed;
 					}
 					else
 					{
 						//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
 						//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].neq = inter_e_den / scale;
 						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].neq = inter_e_den / scale;
+						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vnqr = -0.2 * max_q_speed;
 					}
 					j++;
 				}
@@ -670,9 +664,10 @@ void  boundary_condition()
 				i = 0;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
-					if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ni - MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne > 1e15) continue;
-					if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].peq = out_e_den;
+					//if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ni - MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne > 1e15) continue;
+					//if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].peq = out_e_den / scale;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vpqz = 0.2 * max_q_speed;
 					i++;
 				}
 			}
@@ -682,10 +677,11 @@ void  boundary_condition()
 				j = 0;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
-					if (MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ni - MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne > 1e15) continue;
-					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
+					//if (MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ni - MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne > 1e15) continue;
+					//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
 					//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].peq = out_e_den;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].peq = out_e_den;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].peq = out_e_den / scale;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vpqr = 0.2 * max_q_speed;
 					j++;
 				}
 			}

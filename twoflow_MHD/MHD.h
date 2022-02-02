@@ -14,7 +14,7 @@
 
 //#define DADI_DEBUG
 //#define FLUID_DEBUG
-#define BOUNDARY_DEBUG
+//#define BOUNDARY_DEBUG
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)
@@ -133,19 +133,34 @@ struct  node
 	int f_anode2;
 };
 
+struct _pid 
+{
+	float set_current;//定义设定值
+	float actual_current;//定义实际值
+	float err;//定义偏差值
+	float err_last;//定义上一个偏差值
+	float Kp, Ki, Kd;//定义比例、积分、微分系数
+	float ne_density;//定义发射电子密度(控制执行器的变量)
+	float integral;//定义积分值
+};
 
 
 
 extern Boundary boundary_array[BND_NUM];
 extern int nr, nz;
 extern double dr, dz, dtheta;
-extern double dt, dtq;
+extern double dt;
 extern int scale;
 extern int index;
 
 extern int world[ZMAX][RMAX];
 extern int btype[ZMAX][RMAX];
 extern int ptype[ZMAX][RMAX];
+
+extern double cathod_cell;
+extern double anode_cell;
+extern double out_e_den;
+
 int initial();
 void  boundary_condition();
 void matrix_to_csv(double** a, int N, int M, int array_size, char* filename);
@@ -176,8 +191,8 @@ extern double Ez[ZMAX][RMAX];
 
 extern double btheta[ZMAX][RMAX];
 
-extern double ne[ZMAX][RMAX];
-extern double ni[ZMAX][RMAX];
+extern double Jz[ZMAX][RMAX];
+extern double Jr[ZMAX][RMAX];
 
 extern struct node MPDT[ZMAX][RMAX];
 extern struct _U U[ZMAX][RMAX], U_bar[ZMAX][RMAX], U_bar2[ZMAX][RMAX];
@@ -193,6 +208,8 @@ extern struct _F sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
 extern double app_Bz[ZMAX][RMAX];
 extern double app_Br[ZMAX][RMAX];
 
+extern struct _pid pid;
+
 extern double bg_den;
 extern double inter_e_den;
 extern double inter_pla_den;
@@ -201,8 +218,8 @@ extern double set_phi;
 extern double max_q_speed;
 extern double orgin_I;
 extern double orgin_a;
-
-
+extern double current_I;
+extern double para_p, para_i, para_d;
 
 /// <summary>
 /// move.cpp 函数声明
@@ -214,6 +231,8 @@ bool is_electron_ion_separation(double angle);
 bool is_large_max_speed(double ur, double utheta, double uz, double max_speed);
 void ionization_collisions(int i, int j);
 void coulomb_collision(int i, int j);
+void current_caulate();
+void current_control();
 
 int solveGS();
 void test_sor_code();

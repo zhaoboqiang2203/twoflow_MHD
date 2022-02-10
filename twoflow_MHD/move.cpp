@@ -390,12 +390,26 @@ bool is_large_max_speed(double ur, double utheta, double uz, double max_speed)
 	return sqr(ur) + sqr(utheta) + sqr(uz) > sqr(max_speed);
 }
 
-//double ionization_collisions(int i, int j)
-//{
-//	double rend = 0;
-//
-//	return 0;
-//}
+/*************************************************
+
+Function:                  // ionization_collisions
+
+Description:               // 原子电离函数
+
+Calls:                     // 无
+
+Input:                     // int i int j 在流场中网格点位置
+
+						   // 用、取值说明及参数间关系。
+
+Output:                    // 对输出参数的说明。
+
+Return:                    // 函数返回值的说明
+
+Others:                    // 其它说明
+
+*************************************************/
+
 
 void ionization_collisions(int i, int j)
 {
@@ -404,8 +418,8 @@ void ionization_collisions(int i, int j)
 	double tuz;
 
 	double tu2;
-	double nn = (1e21 - MPDT[i][j].ne - MPDT[i][j].neq + MPDT[i][j].peq);
-
+	//double nn = (1e21 - MPDT[i][j].ne - MPDT[i][j].neq + MPDT[i][j].peq);
+	double nn = (1e21 - MPDT[i][j].ne - MPDT[i][j].neq );
 	if (nn < 0)
 	{
 		return;
@@ -492,7 +506,7 @@ void coulomb_collision(int i, int j)
 	double ur1, utheta1, uz1;
 	double pre_ee, pre_ei;
 	double ep;
-	double ne = MPDT[i][j].ne + MPDT[i][j].neq  - MPDT[i][j].peq;
+	double ne = MPDT[i][j].ne + MPDT[i][j].neq ;
 
 	pre_ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 	pre_ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);

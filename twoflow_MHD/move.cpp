@@ -53,7 +53,7 @@ void move()
 	double srho, stheta, sz;
 	double urho, utheta, uz;
 	double urho_half, utheta_half, uz_half;
-
+	double t0;
 
 	for (int i = 0; i < nz; i++)
 	{
@@ -66,7 +66,13 @@ void move()
 			if ((ptype[i][j] & VACCUM_BOUNDARY) != 0) continue;
 			if (MPDT[i][j].ne == 0 || MPDT[i][j].ni == 0) continue;
 			if ((ptype[i][j] & ANODE_BOUNDARY) != 0 || (ptype[i][j] & CATHODE_BOUNDARY) != 0 ) continue;
-			q_half = -dt * QE / ME / 2;
+
+			t0 = ME / (QE * sqrt(sqr(app_Br[i][j]) + sqr(app_Bz[i][j])));
+
+			//fmod(dt, t0);
+			//q_half = -dt * QE / ME / 2;
+			
+			q_half = -fmod(dt, t0) * QE / ME / 2;
 			hrho = q_half * app_Br[i][j];
 			htheta = 0;
 			hz = q_half * app_Bz[i][j];
@@ -119,8 +125,9 @@ void move()
 			//	MPDT[i][j].vez = -1.8e6;
 			//}
 
+			t0 = MI / (QE * sqrt(sqr(app_Br[i][j]) + sqr(app_Bz[i][j])));
 
-			q_half = dt * QE / MI / 2;
+			q_half = fmod(dt,t0) * QE / MI / 2;
 			hrho = q_half * app_Br[i][j];
 			htheta = 0;
 			hz = q_half * app_Bz[i][j];

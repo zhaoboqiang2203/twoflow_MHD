@@ -55,9 +55,11 @@ void move()
 	double urho_half, utheta_half, uz_half;
 	double t0;
 
-	for (int i = 0; i < nz; i++)
+	register int i, j, k;
+
+	for (i = 0; i < nz; i++)
 	{
-		for (int j = 0; j < nr; j++)
+		for (j = 0; j < nr; j++)
 		{
 			//if (i == 390 && j == 0)
 			//{
@@ -148,6 +150,7 @@ void move()
 
 			coulomb_collision(i, j);
 			ionization_collisions(i, j);
+			viscosity_collision(i, j);
 		//	double pre_ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
 
 
@@ -258,6 +261,35 @@ void move()
 		//		MPDT[i][j].pe -= MPDT[i][j].ne * tep1 * (gamma - 1);
 		//		MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne) + 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 		//	}
+		}
+	}
+
+
+	for (i = 0; i < nz; i++)
+	{
+		for (j = 0; j < nr; j++)
+		{
+
+			if (btype[i][j] == 1)
+			{
+				MPDT[i][j].vir = vir[i][j];
+				MPDT[i][j].viz = viz[i][j];
+
+				MPDT[i][j].ver = ver[i][j];
+				MPDT[i][j].vez = vez[i][j];
+			}
+			else if (btype[i][j] == DOWN && ptype[i][j] == CYLINDRICAL_AXIS)
+			{
+				MPDT[i][j].vir = vir[i][j];
+				MPDT[i][j].viz = viz[i][j];
+
+				MPDT[i][j].ver = ver[i][j];
+				MPDT[i][j].vez = vez[i][j];
+			}
+			else
+			{
+
+			}
 		}
 	}
 }
@@ -553,6 +585,30 @@ void coulomb_collision(int i, int j)
 	//MPDT[i][j].ee = ep + 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 	MPDT[i][j].ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
 	return;
+}
+
+void viscosity_collision(int i, int j)
+{
+	if (btype[i][j] == 1)
+	{
+		vir[i][j] = MPDT[i][j].vir + 0.1 * ((MPDT[i + 1][j].vir + MPDT[i][j].vir + MPDT[i - 1][j].vir) / 3 - MPDT[i][j].vir);
+		viz[i][j] = MPDT[i][j].viz + 0.1 * ((MPDT[i][j + 1].viz + MPDT[i][j].viz + MPDT[i][j - 1].viz) / 3 - MPDT[i][j].viz);
+
+		ver[i][j] = MPDT[i][j].ver + 0.1 * ((MPDT[i + 1][j].ver + MPDT[i][j].ver + MPDT[i - 1][j].ver) / 3 - MPDT[i][j].ver);
+		vez[i][j] = MPDT[i][j].vez + 0.1 * ((MPDT[i][j + 1].vez + MPDT[i][j].vez + MPDT[i][j - 1].vez) / 3 - MPDT[i][j].vez);
+	}
+	else if (btype[i][j] == DOWN && ptype[i][j] == CYLINDRICAL_AXIS)
+	{
+		vir[i][j] = MPDT[i][j].vir + 0.1 * ((MPDT[i][j + 1].vir + MPDT[i][j].vir + MPDT[i][j - 1].vir) / 3 - MPDT[i][j].vir);
+		viz[i][j] = MPDT[i][j].viz + 0.1 * ((MPDT[i + 1][j].viz + MPDT[i][j].viz ) / 2 - MPDT[i][j].viz);
+
+		ver[i][j] = MPDT[i][j].ver + 0.1 * ((MPDT[i][j + 1].ver + MPDT[i][j].ver + MPDT[i][j - 1].ver) / 3 - MPDT[i][j].ver);
+		vez[i][j] = MPDT[i][j].vez + 0.1 * ((MPDT[i + 1][j].vez + MPDT[i][j].vez ) / 2 - MPDT[i][j].vez);
+	}
+	else 
+	{
+		
+	}
 }
 
 void recombination_collision()

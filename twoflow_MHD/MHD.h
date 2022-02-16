@@ -205,6 +205,15 @@ extern struct _F Fqr[ZMAX][RMAX], Fqr_bar[ZMAX][RMAX], Fqr_bar2[ZMAX][RMAX];
 extern struct _F Fqz[ZMAX][RMAX], Fqz_bar[ZMAX][RMAX], Fqz_bar2[ZMAX][RMAX];
 extern struct _F sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
 
+
+extern double vez[ZMAX][RMAX];
+extern double ver[ZMAX][RMAX];
+extern double vethera[ZMAX][RMAX];
+
+extern double viz[ZMAX][RMAX];
+extern double vir[ZMAX][RMAX];
+extern double vithera[ZMAX][RMAX];
+
 extern double app_Bz[ZMAX][RMAX];
 extern double app_Br[ZMAX][RMAX];
 
@@ -233,6 +242,7 @@ void ionization_collisions(int i, int j);
 void coulomb_collision(int i, int j);
 void current_caulate();
 void current_control();
+void viscosity_collision(int i, int j);
 
 int solveGS();
 void test_sor_code();

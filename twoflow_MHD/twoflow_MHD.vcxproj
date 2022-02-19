@@ -156,6 +156,9 @@
     <ClInclude Include="MHD.h" />
     <ClInclude Include="testcode.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="parameter.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

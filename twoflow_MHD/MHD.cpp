@@ -122,6 +122,7 @@ int main()
 		if (index % nq == 0)
 		{
 			printf("index %d\n", index);
+			max_write();
 			potential_solve();
 			current_caulate();
 			current_control();
@@ -1213,4 +1214,17 @@ void parameter_read()
 
 	//printf("ne i = %d\n", i);
 	infile.close();
+}
+
+void max_write()
+{
+	fstream myfile(".\\output\\PHI_I_data.csv", ios::app);
+	if (!myfile.is_open())
+	{
+		cout << "未成功打开文件" << endl;
+	}
+
+	myfile << index << "," << max_phi << "," << current_I << endl;
+
+	myfile.close();
 }

@@ -253,6 +253,7 @@ void wirte_datfile();
 void read_datfile();
 bool is_read_datfile();
 void parameter_read();
+void max_write();
 
 void judge_bit();
 void magnetic_field_initial();

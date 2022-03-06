@@ -12,9 +12,11 @@
 #include <string>
 #include <sstream>
 
+using namespace std;
+
 //#define DADI_DEBUG
 //#define FLUID_DEBUG
-//#define BOUNDARY_DEBUG
+#define BOUNDARY_DEBUG
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)
@@ -26,6 +28,14 @@
 #define sqr(a)	        ((a) * (a))
 #define cube(a)         ((a) * (a) * (a))
 
+#define PRE_DIFF_U_R(i,j,x) (-3*U[i][j].u[x]+3*U[i][j+1].u[x]-U[i][j+2].u[x])
+#define PRE_DIFF_U_Z(i,j,x) (-3*U[i][j].u[x]+3*U[i+1][j].u[x]-U[i+2][j].u[x])
+
+#define MID_DIFF_U_R(i,j,x) (-U[i][j-1].u[x]+U[i][j+1].u[x])
+#define MID_DIFF_U_Z(i,j,x) (-U[i-1][j].u[x]+U[i+1][j].u[x])
+
+#define AFTER_DIFF_U_R(i,j,x) (U[i][j-2].u[x]-4*U[i][j-1].u[x]+3*U[i][j].u[x])
+#define AFTER_DIFF_U_Z(i,j,x) (U[i-2][j].u[x]-4*U[i-1][j].u[x]+3*U[i][j].u[x])
 
 #define RMAX 288
 #define ZMAX 1001
@@ -122,15 +132,17 @@ struct  node
 
 	double angle_b_vi;
 	
-	int f_left;
-	int f_right;
-	int f_down;
-	int f_up;
+};
 
-	int f_cathode;
-	int f_cathode2;
-	int f_anode;
-	int f_anode2;
+struct _particle
+{
+	double den;
+	double vr;
+	double vtheta;
+	double vz;
+
+	double pre;
+	double eng;
 };
 
 struct _pid 
@@ -169,11 +181,12 @@ int fill_plasma(int tr, int tz, int fill_n);
 void output();
 
 const double EPS_0 = 8.85418782e-12;  	// C/(V*m), vacuum permittivity
-const double EPS_PLA = 1;				//相对电导率
+const double EPS_PLA = 1e8;				//相对电导率
 const double QE = 1.602176565e-19;		// C, electron charge
 const double AMU = 1.660538921e-27;		// kg, atomic mass unit
 const double ME = 9.10938215e-31;		// kg, electron mass
-const double MI = 40 * AMU;		        // kg, electron mass
+const double REL_MASS = 40;             //相对原子质量
+const double MI = REL_MASS * AMU;		        // kg, electron mass
 const double K = 1.380648e-23;			// J/K, Boltzmann constant
 const double PI = 3.141592653;			// pi
 const double EvToK = QE / K;				// 1eV in K ~ 11604
@@ -205,6 +218,18 @@ extern struct _F Fqr[ZMAX][RMAX], Fqr_bar[ZMAX][RMAX], Fqr_bar2[ZMAX][RMAX];
 extern struct _F Fqz[ZMAX][RMAX], Fqz_bar[ZMAX][RMAX], Fqz_bar2[ZMAX][RMAX];
 extern struct _F sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
 
+extern struct _F tau_vis[ZMAX][RMAX];
+
+extern double taurr[ZMAX][RMAX];
+extern double taurtheta[ZMAX][RMAX];
+extern double taurz[ZMAX][RMAX];
+extern double tautheta2[ZMAX][RMAX];
+extern double tauthetaz[ZMAX][RMAX];
+extern double tauzz[ZMAX][RMAX];
+
+extern double pniz[ZMAX][RMAX];
+extern double pnir[ZMAX][RMAX];
+extern double tau_ni[ZMAX][RMAX];
 
 extern double vez[ZMAX][RMAX];
 extern double ver[ZMAX][RMAX];
@@ -225,9 +250,14 @@ extern double inter_pla_den;
 extern double max_phi;
 extern double set_phi;
 extern double max_q_speed;
-extern double orgin_I;
-extern double orgin_a;
+
+extern double cathode_I;
 extern double current_I;
+
+extern double coil_I;//线圈电流
+extern double coil_R;//线圈内径
+extern double coil_W;//线圈宽度（内外径差值）
+extern double coil_L;//线圈厚度
 extern double para_p, para_i, para_d;
 
 /// <summary>
@@ -254,6 +284,11 @@ void read_datfile();
 bool is_read_datfile();
 void parameter_read();
 void max_write();
+
+int test_json();
+int btype_trans(string ss);
+int dir_trans(string ss);
+PTypes ptype_trans(string ss);
 
 void judge_bit();
 void magnetic_field_initial();

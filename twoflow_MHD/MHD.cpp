@@ -23,6 +23,18 @@ struct _F Fqr[ZMAX][RMAX], Fqr_bar[ZMAX][RMAX], Fqr_bar2[ZMAX][RMAX];
 struct _F Fqz[ZMAX][RMAX], Fqz_bar[ZMAX][RMAX], Fqz_bar2[ZMAX][RMAX];
 struct _F sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
 
+struct _F tau_vis[ZMAX][RMAX];
+
+double taurr[ZMAX][RMAX];
+double taurtheta[ZMAX][RMAX];
+double taurz[ZMAX][RMAX];
+double tautheta2[ZMAX][RMAX];
+double tauthetaz[ZMAX][RMAX];
+double tauzz[ZMAX][RMAX];
+
+double pniz[ZMAX][RMAX];
+double pnir[ZMAX][RMAX];
+double tau_ni[ZMAX][RMAX];
 struct _pid pid;
 
 double phi[ZMAX][RMAX];
@@ -56,8 +68,6 @@ double max_phi;
 double set_phi;
 
 double phi_sigma;
-double orgin_I = 18000;
-double orgin_a = 0.076;
 double cathode_I;
 double current_I;
 double para_p, para_i, para_d;
@@ -68,9 +78,9 @@ int main()
 	nz = ZMAX;
 	nr = RMAX;
 
-	parameter_read();
-
+	//parameter_read();
 	
+	//exit(0);
 	//index = 140001;
 
 	//set_phi = 160; 
@@ -78,6 +88,7 @@ int main()
 	//仿真参数定义区
 
 	scale = ZMAX / 200;
+	test_json();
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
 	dtheta = PI / 180;
@@ -85,15 +96,15 @@ int main()
 	nq = 100;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
-	max_q_speed = 6e3;
+	max_q_speed = 3e4;
 	phi_sigma = 1e9 / 360 / 300 / max_q_speed / 1e2;
 	inter_e_den = cathode_I * dt / QE * phi_sigma;
-	inter_pla_den = 0.04 * dt / 40 * NA / 360 / 20 * 1e9;
+	inter_pla_den = 0.04  / 40 * NA / 360 / 20 * 1e9;
 
 	pid.set_current = cathode_I;
-	pid.Kp = 2e11;
-	pid.Ki = 1e3;
-	pid.Kd = 1e5;
+	pid.Kp = 6e16;
+	pid.Ki = 1e13;
+	pid.Kd = 1e13;
 
 	//dt = 0.05 * ((dr * dr) + (dz * dz));
 	printf("dt = %e\n", dt);
@@ -128,8 +139,8 @@ int main()
 			current_control();
 		}
 
-		Q_fluid();
-		move_q();
+		//Q_fluid();
+		//move_q();
 
 		move();
 		mag_phi();
@@ -341,7 +352,7 @@ void output()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			res_out[i][j] = MPDT[i][j].ee / QE;
+			res_out[i][j] = MPDT[i][j].ee * ME/ QE;
 		}
 	}
 
@@ -352,7 +363,7 @@ void output()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			res_out[i][j] = MPDT[i][j].ei / QE;
+			res_out[i][j] = MPDT[i][j].ei * MI / QE;
 		}
 	}
 
@@ -422,7 +433,7 @@ void output()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			res_out[i][j] = (MPDT[i][j].peq * MPDT[i][j].vpqr - MPDT[i][j].neq * MPDT[i][j].vnqr) * QE / dt;
+			res_out[i][j] = (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE;
 		}
 	}
 
@@ -434,7 +445,7 @@ void output()
 	{
 		for (int j = 0; j < RMAX; j++)
 		{
-			res_out[i][j] = (MPDT[i][j].peq * MPDT[i][j].vpqz - MPDT[i][j].neq * MPDT[i][j].vnqz) * QE / dt;
+			res_out[i][j] = (MPDT[i][j].ni * MPDT[i][j].viz - MPDT[i][j].ne * MPDT[i][j].vez) * QE;
 		}
 	}
 
@@ -1176,7 +1187,7 @@ void parameter_read()
 	//读取线圈电流
 	getline(readstr, number, ':'); //循环读取数据
 	getline(readstr, number);
-	orgin_I = atof(number.c_str());
+	coil_I = atof(number.c_str());
 
 	getline(infile, ss);
 	//string数据流化
@@ -1186,7 +1197,7 @@ void parameter_read()
 	//读取线圈半径
 	getline(readstr, number, ':'); //循环读取数据
 	getline(readstr, number);
-	orgin_a = atof(number.c_str());
+	coil_R = atof(number.c_str());
 
 	getline(infile, ss);
 	//string数据流化
@@ -1208,8 +1219,8 @@ void parameter_read()
 	getline(readstr, number);
 	index = atof(number.c_str());
 
-	printf("orgin_I = %lf\n", orgin_I);
-	printf("orgin_a = %lf\n", orgin_a);
+	printf("coil_I = %lf\n", coil_I);
+	printf("coil_R = %lf\n", coil_R);
 	printf("cathode_I = %lf\n", cathode_I);
 
 	//printf("ne i = %d\n", i);

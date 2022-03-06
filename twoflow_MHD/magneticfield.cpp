@@ -5,6 +5,11 @@ double I = 18000;// current, unit: A
 double a = 0.5;// radius of current coil, unit: m
 double eps = 1e-4;
 
+double coil_I;//线圈电流
+double coil_R;//线圈内径
+double coil_W;//线圈宽度（内外径差值）
+double coil_L;//线圈厚度
+
 // Set field for single coil
 double rho1(double x, double y, double z)
 {
@@ -114,9 +119,10 @@ void magnetic_field_initial()
     double length;
     double weith;
 
-    length = 0.076;
-    weith = 0.001;
-    
+    //length = 0.076;
+    //weith = 0.001;
+    length = coil_L;
+    weith = coil_W;
 
     double nd = 0.001;
     double wth = 0;
@@ -131,11 +137,11 @@ void magnetic_field_initial()
         }
     }
 
-    I = orgin_I / (length / nd * weith / nd);
+    I = coil_I / (length / nd * weith / nd);
 
     while (wth < weith)
     {
-        a = orgin_a + wth;
+        a = coil_R + wth;
         while (lth < length)
         {
             for (int i = 0; i < nz; i++)

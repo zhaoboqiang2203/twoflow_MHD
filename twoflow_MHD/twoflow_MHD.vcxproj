@@ -143,23 +143,46 @@
     <ClCompile Include="boundary.cpp" />
     <ClCompile Include="dadi.cpp" />
     <ClCompile Include="fluid.cpp" />
+    <ClCompile Include="json\json_reader.cpp" />
+    <ClCompile Include="json\json_value.cpp" />
+    <ClCompile Include="json\json_writer.cpp" />
     <ClCompile Include="magneticfield.cpp" />
     <ClCompile Include="MHD.cpp" />
     <ClCompile Include="move.cpp" />
     <ClCompile Include="PotentialSolver.cpp" />
+    <ClCompile Include="readparam.cpp" />
     <ClCompile Include="sortestcode.cpp" />
     <ClCompile Include="testcode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dadi.h" />
     <ClInclude Include="fluid.h" />
+    <ClInclude Include="json\allocator.h" />
+    <ClInclude Include="json\assertions.h" />
+    <ClInclude Include="json\config.h" />
+    <ClInclude Include="json\forwards.h" />
+    <ClInclude Include="json\json.h" />
+    <ClInclude Include="json\json_features.h" />
+    <ClInclude Include="json\json_tool.h" />
+    <ClInclude Include="json\reader.h" />
+    <ClInclude Include="json\value.h" />
+    <ClInclude Include="json\version.h" />
+    <ClInclude Include="json\writer.h" />
     <ClInclude Include="MHD.h" />
     <ClInclude Include="testcode.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="parameter.txt" />
+    <Text Include="mpdtParam.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="json\json_valueiterator.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

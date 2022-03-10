@@ -16,7 +16,7 @@ using namespace std;
 
 //#define DADI_DEBUG
 //#define FLUID_DEBUG
-#define BOUNDARY_DEBUG
+//#define BOUNDARY_DEBUG
 
 #define _for(i,a,b) for( i=(a); i<(b); ++i)
 #define _feq(i,a,b) for( i=(a); i<=(b); ++i)
@@ -37,7 +37,7 @@ using namespace std;
 #define AFTER_DIFF_U_R(i,j,x) (U[i][j-2].u[x]-4*U[i][j-1].u[x]+3*U[i][j].u[x])
 #define AFTER_DIFF_U_Z(i,j,x) (U[i-2][j].u[x]-4*U[i-1][j].u[x]+3*U[i][j].u[x])
 
-#define RMAX 288
+#define RMAX 401
 #define ZMAX 1001
 
 #define R_DIR 0
@@ -48,7 +48,7 @@ using namespace std;
 #define RIGHT 32
 #define DOWN 128
 
-#define BND_NUM  9
+#define BND_NUM  30
 
 
 enum PTypes {
@@ -172,6 +172,7 @@ extern int ptype[ZMAX][RMAX];
 extern double cathod_cell;
 extern double anode_cell;
 extern double out_e_den;
+extern int bnd_size;
 
 int initial();
 void  boundary_condition();
@@ -181,12 +182,12 @@ int fill_plasma(int tr, int tz, int fill_n);
 void output();
 
 const double EPS_0 = 8.85418782e-12;  	// C/(V*m), vacuum permittivity
-const double EPS_PLA = 1e8;				//相对电导率
+//const double EPS_PLA = 1e8;				//相对电导率
 const double QE = 1.602176565e-19;		// C, electron charge
 const double AMU = 1.660538921e-27;		// kg, atomic mass unit
 const double ME = 9.10938215e-31;		// kg, electron mass
-const double REL_MASS = 40;             //相对原子质量
-const double MI = REL_MASS * AMU;		        // kg, electron mass
+//const double REL_MASS = 40;             //相对原子质量
+//const double MI = REL_MASS * AMU;		        // kg, electron mass
 const double K = 1.380648e-23;			// J/K, Boltzmann constant
 const double PI = 3.141592653;			// pi
 const double EvToK = QE / K;				// 1eV in K ~ 11604
@@ -249,7 +250,14 @@ extern double inter_e_den;
 extern double inter_pla_den;
 extern double max_phi;
 extern double set_phi;
-extern double max_q_speed;
+
+extern double e_half[ZMAX][RMAX];
+extern double e_hrho[ZMAX][RMAX], e_htheta[ZMAX][RMAX], e_hz[ZMAX][RMAX], e_h2[ZMAX][RMAX];
+extern double e_srho[ZMAX][RMAX], e_stheta[ZMAX][RMAX], e_sz[ZMAX][RMAX];
+
+extern double i_half[ZMAX][RMAX];
+extern double i_hrho[ZMAX][RMAX], i_htheta[ZMAX][RMAX], i_hz[ZMAX][RMAX], i_h2[ZMAX][RMAX];
+extern double i_srho[ZMAX][RMAX], i_stheta[ZMAX][RMAX], i_sz[ZMAX][RMAX];
 
 extern double cathode_I;
 extern double current_I;
@@ -258,6 +266,11 @@ extern double coil_I;//线圈电流
 extern double coil_R;//线圈内径
 extern double coil_W;//线圈宽度（内外径差值）
 extern double coil_L;//线圈厚度
+
+extern double REL_MASS;             //相对原子质量
+extern double MI;		            // kg, electron mass
+extern double EPS_PLA;				//相对电导率
+
 extern double para_p, para_i, para_d;
 
 /// <summary>

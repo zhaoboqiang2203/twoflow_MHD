@@ -6,6 +6,7 @@ int world[ZMAX][RMAX];
 int btype[ZMAX][RMAX];
 int ptype[ZMAX][RMAX];
 Boundary boundary_array[BND_NUM];
+int bnd_size;
 double bg_den = 2.41e8 * 1e9;
 double inter_e_den = 1.1905e8 * 1e9;
 double inter_pla_den = 6.68e7 * 1e9;
@@ -109,7 +110,7 @@ int initial()
 	memset(btype, 0, sizeof(world));
 	memset(ptype, 0, sizeof(world));
 
-	_for(k, 0, BND_NUM)
+	_for(k, 0, bnd_size)
 	{
 		double dr = boundary_array[k].end.r - boundary_array[k].start.r;
 		double dz = boundary_array[k].end.z - boundary_array[k].start.z;
@@ -192,7 +193,7 @@ int initial()
 	}
 
 
-	_for(k, 0, BND_NUM)
+	_for(k, 0, bnd_size)
 	{
 		double dr = boundary_array[k].end.r - boundary_array[k].start.r;
 		double dz = boundary_array[k].end.z - boundary_array[k].start.z;
@@ -224,7 +225,7 @@ int initial()
 	cathod_cell = 0;
 	anode_cell = 0;
 	//计算阴阳极网格数
-	_for(k, 0, BND_NUM)
+	_for(k, 0, bnd_size)
 	{
 		if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
 		{
@@ -431,7 +432,7 @@ void  boundary_condition()
 	double eletron_assi = 0;
 	//固体边界
 
-	_for(k, 0, BND_NUM)
+	_for(k, 0, bnd_size)
 	{
 		//if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
 		//{
@@ -492,6 +493,10 @@ void  boundary_condition()
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vitheta = 0;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vez = 0;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].viz = 0;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].pe = 0;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].pi = 0;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ee = 0;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ei = 0;
 					i++;
 				}
 			}
@@ -511,6 +516,10 @@ void  boundary_condition()
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vitheta = 0;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vez = 0;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].viz = 0;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].pe = 0;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].pi = 0;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ee = 0;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ei = 0;
 					j++;
 				}
 			}
@@ -533,6 +542,10 @@ void  boundary_condition()
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vitheta = 0;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vez = 0;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].viz = 0;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].pe = 0;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].pi = 0;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ee = 0;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ei = 0;
 					i++;
 				}
 			}
@@ -548,6 +561,10 @@ void  boundary_condition()
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vitheta = 0;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vez = 0;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].viz = 0;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].pe = 0;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].pi = 0;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ee = 0;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ei = 0;
 					j++;
 				}
 			}
@@ -555,7 +572,7 @@ void  boundary_condition()
 
 	}
 
-	_for(k, 0, BND_NUM)
+	_for(k, 0, bnd_size)
 	{
 		if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
 		{

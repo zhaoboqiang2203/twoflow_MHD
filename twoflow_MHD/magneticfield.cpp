@@ -127,7 +127,7 @@ void magnetic_field_initial()
     double nd = 0.001;
     double wth = 0;
     double lth = 0;
-
+    double t0;
     for (int i = 0; i < nz; i++)
     {
         for (int j = 0; j < nr; j++)
@@ -150,6 +150,32 @@ void magnetic_field_initial()
                 {
                     app_Br[i][j] += Brho(j * dr, 0, i * dz - lth);
                     app_Bz[i][j] += Bscz(j * dr, 0, i * dz - lth);
+
+                    t0 = 2 * PI * ME / (QE * sqrt(sqr(app_Br[i][j]) + sqr(app_Bz[i][j])));
+
+
+                    
+                    e_half[i][i] = -fmod(dt, t0) * QE / ME / 2;
+                    e_hrho[i][i] = e_half[i][i] * app_Br[i][j];
+                    e_htheta[i][i] = 0;
+                    e_hz[i][i] = e_half[i][i] * app_Bz[i][j];
+                    e_h2[i][i] = sqr(e_hrho[i][i]) + sqr(e_hz[i][i]);
+                    
+                    e_srho[i][i] = 2 * e_hrho[i][i] / (1 + e_h2[i][i]);
+                    e_stheta[i][i] = 2 * e_htheta[i][i] / (1 + e_h2[i][i]);
+                    e_sz[i][i] = 2 * e_hz[i][i] / (1 + e_h2[i][i]);
+
+                    t0 = 2 * PI * MI / (QE * sqrt(sqr(app_Br[i][j]) + sqr(app_Bz[i][j])));
+
+                    i_half[i][j] = fmod(dt, t0) * QE / MI / 2;
+                    i_hrho[i][j] = i_half[i][j] * app_Br[i][j];
+                    i_htheta[i][j] = 0;
+                    i_hz[i][j] = i_half[i][j] * app_Bz[i][j];
+                    i_h2[i][j] = sqr(i_hrho[i][j]) + sqr(i_hz[i][j]);
+
+                    i_srho[i][j] = 2 * i_hrho[i][j] / (1 + i_h2[i][j]);
+                    i_stheta[i][j] = 2 * i_htheta[i][j] / (1 + i_h2[i][j]);
+                    i_sz[i][j] = 2 * i_hz[i][j] / (1 + i_h2[i][j]);
                 }
             }
 

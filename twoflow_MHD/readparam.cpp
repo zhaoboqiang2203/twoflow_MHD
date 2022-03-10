@@ -41,15 +41,24 @@ int test_json()
 		return EXIT_FAILURE;
 	}
 
+
+
+	index = root["index"].asInt();
+	cathode_I = root["cathod current"].asInt();
+	REL_MASS = root["particle"][0]["REL_MASS"].asDouble();             //相对原子质量
+	EPS_PLA = root["EPS_PLA"].asDouble();
+	MI = REL_MASS * AMU;		        // kg, electron mass
+
 #ifdef BOUNDARY_DEBUG
 	std::cout << root << std::endl;
 #endif
 	
-
-	index = root["index"].asInt();
-	cathode_I = root["cathod current"].asInt();
-	printf("index = %lf\n", index);
+	printf("index = %d\n", index);
 	printf("cathode_I = %lf\n", cathode_I);
+	printf("EPS_PLA = %e\n", EPS_PLA);
+	printf("REL_MASS = %lf\n", REL_MASS);
+
+	bnd_size = root["boundary"].size();
 	for (int i = 0; i < root["boundary"].size(); i++)
 	{
 		bdyC = root["boundary"][i];
@@ -78,6 +87,10 @@ int test_json()
 	printf("length = %lf\n", coil_L);
 	printf("weith = %lf\n", coil_W);
 	printf("radius = %lf\n", coil_R);
+
+
+
+
 	ifs.close();
 	return EXIT_SUCCESS;
 

@@ -44,13 +44,16 @@ Others:                   // 其它说明
 
 *************************************************/
 
-double max_q_speed = 1e-5;
+double e_half[ZMAX][RMAX];
+double e_hrho[ZMAX][RMAX], e_htheta[ZMAX][RMAX], e_hz[ZMAX][RMAX], e_h2[ZMAX][RMAX];
+double e_srho[ZMAX][RMAX], e_stheta[ZMAX][RMAX], e_sz[ZMAX][RMAX];
+
+double i_half[ZMAX][RMAX];
+double i_hrho[ZMAX][RMAX], i_htheta[ZMAX][RMAX], i_hz[ZMAX][RMAX], i_h2[ZMAX][RMAX];
+double i_srho[ZMAX][RMAX], i_stheta[ZMAX][RMAX], i_sz[ZMAX][RMAX];
 
 void move()
 {
-	double q_half;
-	double hrho, htheta, hz, h2;
-	double srho, stheta, sz;
 	double urho, utheta, uz;
 	double urho_half, utheta_half, uz_half;
 	double Epr, Epz;
@@ -83,58 +86,55 @@ void move()
 			Epr = Er[i][j] - ct * app_Br[i][j];
 			Epz = Ez[i][j] - ct * app_Bz[i][j];
 
-			t0 = ME / (QE * sqrt(sqr(app_Br[i][j]) + sqr(app_Bz[i][j])));
+			//t0 = 2 * PI * ME / (QE * sqrt(sqr(app_Br[i][j]) + sqr(app_Bz[i][j])));
 
 			//fmod(dt, t0);
 			//q_half = -dt * QE / ME / 2;
-
-			q_half = -fmod(dt, t0) * QE / ME / 2;
-			hrho = q_half * app_Br[i][j];
-			htheta = 0;
-			hz = q_half * app_Bz[i][j];
-			h2 = sqr(hrho) + sqr(hz);
-			
-			srho = 2 * hrho / (1 + h2);
-			stheta = 2 * htheta / (1 + h2); 
-			sz = 2 * hz / (1 + h2);
-			urho = MPDT[i][j].ver + q_half * Epr;
+			//MPDT[i][j].angle_b_vi = fmod(dt, t0);
+			//q_half = -fmod(dt, t0) * QE / ME / 2;
+			//hrho = q_half * app_Br[i][j];
+			//htheta = 0;
+			//hz = q_half * app_Bz[i][j];
+			//h2 = sqr(hrho) + sqr(hz);
+			//
+			//srho = 2 * hrho / (1 + h2);
+			//stheta = 2 * htheta / (1 + h2); 
+			//sz = 2 * hz / (1 + h2);
+			urho = MPDT[i][j].ver + e_half[i][j] * Epr;
 			utheta = MPDT[i][j].vetheta;
-			uz = MPDT[i][j].vez + q_half * Epz;
-			urho_half = urho + (utheta * sz - uz * stheta) + ((uz * hrho - urho * hz) * sz - (urho * htheta - utheta * hrho) * stheta);
-			utheta_half = utheta + (uz * srho - urho * sz) + ((urho * htheta - utheta * hrho) * srho - (utheta * hz - uz * htheta) * sz);
-			uz_half = uz + (urho * stheta - utheta * srho) + ((utheta * hz - uz * htheta) * stheta - (uz * hrho - urho * hz) * srho);
-			MPDT[i][j].ver = urho_half + q_half * Epr;
+			uz = MPDT[i][j].vez + e_half[i][j] * Epz;
+			urho_half = urho + (utheta * e_sz[i][j] - uz * e_stheta[i][j]) + ((uz * e_hrho[i][j] - urho * e_hz[i][j]) * e_sz[i][j] - (urho * e_htheta[i][j] - utheta * e_hrho[i][j]) * e_stheta[i][j]);
+			utheta_half = utheta + (uz * e_srho[i][j] - urho * e_sz[i][j]) + ((urho * e_htheta[i][j] - utheta * e_hrho[i][j]) * e_srho[i][j] - (utheta * e_hz[i][j] - uz * e_htheta[i][j]) * e_sz[i][j]);
+			uz_half = uz + (urho * e_stheta[i][j] - utheta * e_srho[i][j]) + ((utheta * e_hz[i][j] - uz * e_htheta[i][j]) * e_stheta[i][j] - (uz * e_hrho[i][j] - urho * e_hz[i][j]) * e_srho[i][j]);
+			MPDT[i][j].ver = urho_half + e_half[i][j] * Epr;
 			MPDT[i][j].vetheta = utheta_half;
-			MPDT[i][j].vez = uz_half + q_half * Epz;
+			MPDT[i][j].vez = uz_half + e_half[i][j] * Epz;
 		
 			MPDT[i][j].ver += -QE * ct * app_Br[i][j] / ME * dt;
 			MPDT[i][j].vez += -QE * ct * app_Bz[i][j] / ME * dt;
 
 
 
+			//t0 = 2 * PI * MI / (QE * sqrt(sqr(app_Br[i][j]) + sqr(app_Bz[i][j])));
+			//
+			//q_half = fmod(dt, t0) * QE / MI / 2;
+			//hrho = q_half * app_Br[i][j];
+			//htheta = 0;
+			//hz = q_half * app_Bz[i][j];
+			//h2 = sqr(hrho) + sqr(hz);
 
-
-
-			t0 = MI / (QE * sqrt(sqr(app_Br[i][j]) + sqr(app_Bz[i][j])));
-			
-			q_half = fmod(dt, t0) * QE / MI / 2;
-			hrho = q_half * app_Br[i][j];
-			htheta = 0;
-			hz = q_half * app_Bz[i][j];
-			h2 = sqr(hrho) + sqr(hz);
-
-			srho = 2 * hrho / (1 + h2);
-			stheta = 2 * htheta / (1 + h2);
-			sz = 2 * hz / (1 + h2);
-			urho = MPDT[i][j].vir + q_half * Epr;
+			//srho = 2 * hrho / (1 + h2);
+			//stheta = 2 * htheta / (1 + h2);
+			//sz = 2 * hz / (1 + h2);
+			urho = MPDT[i][j].vir + i_half[i][j] * Epr;
 			utheta = MPDT[i][j].vitheta;
-			uz = MPDT[i][j].viz + q_half * Epz;
-			urho_half = urho + (utheta * sz - uz * stheta) + ((uz * hrho - urho * hz) * sz - (urho * htheta - utheta * hrho) * stheta);
-			utheta_half = utheta + (uz * srho - urho * sz) + ((urho * htheta - utheta * hrho) * srho - (utheta * hz - uz * htheta) * sz);
-			uz_half = uz + (urho * stheta - utheta * srho) + ((utheta * hz - uz * htheta) * stheta - (uz * hrho - urho * hz) * srho);
-			MPDT[i][j].vir = urho_half + q_half * Epr;
+			uz = MPDT[i][j].viz + i_half[i][j] * Epz;
+			urho_half = urho + (utheta * i_sz[i][j] - uz * i_stheta[i][j]) + ((uz * i_hrho[i][j] - urho * i_hz[i][j]) * i_sz[i][j] - (urho * i_htheta[i][j] - utheta * i_hrho[i][j]) * i_stheta[i][j]);
+			utheta_half = utheta + (uz * i_srho[i][j] - urho * i_sz[i][j]) + ((urho * i_htheta[i][j] - utheta * i_hrho[i][j]) * i_srho[i][j] - (utheta * i_hz[i][j] - uz * i_htheta[i][j]) * i_sz[i][j]);
+			uz_half = uz + (urho * i_stheta[i][j] - utheta * i_srho[i][j]) + ((utheta * i_hz[i][j] - uz * i_htheta[i][j]) * i_stheta[i][j] - (uz * i_hrho[i][j] - urho * i_hz[i][j]) * i_srho[i][j]);
+			MPDT[i][j].vir = urho_half + i_half[i][j] * Epr;
 			MPDT[i][j].vitheta = utheta_half;
-			MPDT[i][j].viz = uz_half + q_half * Epz;
+			MPDT[i][j].viz = uz_half + i_half[i][j] * Epz;
 			
 			MPDT[i][j].vir += QE * ct * app_Br[i][j] / MI * dt;
 			MPDT[i][j].viz += QE * ct * app_Bz[i][j] / MI * dt;
@@ -147,266 +147,17 @@ void move()
 			coulomb_collision(i, j);
 			
 			//viscosity_collision(i, j);
-		//	double pre_ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
-
-
-
-		//	double Q_ei = 1.4e-22;//电子离子碰撞截面
-		//	MPDT[i][j].tau_ei = pow(pre_ee,1.5) * sqrt(ME) / (11.313708 * PI * MPDT[i][j].ni * pow(QE, 4) * 10);
-		//	//double sigma_q = PI * pow(QE, 4) / (128 * sqr(EPS_0) * sqr(ME) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 4));
-		//	MPDT[i][j].sigma_Q = PI * pow(QE, 4) / (128 * sqr(EPS_0) * sqr(ME) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 4));
-		//	MPDT[i][j].mu_ie = MPDT[i][j].ni * Q_ei * sqrt((12 * MPDT[i][j].ee) / (PI * ME));
-
-		//	//if(abs(MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz) < 1e-6)
-		//	//{ 
-		//	//	MPDT[i][j].mu_ie = 0;
-		//	//}
-		//	//else
-		//	//{
-		//	//	MPDT[i][j].mu_ie = (MPDT[i][j].ne * PI * pow(QE, 4)) / (128 * sqr(EPS_0) * sqr(ME) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 3));
-		//	//}
-		//	double m_eir = 0;        //电子向离子转移的径向（r方向）动量
-		//	double m_eitheta = 0;    //电子向离子转移的角向（theta方向）动量
-		//	double m_eiz = 0;        //电子向离子转移的轴向（z方向）动量
-
-		//	MPDT[i][j].delta_ei = dt / MPDT[i][j].tau_ei * (pre_ee - pre_ei);     //电子向离子转移的能量
-		//	
-		//	//double eta = MPDT[i][j].mu_ie * MPDT[i][j].ne * ME;
-		//	//m_eir      = eta * (MPDT[i][j].ver - MPDT[i][j].vir);
-		//	//m_eitheta  = eta * (MPDT[i][j].vetheta - MPDT[i][j].vitheta);
-		//	//m_eiz      = eta * (MPDT[i][j].vez - MPDT[i][j].viz);
-
-		//	////delta_ei = 3 * MPDT[i][j].ne * ME * MPDT[i][j].mu_ie * (MPDT[i][j].ee - MPDT[i][j].ei);
-
-		//	//double pre_eng = MPDT[i][j].ei + MPDT[i][j].ee;
-
-		//	//if (MPDT[i][j].ne != 0 && MPDT[i][j].ni != 0)
-		//	//{
-		//	//	MPDT[i][j].ver -= m_eir / (MPDT[i][j].ne * ME);
-		//	//	MPDT[i][j].vir += m_eir / (MPDT[i][j].ni * MI);
-		//	//	MPDT[i][j].vetheta -= m_eitheta / (MPDT[i][j].ne * ME);
-		//	//	MPDT[i][j].vitheta += m_eitheta / (MPDT[i][j].ni * MI);
-		//	//	MPDT[i][j].vez -= m_eiz / (MPDT[i][j].ne * ME);
-		//	//	MPDT[i][j].viz += m_eiz / (MPDT[i][j].ni * MI);
-		//	//}
-		//	tur = sqr(MPDT[i][j].ver - MPDT[i][j].vir);
-		//	tutheta = sqr(MPDT[i][j].vetheta - MPDT[i][j].vitheta);
-		//	tuz = sqr(MPDT[i][j].vez - MPDT[i][j].viz);
-
-		//	tu2 = tuz + tutheta + tuz;
-
-		//	MPDT[i][j].vir += sqrt(2 * tur / tu2 * MPDT[i][j].delta_ei / (MPDT[i][j].ni * MI));
-		//	MPDT[i][j].vitheta += sqrt(2 * tutheta / tu2 * MPDT[i][j].delta_ei / (MPDT[i][j].ni * MI));
-		//	MPDT[i][j].viz += sqrt(2 * tuz / tu2 * MPDT[i][j].delta_ei / (MPDT[i][j].ni * MI));
-
-		//	MPDT[i][j].ver -= sqrt(2 * tur / tu2 * 11 * MPDT[i][j].delta_ei / (MPDT[i][j].ne * ME));
-		//	MPDT[i][j].vetheta -= sqrt(2 * tutheta / tu2 * 11 * MPDT[i][j].delta_ei / (MPDT[i][j].ne * ME));
-		//	MPDT[i][j].vez -= sqrt(2 * tuz / tu2 * 11 * MPDT[i][j].delta_ei / (MPDT[i][j].ne * ME));
-
-		//	//MPDT[i][j].ver = MPDT[i][j].vir;
-		//	//MPDT[i][j].vetheta = MPDT[i][j].vitheta;
-		//	//MPDT[i][j].vez = MPDT[i][j].viz;
 
 		//	//离子速度和磁场夹角
-	MPDT[i][j].angle_b_vi = magnetic_vec_angle(app_Br[i][j], app_Bz[i][j], MPDT[i][j].vir, MPDT[i][j].viz);
-
-		//	////碰撞之后电子流体能量
-		//	//double alter_ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-
-		//	//double pre_ei = MPDT[i][j].ei;
-		//	//double ev = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez) ;
-		//	MPDT[i][j].ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz) ;
-
-		//	//double dee = pre_ee - alter_ee;
-		//	//double dei = MPDT[i][j].ei - pre_ei;
+	//MPDT[i][j].angle_b_vi = magnetic_vec_angle(app_Br[i][j], app_Bz[i][j], MPDT[i][j].vir, MPDT[i][j].viz);
 
 
-		//	MPDT[i][j].pe += MPDT[i][j].ne * 10 * MPDT[i][j].delta_ei * (gamma - 1);
-		//	MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne) + 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-
-
-
-
-		//	//电离部分待完成，电子能量大于电离值增加电子离子密度
-
-		//	if (MPDT[i][j].ee > 15.6 * QE)
-		//	{
-		//		if (MPDT[i][j].ne < 1e21)
-		//		{
-		//			MPDT[i][j].ni += MPDT[i][j].ne;
-		//			MPDT[i][j].ne *= 2;
-		//		}
-
-		//		double tep = MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne);
-		//		double teu = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-
-		//		double tep1 = tep / (tep + teu) * 15.6 * QE;
-		//		double teu2 = teu / (tep + teu) * 15.6 * QE;
-
-
-		//		tur = sqr(MPDT[i][j].ver);
-		//		tutheta = sqr(MPDT[i][j].vetheta);
-		//		tuz = sqr(MPDT[i][j].vez);
-
-		//		tu2 = tuz + tutheta + tuz;
-
-		//		MPDT[i][j].ver -= sqrt(2 * tur / tu2 * teu2 /(MPDT[i][j].ne * ME));
-		//		MPDT[i][j].vetheta -= sqrt(2 * tutheta / tu2 * teu2 / (MPDT[i][j].ne * ME));
-		//		MPDT[i][j].vez -= sqrt(2 * tuz / tu2 * teu2 / (MPDT[i][j].ne * ME));
-
-		//		MPDT[i][j].pe -= MPDT[i][j].ne * tep1 * (gamma - 1);
-		//		MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne) + 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-		//	}
 		}
 	}
 
 
-	//for (i = 0; i < nz; i++)
-	//{
-	//	for (j = 0; j < nr; j++)
-	//	{
-
-	//		if (btype[i][j] == 1)
-	//		{
-	//			MPDT[i][j].vir = vir[i][j];
-	//			MPDT[i][j].viz = viz[i][j];
-
-	//			MPDT[i][j].ver = ver[i][j];
-	//			MPDT[i][j].vez = vez[i][j];
-	//		}
-	//		else if (btype[i][j] == DOWN && ptype[i][j] == CYLINDRICAL_AXIS)
-	//		{
-	//			MPDT[i][j].vir = vir[i][j];
-	//			MPDT[i][j].viz = viz[i][j];
-
-	//			MPDT[i][j].ver = ver[i][j];
-	//			MPDT[i][j].vez = vez[i][j];
-	//		}
-	//		else
-	//		{
-
-	//		}
-	//	}
-	//}
 }
 
-void move_q()
-{
-	double q_half;
-	double hrho, htheta, hz, h2;
-	double srho, stheta, sz;
-	double urho, utheta, uz;
-	double urho_half, utheta_half, uz_half;
-	for (int i = 0; i < nz; i++)
-	{
-		for (int j = 0; j < nr; j++)
-		{
-			if ((ptype[i][j] & VACCUM_BOUNDARY) != 0) continue;
-			if (MPDT[i][j].neq != 0 ) 
-			{
-				//判断电子电荷和离子电荷是否分离
-				if (is_electron_ion_separation(MPDT[i][j].angle_b_vi) == true)
-				{
-					//计算多余电子运动
-					q_half = -dt * QE / ME / 2;
-					hrho = q_half * app_Br[i][j];
-					htheta = 0;
-					hz = q_half * app_Bz[i][j];
-					h2 = sqr(hrho) + sqr(hz);
-
-					srho = 2 * hrho / (1 + h2);
-					stheta = 2 * htheta / (1 + h2);
-					sz = 2 * hz / (1 + h2);
-					urho = MPDT[i][j].vnqr + q_half * Er[i][j];
-					utheta = MPDT[i][j].vnqtheta;
-					uz = MPDT[i][j].vnqz + q_half * Ez[i][j];
-					urho_half = urho + (utheta * sz - uz * stheta) + ((uz * hrho - urho * hz) * sz - (urho * htheta - utheta * hrho) * stheta);
-					utheta_half = utheta + (uz * srho - urho * sz) + ((urho * htheta - utheta * hrho) * srho - (utheta * hz - uz * htheta) * sz);
-					uz_half = uz + (urho * stheta - utheta * srho) + ((utheta * hz - uz * htheta) * stheta - (uz * hrho - urho * hz) * srho);
-					MPDT[i][j].vnqr = urho_half + q_half * Er[i][j];
-					MPDT[i][j].vnqtheta = utheta_half;
-					MPDT[i][j].vnqz = uz_half + q_half * Ez[i][j];
-
-					urho = MPDT[i][j].vnqr;
-					utheta = MPDT[i][j].vnqtheta;
-					uz = MPDT[i][j].vnqz;
-
-
-					if (is_large_max_speed(urho, utheta, uz, max_q_speed) == true)
-					{
-						double tu = sqrt(sqr(urho) + sqr(utheta) + sqr(uz));
-						MPDT[i][j].vnqr = urho / tu * max_q_speed;
-						MPDT[i][j].vnqtheta = utheta / tu * max_q_speed;
-						MPDT[i][j].vnqz = uz / tu * max_q_speed;
-					}
-				}
-				else
-				{
-					if (is_large_max_speed(MPDT[i][j].vir, MPDT[i][j].vitheta, MPDT[i][j].viz, max_q_speed) == true)
-					{
-						double tu = sqrt(sqr(MPDT[i][j].vir) + sqr(MPDT[i][j].vitheta) + sqr(MPDT[i][j].viz));
-						MPDT[i][j].vnqr = MPDT[i][j].vir / tu * max_q_speed;
-						MPDT[i][j].vnqtheta = MPDT[i][j].vitheta / tu * max_q_speed;
-						MPDT[i][j].vnqz = MPDT[i][j].viz / tu * max_q_speed;
-					}
-					else
-					{
-						MPDT[i][j].vnqr = MPDT[i][j].vir;
-						MPDT[i][j].vnqtheta = MPDT[i][j].vitheta;
-						MPDT[i][j].vnqz = MPDT[i][j].viz;
-					}
-				}
-			}
-
-			if (MPDT[i][j].peq != 0)
-			{
-				q_half = dt * QE / ME / 2;
-				hrho = q_half * app_Br[i][j];
-				htheta = 0;
-				hz = q_half * app_Bz[i][j];
-				h2 = sqr(hrho) + sqr(hz);
-
-				srho = 2 * hrho / (1 + h2);
-				stheta = 2 * htheta / (1 + h2);
-				sz = 2 * hz / (1 + h2);
-				urho = MPDT[i][j].vpqr + q_half * Er[i][j];
-				utheta = MPDT[i][j].vpqtheta;
-				uz = MPDT[i][j].vpqz + q_half * Ez[i][j];
-				urho_half = urho + (utheta * sz - uz * stheta) + ((uz * hrho - urho * hz) * sz - (urho * htheta - utheta * hrho) * stheta);
-				utheta_half = utheta + (uz * srho - urho * sz) + ((urho * htheta - utheta * hrho) * srho - (utheta * hz - uz * htheta) * sz);
-				uz_half = uz + (urho * stheta - utheta * srho) + ((utheta * hz - uz * htheta) * stheta - (uz * hrho - urho * hz) * srho);
-				MPDT[i][j].vpqr = urho_half + q_half * Er[i][j];
-				MPDT[i][j].vpqtheta = utheta_half;
-				MPDT[i][j].vpqz = uz_half + q_half * Ez[i][j];
-
-
-				urho = MPDT[i][j].vpqr;
-				utheta = MPDT[i][j].vpqtheta;
-				uz = MPDT[i][j].vpqz;
-
-				if (is_large_max_speed(urho, utheta, uz, max_q_speed) == true)
-				{
-					double tu = sqrt(sqr(urho) + sqr(utheta) + sqr(uz));
-					MPDT[i][j].vpqr = urho / tu * max_q_speed;
-					MPDT[i][j].vpqtheta = utheta / tu * max_q_speed;
-					MPDT[i][j].vpqz = uz / tu * max_q_speed;
-				}
-			}
-			
-		}
-	}
-}
-
-void plasma_para()
-{
-
-}
-
-
-void collision()
-{
-	
-}
 
 double  magnetic_vec_angle(double var,double vaz,double vbr,double vbz)
 {
@@ -552,7 +303,17 @@ void coulomb_collision(int i, int j)
 	double ur1, utheta1, uz1;
 	double pre_ee, pre_ei;
 	double ep;
-	double ne = MPDT[i][j].ne;
+	double ne = 0;
+
+	if (MPDT[i][j].ne > MPDT[i][j].ni * 10)
+	{
+		ne = MPDT[i][j].ni * 10;
+	}
+	else
+	{
+		ne = MPDT[i][j].ne;
+	}
+
 
 	pre_ee = 0.5 * ME * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
 	pre_ei = 0.5 * MI * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
@@ -561,16 +322,22 @@ void coulomb_collision(int i, int j)
 	utheta = (MPDT[i][j].vetheta * ne * ME + MPDT[i][j].vitheta * MPDT[i][j].ni * MI) / (ne * ME + MPDT[i][j].ni * MI);
 	uz = (MPDT[i][j].vez * ne * ME + MPDT[i][j].viz * MPDT[i][j].ni * MI) / (ne * ME + MPDT[i][j].ni * MI);
 
-	ep = pre_ee + pre_ei - 0.5 * (ME + MI) * (sqr(ur) + sqr(utheta) + sqr(uz));
+	//ep = pre_ee + pre_ei - 0.5 * (ME + MI) * (sqr(ur) + sqr(utheta) + sqr(uz));
 
-	if (ep < 0)
-	{
-		ep = 0;
-	}
-	
+	//if (ep < 0)
+	//{
+	//	ep = 0;
+	//}
+	//
 
-	MPDT[i][j].pe = ne * ep * (gamma - 1);
+	//MPDT[i][j].pe = ne * ep * (gamma - 1);
 
+
+	//if (MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne * ME) > 0.5 * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez))
+	//{
+	//	printf("PE = % lf\n", MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne) / QE);
+	//	printf("ee = % lf\n", 0.5 * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez) * ME / QE);
+	//}
 	//ur1 = sqrt((sqr(ur) + sqr(utheta) + sqr(uz)) / 3.0);
 
 	//MPDT[i][j].vir = ur + 0.01 * (ur1 - ur);
@@ -706,13 +473,13 @@ void current_caulate()
 	int start_z = 0, end_z = 0, pos_r = 0;
 	register int i, j;
 
-	pos_r = 34;
+	pos_r = 20;
 	start_z = 0;
-	end_z = 382;
+	end_z = 160;
 
-	pos_z = 382;
+	pos_z = 160;
 	start_r = 0;
-	end_r = 34;
+	end_r = 20;
 
 	current_I = 0;
 

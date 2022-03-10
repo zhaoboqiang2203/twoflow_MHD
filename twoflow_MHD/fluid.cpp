@@ -612,6 +612,7 @@ void electron_flow_v2()
 				U[i][j].u[11] = U_bar2[i][j].u[11] + Qr.u[11] / 4 * (MPDT[i][j + 1].ee - 2 * MPDT[i][j].ee + MPDT[i][j - 1].ee) + Qz.u[11] / 4 * (MPDT[i + 1][j].ee - 2 * MPDT[i][j].ee + MPDT[i - 1][j].ee);
 				U[i][j].u[12] = U_bar2[i][j].u[12] + Qr.u[12] / 4 * (MPDT[i][j + 1].ei - 2 * MPDT[i][j].ei + MPDT[i][j - 1].ei) + Qz.u[12] / 4 * (MPDT[i + 1][j].ei - 2 * MPDT[i][j].ei + MPDT[i - 1][j].ei);
 
+
 #ifdef FLUID_DEBUG
 				if (i == row && j == col)
 				{
@@ -673,23 +674,6 @@ void electron_flow_v2()
 	{
 		for (j = 0; j < nr; j++)
 		{
-			//if (U[i][j].u[0] > 0)
-			//{
-			//	MPDT[i][j].ne = U[i][j].u[0];
-			//}
-			//else
-			//{
-			//	MPDT[i][j].ne = 0;
-			//}
-
-			//if (U[i][j].u2 > 0)
-			//{
-			//	MPDT[i][j].ni = U[i][j].u2;
-			//}
-			//else
-			//{
-			//	MPDT[i][j].ni = 0;
-			//}
 
 			MPDT[i][j].ne = U[i][j].u[0];
 			MPDT[i][j].ni = U[i][j].u[1];
@@ -1348,8 +1332,8 @@ struct _F cal_s(struct _U uij)
 }
 double dy_vis(int i,int j)
 {
-	//return 1.5e-21 * cube(REL_MASS) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 1.5);
-	return 1.5e-21 * cube(REL_MASS) * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
+	//return 1.5e-21 * cube(REL_MASS) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 2);
+	return 1.5e-19 * cube(REL_MASS) * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
 }
 
 void cal_tau()
@@ -1552,10 +1536,10 @@ void cal_tau()
 			//MPDT[i][j].tau_visz;
 			//MPDT[i][j].tau_vistheta;
 
-			MPDT[i][j].neq = tau_vis[i][j].f[12];
-			MPDT[i][j].vnqr = tau_vis[i][j].f[5];
-			MPDT[i][j].vnqz = tau_vis[i][j].f[7];
-			MPDT[i][j].vnqtheta = tau_vis[i][j].f[6];
+			//MPDT[i][j].neq = tau_vis[i][j].f[12];
+			//MPDT[i][j].vnqr = tau_vis[i][j].f[5];
+			//MPDT[i][j].vnqz = tau_vis[i][j].f[7];
+			//MPDT[i][j].vnqtheta = tau_vis[i][j].f[6];
 		}
 	}
 
@@ -1764,10 +1748,10 @@ void cal_tau_bar()
 			//	tau_vis[i][j].f[7] = 0;
 			//}
 
-			MPDT[i][j].peq = tau_vis[i][j].f[12];
-			MPDT[i][j].vpqr = tau_vis[i][j].f[5];
-			MPDT[i][j].vpqz = tau_vis[i][j].f[7];
-			MPDT[i][j].vpqtheta = tau_vis[i][j].f[6];
+			//MPDT[i][j].peq = tau_vis[i][j].f[12];
+			//MPDT[i][j].vpqr = tau_vis[i][j].f[5];
+			//MPDT[i][j].vpqz = tau_vis[i][j].f[7];
+			//MPDT[i][j].vpqtheta = tau_vis[i][j].f[6];
 
 		}
 	}

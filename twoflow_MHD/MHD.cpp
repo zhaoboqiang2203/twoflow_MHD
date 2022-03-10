@@ -70,6 +70,9 @@ double set_phi;
 double phi_sigma;
 double cathode_I;
 double current_I;
+double REL_MASS;             //相对原子质量
+double MI;		            // kg, electron mass
+double EPS_PLA;				//相对电导率
 double para_p, para_i, para_d;
 
 int main()
@@ -87,7 +90,7 @@ int main()
 	
 	//仿真参数定义区
 
-	scale = ZMAX / 200;
+	scale = ZMAX / 500;
 	test_json();
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
@@ -96,15 +99,13 @@ int main()
 	nq = 100;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
-	max_q_speed = 3e4;
-	phi_sigma = 1e9 / 360 / 300 / max_q_speed / 1e2;
-	inter_e_den = cathode_I * dt / QE * phi_sigma;
+	inter_e_den = cathode_I * 6e18;
 	inter_pla_den = 0.04  / 40 * NA / 360 / 20 * 1e9;
 
 	pid.set_current = cathode_I;
-	pid.Kp = 6e16;
-	pid.Ki = 1e13;
-	pid.Kd = 1e13;
+	pid.Kp = 6e18;
+	pid.Ki = 1e17;
+	pid.Kd = 1e17;
 
 	//dt = 0.05 * ((dr * dr) + (dz * dz));
 	printf("dt = %e\n", dt);
@@ -139,8 +140,6 @@ int main()
 			current_control();
 		}
 
-		//Q_fluid();
-		//move_q();
 
 		move();
 		mag_phi();
@@ -413,20 +412,20 @@ void output()
 	//sprintf_s(fname, (".\\output\\bz\\bz_%d.csv"), index);
 	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 	 
-	sprintf_s(fname, (".\\output\\btheta\\btheta_%d.csv"), index);
-	matrix_to_csv((double**)btheta, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\btheta\\btheta_%d.csv"), index);
+	//matrix_to_csv((double**)btheta, ZMAX, RMAX, RMAX, fname);
 
-	//电子离子碰撞频率
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].mu_ie;
-		}
-	}
+	////电子离子碰撞频率
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].mu_ie;
+	//	}
+	//}
 
-	sprintf_s(fname, (".\\output\\mu_ie\\mu_ie_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\mu_ie\\mu_ie_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 	
 	//电流密度r方向
 	for (int i = 0; i < ZMAX; i++)
@@ -452,133 +451,133 @@ void output()
 	sprintf_s(fname, (".\\output\\Jz\\Jz_%d.csv"), index);
 	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
-	//电子向离子转移能量
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].delta_ei;
-		}
-	}
+	////电子向离子转移能量
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].delta_ei;
+	//	}
+	//}
 
-	sprintf_s(fname, (".\\output\\delta_ei\\delta_ei_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\delta_ei\\delta_ei_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
-	//电子离子碰撞截面
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].sigma_Q;
-		}
-	}
+	////电子离子碰撞截面
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].sigma_Q;
+	//	}
+	//}
 
-	sprintf_s(fname, (".\\output\\sigma\\sigma_Q_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\sigma\\sigma_Q_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
-	//多余电荷密度
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].peq;
-		}
-	}
+	////多余电荷密度
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].peq;
+	//	}
+	//}
 
-	sprintf_s(fname, (".\\output\\peq\\peq_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\peq\\peq_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].neq;
-		}
-	}
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].neq;
+	//	}
+	//}
 
-	sprintf_s(fname, (".\\output\\neq\\neq_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\neq\\neq_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].vnqr;
-		}
-	}
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].vnqr;
+	//	}
+	//}
 
-	sprintf_s(fname, (".\\output\\vnqr\\vnqr_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\vnqr\\vnqr_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].vnqz;
-		}
-	}
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].vnqz;
+	//	}
+	//}
 
-	sprintf_s(fname, (".\\output\\vnqz\\vnqz_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\vnqz\\vnqz_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].vnqtheta;
-		}
-	}
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].vnqtheta;
+	//	}
+	//}
 
-	sprintf_s(fname, (".\\output\\vnqtheta\\vnqtheta_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].vpqr;
-		}
-	}
-
-	sprintf_s(fname, (".\\output\\vpqr\\vpqr_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].vpqz;
-		}
-	}
-
-	sprintf_s(fname, (".\\output\\vpqz\\vpqz_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].vpqtheta;
-		}
-	}
-
-	sprintf_s(fname, (".\\output\\vpqtheta\\vpqtheta_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\vnqtheta\\vnqtheta_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 
 
-	for (int i = 0; i < ZMAX; i++)
-	{
-		for (int j = 0; j < RMAX; j++)
-		{
-			res_out[i][j] = MPDT[i][j].angle_b_vi;
-		}
-	}
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].vpqr;
+	//	}
+	//}
 
-	sprintf_s(fname, (".\\output\\angle\\angle_%d.csv"), index);
-	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	//sprintf_s(fname, (".\\output\\vpqr\\vpqr_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].vpqz;
+	//	}
+	//}
+
+	//sprintf_s(fname, (".\\output\\vpqz\\vpqz_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].vpqtheta;
+	//	}
+	//}
+
+	//sprintf_s(fname, (".\\output\\vpqtheta\\vpqtheta_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+
+
+	//for (int i = 0; i < ZMAX; i++)
+	//{
+	//	for (int j = 0; j < RMAX; j++)
+	//	{
+	//		res_out[i][j] = MPDT[i][j].angle_b_vi;
+	//	}
+	//}
+
+	//sprintf_s(fname, (".\\output\\angle\\angle_%d.csv"), index);
+	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 
 }

@@ -1,47 +1,71 @@
 {
 	"index": 140001,
 	"cathod current": 1000,
+	"EPS_PLA": 1e8,
+	"particle": [
+		{
+			"REL_MASS": 40
+		}
+	],
 	"magnetic coil": [
 		{
-			"current": 11520,
+			"current": 10277,
 			"length": 0.076,
 			"weith": 0.001,
 			"radius": 0.076
 		}
 	],
-	"boundary num": 9,
+	"boundary num": 14,
 	"boundary": [
 		{
 			"physics_type": "CYLINDRICAL_AXIS",
 			"start.r": 0,
 			"start.z": 76,
 			"end.r": 0,
-			"end.z": 200,
+			"end.z": 500,
 			"bnd_dir": "Z_DIR",
 			"boundary_type": "DOWN"
 		},
 		{
 			"physics_type": "VACCUM_BOUNDARY",
 			"start.r": 0,
-			"start.z": 200,
-			"end.r": 57.4,
-			"end.z": 200,
+			"start.z": 500,
+			"end.r": 200,
+			"end.z": 500,
 			"bnd_dir": "R_DIR",
 			"boundary_type": "RIGHT"
 		},
 		{
 			"physics_type": "VACCUM_BOUNDARY",
-			"start.r": 57.4,
+			"start.r": 200,
 			"start.z": 76,
-			"end.r": 57.4,
-			"end.z": 200,
+			"end.r": 200,
+			"end.z": 500,
 			"bnd_dir": "Z_DIR",
 			"boundary_type": "UP"
 		},
 		{
+			"physics_type": "VACCUM_BOUNDARY",
+			"start.r": 69.4,
+			"start.z": 76,
+			"end.r": 200,
+			"end.z": 76,
+			"bnd_dir": "R_DIR",
+			"boundary_type": "LEFT"
+		},
+		{
 			"physics_type": "ANODE_BOUNDARY",
 			"start.r": 57.4,
-			"start.z": 38,
+			"start.z": 76,
+			"end.r": 69.4,
+			"end.z": 76,
+			"bnd_dir": "R_DIR",
+			"boundary_type": "LEFT"
+		},
+		{
+			"physics_type": "ANODE_BOUNDARY",
+			"start.r": 57.4,
+			"start.z": 20,
 			"end.r": 57.4,
 			"end.z": 76,
 			"bnd_dir": "Z_DIR",
@@ -52,7 +76,7 @@
 			"start.r": 57.4,
 			"start.z": 0,
 			"end.r": 57.4,
-			"end.z": 38,
+			"end.z": 20,
 			"bnd_dir": "Z_DIR",
 			"boundary_type": "UP"
 		},
@@ -70,14 +94,14 @@
 			"start.r": 6.4,
 			"start.z": 0,
 			"end.r": 6.4,
-			"end.z": 38,
+			"end.z": 20,
 			"bnd_dir": "Z_DIR",
 			"boundary_type": "DOWN"
 		},
 		{
 			"physics_type": "CATHODE_BOUNDARY",
 			"start.r": 6.4,
-			"start.z": 38,
+			"start.z": 20,
 			"end.r": 6.4,
 			"end.z": 76,
 			"bnd_dir": "Z_DIR",

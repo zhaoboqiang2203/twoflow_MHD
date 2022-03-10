@@ -588,10 +588,10 @@ void  boundary_condition()
 					//if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
 					//MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j].neq = inter_e_den / scale;
 					//MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].neq = inter_e_den / scale;
-					//MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vnqz = 0.2 * max_q_speed;
+					//MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vnqz = 0.2 * 30000;
 					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne = inter_e_den / scale;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vez = 0.2 * max_q_speed;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ee = 0.5 * sqr(0.21 * max_q_speed);
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vez = 0.2 * 30000;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ee = 0.5 * sqr(0.21 * 30000);
 					i++;
 				}
 			}
@@ -606,20 +606,20 @@ void  boundary_condition()
 						//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1] != 1) continue;
 						//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1].neq = inter_e_den / scale;
 						//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].neq = inter_e_den / scale;
-						//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vnqr = 0.2 * max_q_speed;
+						//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vnqr = 0.2 * 30000;
 						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne = inter_e_den / scale;
-						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ver = 0.2 * max_q_speed;
-						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ee = 0.5 * sqr(0.21 * max_q_speed);
+						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ver = 0.2 * 30000;
+						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ee = 0.5 * sqr(0.21 * 30000);
 					}
 					else
 					{
 						//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
 						//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].neq = inter_e_den / scale;
 						//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].neq = inter_e_den / scale;
-						//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vnqr = -0.2 * max_q_speed;
+						//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vnqr = -0.2 * 30000;
 						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne = inter_e_den / scale;
-						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ver = -0.2 * max_q_speed;
-						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ee = 0.5 * sqr(0.21 * max_q_speed);
+						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ver = -0.2 * 30000;
+						MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ee = 0.5 * sqr(0.21 * 30000);
 					}
 					j++;
 				}
@@ -702,7 +702,7 @@ void  boundary_condition()
 		//			//if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ni - MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne > 1e15) continue;
 		//			//if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
 		//			MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].peq = out_e_den / scale;
-		//			MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vpqz = 0.2 * max_q_speed;
+		//			MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vpqz = 0.2 * 30000;
 		//			i++;
 		//		}
 		//	}
@@ -716,7 +716,7 @@ void  boundary_condition()
 		//			//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
 		//			//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].peq = out_e_den;
 		//			MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].peq = out_e_den / scale;
-		//			MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vpqr = 0.2 * max_q_speed;
+		//			MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vpqr = 0.2 * 30000;
 		//			j++;
 		//		}
 		//	}

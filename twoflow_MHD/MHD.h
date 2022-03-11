@@ -181,6 +181,7 @@ void matrix_int_to_csv(int** a, int N, int M, int array_size, char* filename);
 int fill_plasma(int tr, int tz, int fill_n);
 void output();
 
+
 const double EPS_0 = 8.85418782e-12;  	// C/(V*m), vacuum permittivity
 //const double EPS_PLA = 1e8;				//相对电导率
 const double QE = 1.602176565e-19;		// C, electron charge
@@ -261,7 +262,7 @@ extern double i_srho[ZMAX][RMAX], i_stheta[ZMAX][RMAX], i_sz[ZMAX][RMAX];
 
 extern double cathode_I;
 extern double current_I;
-
+extern double last_I;
 extern double coil_I;//线圈电流
 extern double coil_R;//线圈内径
 extern double coil_W;//线圈宽度（内外径差值）
@@ -277,7 +278,6 @@ extern double para_p, para_i, para_d;
 /// move.cpp 函数声明
 /// </summary>
 void move();
-void move_q();
 double  magnetic_vec_angle(double var, double vaz, double vbr, double vbz);
 bool is_electron_ion_separation(double angle);
 bool is_large_max_speed(double ur, double utheta, double uz, double max_speed);
@@ -295,10 +295,9 @@ void out_judge();
 void wirte_datfile();
 void read_datfile();
 bool is_read_datfile();
-void parameter_read();
+int parameter_read();
 void max_write();
 
-int test_json();
 int btype_trans(string ss);
 int dir_trans(string ss);
 PTypes ptype_trans(string ss);

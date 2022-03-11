@@ -2,6 +2,9 @@
 	"index": 140001,
 	"cathod current": 1000,
 	"EPS_PLA": 1e8,
+	"Kp": 5e16,
+	"Ki": 5e17,
+	"Kd": 1e15,
 	"particle": [
 		{
 			"REL_MASS": 40

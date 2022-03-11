@@ -4,16 +4,8 @@
 #include "MHD.h"
 
 using namespace std;
-/** \brief Write the Value object to a stream.
- * Example Usage:
- * $g++ streamWrite.cpp -ljsoncpp -std=c++11 -o streamWrite
- * $./streamWrite
- * {
- *     "Age" : 20,
- *     "Name" : "robin"
- * }
- */
-int test_json() 
+
+int parameter_read()
 {
 	//Json::Value root;
 	//Json::Value magnet;
@@ -88,8 +80,11 @@ int test_json()
 	printf("weith = %lf\n", coil_W);
 	printf("radius = %lf\n", coil_R);
 
-
-
+	pid.set_current = cathode_I;
+	pid.Kp = root["Kp"].asDouble();
+	pid.Ki = root["Ki"].asDouble();
+	pid.Kd = root["Kd"].asDouble();
+	pid.integral = 0;
 
 	ifs.close();
 	return EXIT_SUCCESS;

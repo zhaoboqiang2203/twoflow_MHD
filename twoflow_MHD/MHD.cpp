@@ -64,12 +64,14 @@ double res_out1[ZMAX][RMAX];
 
 double btheta[ZMAX][RMAX];
 
+
 double max_phi;
 double set_phi;
 
 double phi_sigma;
 double cathode_I;
 double current_I;
+double last_I;
 double REL_MASS;             //相对原子质量
 double MI;		            // kg, electron mass
 double EPS_PLA;				//相对电导率
@@ -78,20 +80,26 @@ double para_p, para_i, para_d;
 int main()
 {
 	int nq;
+	double last_current = 0;
 	nz = ZMAX;
 	nr = RMAX;
 
-	//parameter_read();
-	
-	//exit(0);
-	//index = 140001;
 
-	//set_phi = 160; 
-	
 	//仿真参数定义区
 
 	scale = ZMAX / 500;
-	test_json();
+	parameter_read();
+	max_phi = 0;
+	fstream myfile(".\\output\\PHI_I_data.csv", ios::in);
+	if (!myfile.is_open())
+	{
+		cout << "未成功打开文件" << endl;
+	}
+
+	myfile << index << "," << max_phi << "," << current_I << endl;
+
+	myfile.close();
+
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
 	dtheta = PI / 180;
@@ -99,13 +107,10 @@ int main()
 	nq = 100;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
-	inter_e_den = cathode_I * 6e18;
+	inter_e_den = cathode_I * 1.1e19;
 	inter_pla_den = 0.04  / 40 * NA / 360 / 20 * 1e9;
 
-	pid.set_current = cathode_I;
-	pid.Kp = 6e18;
-	pid.Ki = 1e17;
-	pid.Kd = 1e17;
+
 
 	//dt = 0.05 * ((dr * dr) + (dz * dz));
 	printf("dt = %e\n", dt);
@@ -128,6 +133,8 @@ int main()
 	while (index--)
 	{
 		//printf("index %d\n", index);
+
+		//clock_t start = clock();
 		boundary_condition();
 		electron_flow_v2();
 
@@ -137,12 +144,19 @@ int main()
 			max_write();
 			potential_solve();
 			current_caulate();
-			current_control();
+			if (abs(current_I - last_current) < 0.3 * current_I)
+			{
+				current_control();
+			}
+			last_current = current_I;
+			//current_control();
 		}
 
 
 		move();
-		mag_phi();
+		//current_caulate();
+		//current_control();
+		//mag_phi();
 
 		out_judge();
 
@@ -157,6 +171,9 @@ int main()
 			output();
 
 		}
+
+		//clock_t ends = clock();
+		//cout << "Running Time : " << (double)(ends - start) / CLOCKS_PER_SEC << endl;
 	}
 
 	return 0;
@@ -1162,68 +1179,6 @@ void judge_bit()
 
 		}
 	}
-}
-
-void parameter_read()
-{
-
-	string ss;
-	fstream infile;
-	double num = 0;
-	string number;
-	istringstream readstr;
-	infile.open("parameter.txt", ios::in);
-	if (!infile.is_open())
-	{
-		cout << "未成功打开文件" << endl;
-	}
-
-	getline(infile, ss);
-	//string数据流化
-	readstr.clear(); // 重设状态
-	readstr.rdbuf()->str(ss);
-	readstr.seekg(0, ios::beg); // 重设读取位置
-	//读取线圈电流
-	getline(readstr, number, ':'); //循环读取数据
-	getline(readstr, number);
-	coil_I = atof(number.c_str());
-
-	getline(infile, ss);
-	//string数据流化
-	readstr.clear(); // 重设状态
-	readstr.rdbuf()->str(ss);
-	readstr.seekg(0, ios::beg); // 重设读取位置
-	//读取线圈半径
-	getline(readstr, number, ':'); //循环读取数据
-	getline(readstr, number);
-	coil_R = atof(number.c_str());
-
-	getline(infile, ss);
-	//string数据流化
-	readstr.clear(); // 重设状态
-	readstr.rdbuf()->str(ss);
-	readstr.seekg(0, ios::beg); // 重设读取位置
-	//读取线圈半径
-	getline(readstr, number, ':'); //循环读取数据
-	getline(readstr, number);
-	cathode_I = atof(number.c_str());
-
-	getline(infile, ss);
-	//string数据流化
-	readstr.clear(); // 重设状态
-	readstr.rdbuf()->str(ss);
-	readstr.seekg(0, ios::beg); // 重设读取位置
-	//读取初始序号
-	getline(readstr, number, ':'); //循环读取数据
-	getline(readstr, number);
-	index = atof(number.c_str());
-
-	printf("coil_I = %lf\n", coil_I);
-	printf("coil_R = %lf\n", coil_R);
-	printf("cathode_I = %lf\n", cathode_I);
-
-	//printf("ne i = %d\n", i);
-	infile.close();
 }
 
 void max_write()

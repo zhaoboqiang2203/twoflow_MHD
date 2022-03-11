@@ -509,14 +509,14 @@ void current_control()
 	pid.err = pid.set_current - (-current_I);
 	pid.integral += pid.err;
 
-	if (pid.err > 50 || pid.err < -50)
-	{
-		pid.ne_density = pid.Kp * pid.err + pid.Kd * (pid.err - pid.err_last);
-	}
-	else
-	{
+	//if (pid.err > 50 || pid.err < -50)
+	//{
+	//	pid.ne_density = pid.Kp * pid.err + pid.Kd * (pid.err - pid.err_last);
+	//}
+	//else
+	//{
 		pid.ne_density = pid.Kp * pid.err + pid.Ki * pid.integral + pid.Kd * (pid.err - pid.err_last);
-	}
+	//}
 
 	pid.err_last = pid.err;
 	inter_e_den += pid.ne_density;

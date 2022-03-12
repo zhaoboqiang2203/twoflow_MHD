@@ -328,10 +328,11 @@ int initial()
 
 #ifdef BOUNDARY_DEBUG
 	printf("cathod_cell = %lf\nanode_cell = %lf\n", cathod_cell, anode_cell);
+#endif	
 	matrix_int_to_csv((int**)world, ZMAX, RMAX, RMAX, (char*)(".\\output\\world.csv"));
 	matrix_int_to_csv((int**)btype, ZMAX, RMAX, RMAX, (char*)(".\\output\\btype.csv"));
 	matrix_int_to_csv((int**)ptype, ZMAX, RMAX, RMAX, (char*)(".\\output\\ptype.csv"));
-#endif
+
 	for (i = 0; i < nz; i++)
 	{
 		for (j = 0; j < nr; j++)

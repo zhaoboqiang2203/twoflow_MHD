@@ -90,16 +90,11 @@ int main()
 	scale = ZMAX / 500;
 	parameter_read();
 	max_phi = 0;
-	fstream myfile(".\\output\\PHI_I_data.csv", ios::in);
-	if (!myfile.is_open())
-	{
-		cout << "未成功打开文件" << endl;
-	}
-
-	myfile << index << "," << max_phi << "," << current_I << endl;
-
+	//清空文件
+	ofstream myfile(".\\output\\PHI_I_data.csv");
 	myfile.close();
 
+	exit(0);
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
 	dtheta = PI / 180;
@@ -119,7 +114,7 @@ int main()
 
 	initial();
 	magnetic_field_initial();
-	
+
 	//dadi initial
 	init_solve();
 
@@ -144,7 +139,7 @@ int main()
 			max_write();
 			potential_solve();
 			current_caulate();
-			if (abs(current_I - last_current) < 0.3 * current_I)
+			if (abs(current_I - last_current) < 0.3 * abs(current_I))
 			{
 				current_control();
 			}

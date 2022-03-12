@@ -94,7 +94,6 @@ int main()
 	ofstream myfile(".\\output\\PHI_I_data.csv");
 	myfile.close();
 
-	exit(0);
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
 	dtheta = PI / 180;

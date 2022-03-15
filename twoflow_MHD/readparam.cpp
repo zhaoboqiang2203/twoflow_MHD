@@ -20,7 +20,8 @@ int parameter_read()
 	Json::Value root;
 	Json::Value bdyC;
 	Json::Value mgC;
-	double sr;
+	double cur_para;
+	double mag_field;
 
 	std::ifstream ifs;
 	ifs.open("mpdtParam.json");
@@ -70,10 +71,15 @@ int parameter_read()
 
 	mgC = root["magnetic coil"][0];
 
-	coil_I = mgC["current"].asDouble();//线圈电流
+	//coil_I = mgC["current"].asDouble();//线圈电流
 	coil_R = mgC["radius"].asDouble();//线圈内径
 	coil_W = mgC["weith"].asDouble();//线圈宽度（内外径差值）
 	coil_L = mgC["length"].asDouble();//线圈厚度
+
+	cur_para = mgC["currenr para"].asDouble();
+	mag_field = mgC["magnetic field"].asDouble();
+	
+	coil_I = mag_field / cur_para;  //线圈电流
 
 	printf("coil current = %lf\n", coil_I);
 	printf("length = %lf\n", coil_L);

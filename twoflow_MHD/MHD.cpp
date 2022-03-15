@@ -11,6 +11,9 @@ double dt;
 
 int index;
 
+
+struct _particle atom[ZMAX][RMAX];
+
 struct node MPDT[ZMAX][RMAX];
 struct node MPDT_in[ZMAX][RMAX];
 struct _U U[ZMAX][RMAX], U_bar[ZMAX][RMAX], U_bar2[ZMAX][RMAX];
@@ -18,10 +21,10 @@ struct _F Fr[ZMAX][RMAX], Fr_bar[ZMAX][RMAX], Fr_bar2[ZMAX][RMAX];
 struct _F Fz[ZMAX][RMAX], Fz_bar[ZMAX][RMAX], Fz_bar2[ZMAX][RMAX];
 struct _F s[ZMAX][RMAX], s_bar[ZMAX][RMAX], s_bar2[ZMAX][RMAX];
 
-struct _U Uq[ZMAX][RMAX], Uq_bar[ZMAX][RMAX], Uq_bar2[ZMAX][RMAX];
-struct _F Fqr[ZMAX][RMAX], Fqr_bar[ZMAX][RMAX], Fqr_bar2[ZMAX][RMAX];
-struct _F Fqz[ZMAX][RMAX], Fqz_bar[ZMAX][RMAX], Fqz_bar2[ZMAX][RMAX];
-struct _F sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
+struct _AF Uq[ZMAX][RMAX], Uq_bar[ZMAX][RMAX], Uq_bar2[ZMAX][RMAX];
+struct _AF Fqr[ZMAX][RMAX], Fqr_bar[ZMAX][RMAX], Fqr_bar2[ZMAX][RMAX];
+struct _AF Fqz[ZMAX][RMAX], Fqz_bar[ZMAX][RMAX], Fqz_bar2[ZMAX][RMAX];
+struct _AF sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
 
 struct _F tau_vis[ZMAX][RMAX];
 
@@ -602,13 +605,13 @@ void out_judge()
 		for (j = 0; j < RMAX; j++)
 		{
 			if (btype[i][j] != 1) continue;
-			if (MPDT[i][j].ne != MPDT[i][j].ne || MPDT[i][j].ne < 0)
+			if (MPDT[i][j].ne != MPDT[i][j].ne)
 			{
 				err_flag = 1;
 				break;
 			}
 
-			if (MPDT[i][j].ni != MPDT[i][j].ni || MPDT[i][j].ni < 0)
+			if (MPDT[i][j].ni != MPDT[i][j].ni)
 			{
 				err_flag = 1;
 				break;

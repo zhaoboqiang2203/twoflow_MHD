@@ -141,8 +141,15 @@ struct _particle
 	double vtheta;
 	double vz;
 
-	double pre;
+	double pressure;
 	double eng;
+};
+
+struct _AF
+{
+	int r, z;
+	double f[5];
+
 };
 
 struct _pid 
@@ -209,16 +216,18 @@ extern double btheta[ZMAX][RMAX];
 extern double Jz[ZMAX][RMAX];
 extern double Jr[ZMAX][RMAX];
 
+extern struct _particle atom[ZMAX][RMAX];
 extern struct node MPDT[ZMAX][RMAX];
 extern struct _U U[ZMAX][RMAX], U_bar[ZMAX][RMAX], U_bar2[ZMAX][RMAX];
 extern struct _F Fr[ZMAX][RMAX], Fr_bar[ZMAX][RMAX], Fr_bar2[ZMAX][RMAX];
 extern struct _F Fz[ZMAX][RMAX], Fz_bar[ZMAX][RMAX], Fz_bar2[ZMAX][RMAX];
 extern struct _F s[ZMAX][RMAX], s_bar[ZMAX][RMAX], s_bar2[ZMAX][RMAX];
 
-extern struct _U Uq[ZMAX][RMAX], Uq_bar[ZMAX][RMAX], Uq_bar2[ZMAX][RMAX];
-extern struct _F Fqr[ZMAX][RMAX], Fqr_bar[ZMAX][RMAX], Fqr_bar2[ZMAX][RMAX];
-extern struct _F Fqz[ZMAX][RMAX], Fqz_bar[ZMAX][RMAX], Fqz_bar2[ZMAX][RMAX];
-extern struct _F sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
+
+extern struct _AF Uq[ZMAX][RMAX], Uq_bar[ZMAX][RMAX], Uq_bar2[ZMAX][RMAX];
+extern struct _AF Fqr[ZMAX][RMAX], Fqr_bar[ZMAX][RMAX], Fqr_bar2[ZMAX][RMAX];
+extern struct _AF Fqz[ZMAX][RMAX], Fqz_bar[ZMAX][RMAX], Fqz_bar2[ZMAX][RMAX];
+extern struct _AF sq[ZMAX][RMAX], sq_bar[ZMAX][RMAX], sq_bar2[ZMAX][RMAX];
 
 extern struct _F tau_vis[ZMAX][RMAX];
 

@@ -57,6 +57,9 @@
     <ClCompile Include="readparam.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="atomFluid.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MHD.h">
@@ -103,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="json\writer.h">
       <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="atomFluid.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

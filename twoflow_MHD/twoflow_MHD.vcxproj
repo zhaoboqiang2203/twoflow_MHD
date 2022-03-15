@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="atomFluid.cpp" />
     <ClCompile Include="boundary.cpp" />
     <ClCompile Include="dadi.cpp" />
     <ClCompile Include="fluid.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="json\version.h" />
     <ClInclude Include="json\writer.h" />
     <ClInclude Include="MHD.h" />
+    <ClInclude Include="atomFluid.h" />
     <ClInclude Include="testcode.h" />
   </ItemGroup>
   <ItemGroup>

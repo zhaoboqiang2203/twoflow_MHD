@@ -1140,10 +1140,6 @@ void ion_flow()
 	return;
 }
 
-void atom_flow()
-{
-	
-}
 
 struct _U cal_u(int i, int j)
 {
@@ -1330,6 +1326,7 @@ struct _F cal_s(struct _U uij)
 	fij.f[12] = -r1 * vir * (gamma - 1) * (0.5 * (vir * vir + vitheta * vitheta + viz * viz) - ei);
 	return fij;
 }
+
 double dy_vis(int i,int j)
 {
 	//return 1.5e-21 * cube(REL_MASS) * pow((MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz), 2);

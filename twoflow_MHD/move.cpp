@@ -205,7 +205,8 @@ void ionization_collisions(int i, int j)
 
 	double tu2, teu2;
 	//double nn = (1e21 - MPDT[i][j].ne - MPDT[i][j].neq + MPDT[i][j].peq);
-	double nn = (1e21 - MPDT[i][j].ni);
+	double nn = (atom[i][j].den - MPDT[i][j].ni);
+	double tden = 0;
 	if (nn < 0)
 	{
 		return;
@@ -242,18 +243,30 @@ void ionization_collisions(int i, int j)
 		MPDT[i][j].vetheta -= sqrt(2 * tutheta / tu2 * teu2 / ME);
 		MPDT[i][j].vez -= sqrt(2 * tuz / tu2 * teu2 / ME);
 
-		//double add_n = nn * p;
 
-		//MPDT[i][j].ver = MPDT[i][j].ver * MPDT[i][j].ne / (MPDT[i][j].ne + add_n);
-		//MPDT[i][j].vetheta = MPDT[i][j].vetheta * MPDT[i][j].ne / (MPDT[i][j].ne + add_n);
-		//MPDT[i][j].vez = MPDT[i][j].vez * MPDT[i][j].ne / (MPDT[i][j].ne + add_n);
+		tden = nn * p;
+		MPDT[i][j].ver = MPDT[i][j].ver * MPDT[i][j].ne / (MPDT[i][j].ne + tden);
+		MPDT[i][j].vetheta = MPDT[i][j].vetheta * MPDT[i][j].ne / (MPDT[i][j].ne + tden);
+		MPDT[i][j].vez = MPDT[i][j].vez * MPDT[i][j].ne / (MPDT[i][j].ne + tden);
 
-		//MPDT[i][j].vir = MPDT[i][j].vir * MPDT[i][j].ne / (MPDT[i][j].ni + add_n);
-		//MPDT[i][j].vitheta = MPDT[i][j].vitheta * MPDT[i][j].ne / (MPDT[i][j].ni + add_n);
-		//MPDT[i][j].viz = MPDT[i][j].viz * MPDT[i][j].ne / (MPDT[i][j].ni + add_n);
+		MPDT[i][j].vir = MPDT[i][j].vir * MPDT[i][j].ni / (MPDT[i][j].ni + tden);
+		MPDT[i][j].vitheta = MPDT[i][j].vitheta * MPDT[i][j].ni / (MPDT[i][j].ni + tden);
+		MPDT[i][j].viz = MPDT[i][j].viz * MPDT[i][j].ni / (MPDT[i][j].ni + tden);
 
-		MPDT[i][j].ni += nn * p;
-		MPDT[i][j].ne += nn * p;
+		
+		
+		//atom[i][j].den -= tden;
+		//if (atom[i][j].den < 0)
+		//{
+		//	tden = atom[i][j].den;
+		//	atom[i][j].den = 0;
+		//	
+		//}
+		MPDT[i][j].ni += tden;
+		MPDT[i][j].ne += tden;
+		
+
+		
 
 		//MPDT[i][j].pe -= MPDT[i][j].ne * tep1 * (gamma - 1);
 		MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne * ME) + 0.5 * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
@@ -473,22 +486,22 @@ void current_caulate()
 	int start_z = 0, end_z = 0, pos_r = 0;
 	register int i, j;
 
-	pos_r = 20;
+	pos_r = 15;
 	start_z = 0;
 	end_z = 160;
 
 	pos_z = 160;
 	start_r = 0;
-	end_r = 20;
+	end_r = 15;
 
 	current_I = 0;
 
-	j = pos_r;
+	//j = pos_r;
 
-	for (i = start_z; i < end_z; i++)
-	{
-		current_I += (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE * dr * 2 * PI * j * dz;
-	}
+	//for (i = start_z; i < end_z; i++)
+	//{
+	//	current_I += (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE * dr * 2 * PI * j * dz;
+	//}
 	i = pos_z;
 
 	for (j = start_r; j < end_r; j++)
@@ -503,6 +516,31 @@ void current_caulate()
 	printf("current = %lf\n", current_I);
 }
 
+//void current_caulate()
+//{
+//	int i, j;
+//	current_I = 0;
+//	for (int k = 0; k < cath_num; k++)
+//	{
+//		i = cath_cell_z[k];
+//		j = cath_cell_r[k];
+//		if (cath_cell_dir[k] == LEFT || cath_cell_dir[k] == RIGHT)
+//		{
+//			if (j != 0)
+//			{
+//				current_I += (MPDT[i][j].ni * MPDT[i][j].viz - MPDT[i][j].ne * MPDT[i][j].vez) * QE * sqr(dr) * PI * (2 * j - 1);
+//			}
+//		}
+//
+//
+//		if (cath_cell_dir[k] == DOWN || cath_cell_dir[k] == UP)
+//		{
+//			current_I += (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE * dr * 2 * PI * j * dz;
+//		}
+//
+//	}
+//	printf("current = %lf\n", current_I);
+//}
 
 void current_control()
 {

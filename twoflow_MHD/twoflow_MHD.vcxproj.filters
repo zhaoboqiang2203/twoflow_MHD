@@ -60,6 +60,9 @@
     <ClCompile Include="atomFluid.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="species.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MHD.h">

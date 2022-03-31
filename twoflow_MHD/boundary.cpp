@@ -18,93 +18,31 @@ double out_e_den;
 
 double inlet_cell;
 double out_cell;
+
+
+int cath_cell_r[10 * ZMAX];
+int cath_cell_z[10 * ZMAX];
+int cath_cell_dir[10 * ZMAX];
+int cath_num = 0;
+
+int anode_cell_r[10 * ZMAX];
+int anode_cell_z[10 * ZMAX];
+int anode_cell_dir[10 * ZMAX];
+int anode_num = 0;
+
+int cera_cell_r[10 * ZMAX];
+int cera_cell_z[10 * ZMAX];
+int cera_cell_dir[10 * ZMAX];
+int cera_num = 0;
+
+
 int initial()
 {
 	register int i, j, k;
-	//___________________________________________________
-	//|        76			|            124			|
-	//|			  			|							|
-	//|51					|  							|
-	//|						|							|
-	//|						|							|
-	//|  				    |							|
-	//| 					|							|
-	//|_________76___________							|
-	//						|							|
-	//                   6.4|							|
-	//						| __________________________|
-
-	//boundary_array[0].physics_type = CYLINDRICAL_AXIS;
-	//boundary_array[0].start.r = 0 * scale;
-	//boundary_array[0].start.z = 76 * scale;
-	//boundary_array[0].end.r = 0 * scale;
-	//boundary_array[0].end.z = 200 * scale;
-	//boundary_array[0].bnd_dir = Z_DIR;
-	//boundary_array[0].boundary_type = DOWN;
-
-	//boundary_array[1].physics_type = VACCUM_BOUNDARY;
-	//boundary_array[1].start.r = 0 * scale;
-	//boundary_array[1].start.z = 200 * scale;
-	//boundary_array[1].end.r = 57.4 * scale;
-	//boundary_array[1].end.z = 200 * scale;
-	//boundary_array[1].bnd_dir = R_DIR;
-	//boundary_array[1].boundary_type = RIGHT;
-
-	//boundary_array[2].physics_type = VACCUM_BOUNDARY;
-	//boundary_array[2].start.r = 57.4 * scale;
-	//boundary_array[2].start.z = 76 * scale;
-	//boundary_array[2].end.r = 57.4 * scale;
-	//boundary_array[2].end.z = 200 * scale;
-	//boundary_array[2].bnd_dir = Z_DIR;
-	//boundary_array[2].boundary_type = UP;
-
-	//boundary_array[3].physics_type = ANODE_BOUNDARY;
-	//boundary_array[3].start.r = 57.4 * scale;
-	//boundary_array[3].start.z = 38 * scale;
-	//boundary_array[3].end.r = 57.4 * scale;
-	//boundary_array[3].end.z = 76 * scale;
-	//boundary_array[3].bnd_dir = Z_DIR;
-	//boundary_array[3].boundary_type = UP;
-
-	//boundary_array[4].physics_type = DIELECTRIC_SURFACE_BOUNDARY;
-	//boundary_array[4].start.r = 57.4 * scale;
-	//boundary_array[4].start.z = 0 * scale;
-	//boundary_array[4].end.r = 57.4 * scale;
-	//boundary_array[4].end.z = 38 * scale;
-	//boundary_array[4].bnd_dir = Z_DIR;
-	//boundary_array[4].boundary_type = UP;
-
-	//boundary_array[5].physics_type = DIELECTRIC_SURFACE_BOUNDARY;
-	//boundary_array[5].start.r = 6.4 * scale;
-	//boundary_array[5].start.z = 0 * scale;
-	//boundary_array[5].end.r = 57.4 * scale;
-	//boundary_array[5].end.z = 0 * scale;
-	//boundary_array[5].bnd_dir = R_DIR;
-	//boundary_array[5].boundary_type = LEFT;
-
-	//boundary_array[6].physics_type = DIELECTRIC_SURFACE_BOUNDARY;
-	//boundary_array[6].start.r = 6.4 * scale;
-	//boundary_array[6].start.z = 0 * scale;
-	//boundary_array[6].end.r = 6.4 * scale;
-	//boundary_array[6].end.z = 38 * scale;
-	//boundary_array[6].bnd_dir = Z_DIR;
-	//boundary_array[6].boundary_type = DOWN;
-
-	//boundary_array[7].physics_type = CATHODE_BOUNDARY;
-	//boundary_array[7].start.r = 6.4 * scale;
-	//boundary_array[7].start.z = 38 * scale;
-	//boundary_array[7].end.r = 6.4 * scale;
-	//boundary_array[7].end.z = 76 * scale;
-	//boundary_array[7].bnd_dir = Z_DIR;
-	//boundary_array[7].boundary_type = DOWN;
-
-	//boundary_array[8].physics_type = CATHODE_BOUNDARY;
-	//boundary_array[8].start.r = 0 * scale;
-	//boundary_array[8].start.z = 76 * scale;
-	//boundary_array[8].end.r = 6.4 * scale;
-	//boundary_array[8].end.z = 76 * scale;
-	//boundary_array[8].bnd_dir = R_DIR;
-	//boundary_array[8].boundary_type = LEFT;
+	
+	cath_num = 0;
+	anode_num = 0;
+	cera_num = 0;
 
 	memset(world, 0, sizeof(world));
 	memset(btype, 0, sizeof(world));
@@ -144,9 +82,10 @@ int initial()
 
 	fill_plasma(30 * scale, 30 * scale, 1);
 	fill_plasma(0, 0, 110);
-	for (int i = 0; i < nz; i++)
+	//fill_plasma(120 * scale, 60 * scale, 210);
+	for (i = 0; i < nz; i++)
 	{
-		for (int j = 0; j < nr; j++)
+		for (j = 0; j < nr; j++)
 		{
 			if (world[i][j] == 1)
 			{
@@ -155,6 +94,10 @@ int initial()
 			else if (world[i][j] == 110)
 			{
 				btype[i][j] = 110;
+			}
+			else if (world[i][j] == 210)
+			{
+				btype[i][j] = 210;
 			}
 			//else if (btype[i][j] == (LEFT + UP) && (i != 0 && j != (RMAX - 1)))
 			//{
@@ -195,13 +138,13 @@ int initial()
 
 	_for(k, 0, bnd_size)
 	{
-		double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-		double dz = boundary_array[k].end.z - boundary_array[k].start.z;
+		double lr = boundary_array[k].end.r - boundary_array[k].start.r;
+		double lz = boundary_array[k].end.z - boundary_array[k].start.z;
 
-		if (dr == 0 || dz == 0) continue;
-		if (dr > dz)
+		if (lr == 0 || lz == 0) continue;
+		if (lr > dz)
 		{
-			double ins_z = dz / dr;
+			double ins_z = lz / lr;
 			i = 0;
 			_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 			{
@@ -211,7 +154,7 @@ int initial()
 		}
 		else
 		{
-			double ins_r = dr / dz;
+			double ins_r = lr / lz;
 			j = 0;
 			_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 			{
@@ -221,110 +164,8 @@ int initial()
 		}
 
 	}
+	electrode_side_cell();
 
-	cathod_cell = 0;
-	anode_cell = 0;
-	//计算阴阳极网格数
-	_for(k, 0, bnd_size)
-	{
-		if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
-		{
-			double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-			double dz = boundary_array[k].end.z - boundary_array[k].start.z;
-
-			if (dr > dz)
-			{
-				double ins_z = dz / dr;
-				i = 0;
-				_for(j, boundary_array[k].start.r, boundary_array[k].end.r)
-				{
-					//if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
-					cathod_cell += 2;
-					i++;
-				}
-			}
-			else
-			{
-				double ins_r = dr / dz;
-				j = 0;
-
-				_for(i, (boundary_array[k].start.z + boundary_array[k].end.z) / 2, boundary_array[k].end.z, )
-				{
-					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))] == DOWN)
-					{
-						//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1] != 1) continue;
-						cathod_cell += 2;
-					}
-					else
-					{
-						//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
-						cathod_cell += 2;
-					}
-					j++;
-				}
-			}
-		}
-
-		//保证阴极进入和阳极流出的电子密度相等
-		if (boundary_array[k].physics_type == ANODE_BOUNDARY)
-		{
-			double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-			double dz = boundary_array[k].end.z - boundary_array[k].start.z;
-
-			if (dr > dz)
-			{
-				double ins_z = dz / dr;
-				i = 0;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
-				{
-					if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
-					anode_cell += 2;
-					i++;
-				}
-			}
-			else
-			{
-				double ins_r = dr / dz;
-				j = 0;
-				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
-				{
-					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
-					anode_cell += 2;
-					j++;
-				}
-			}
-		}
-
-		//if (boundary_array[k].physics_type == INLET)
-		//{
-		//	double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-		//	double dz = boundary_array[k].end.z - boundary_array[k].start.z;
-
-		//	if (dr > dz)
-		//	{
-		//		double ins_z = dz / dr;
-		//		i = 0;
-		//		_feq(j, boundary_array[k].start.r, boundary_array[k].end.r - scale)
-		//		{
-		//			cathod_cell += 2;
-		//			i++;
-		//		}
-		//	}
-		//	else
-		//	{
-		//		double ins_r = dr / dz;
-		//		j = 0;
-		//		_feq(i, boundary_array[k].start.z, boundary_array[k].end.z - scale)
-		//		{
-		//			cathod_cell += 2;
-		//			j++;
-		//		}
-		//	}
-		//}
-
-	}
-
-	out_e_den = inter_e_den * cathod_cell / anode_cell;
 
 #ifdef BOUNDARY_DEBUG
 	printf("cathod_cell = %lf\nanode_cell = %lf\n", cathod_cell, anode_cell);
@@ -337,10 +178,10 @@ int initial()
 	{
 		for (j = 0; j < nr; j++)
 		{
-			if (btype[i][j] != 0 && btype[i][j] != 110)
+			if (btype[i][j] != 0 && btype[i][j] != 110 && btype[i][j] != 210)
 			{
-				MPDT[i][j].ne = bg_den / scale;
-				MPDT[i][j].ni = bg_den / scale;
+				MPDT[i][j].ne = bg_den * 0.01;
+				MPDT[i][j].ni = bg_den * 0.01;
 			}
 			else
 			{
@@ -359,8 +200,7 @@ int initial()
 			MPDT[i][j].btheta = 0;
 			MPDT[i][j].pe = 0;
 			MPDT[i][j].pi = 0;
-			//MPDT[i][j].ee = 0;
-			//MPDT[i][j].ei = 0;
+
 
 			if (btype[i][j] != 0 && btype[i][j] != 110)
 			{
@@ -374,18 +214,24 @@ int initial()
 				MPDT[i][j].ei = 0;
 			}
 
+
+			if (btype[i][j] == 1)
+			{
+				atom[i][j].den = bg_den;
+				//atom[i][j].eng = 1e-3 / (MI * bg_den);
+			}
+			else
+			{
+				atom[i][j].den = 0;
+				atom[i][j].eng = 0;
+			}
+			atom[i][j].vr = 0;
+			atom[i][j].vtheta = 0;
+			atom[i][j].vz = 0;
+
 			btheta[i][j] = 0;
 
-			MPDT[i][j].neq = 0;
-			MPDT[i][j].vnqr = 0;
-			MPDT[i][j].vnqz = 0;
-			MPDT[i][j].vnqtheta = 0;
-
-			MPDT[i][j].peq = 0;       
-			MPDT[i][j].vpqr =0;
-			MPDT[i][j].vpqz = 0;
-			MPDT[i][j].vpqtheta =0;
-		}
+			}
 	}
 
 	return 0;
@@ -475,12 +321,12 @@ void  boundary_condition()
 		//陶瓷边界二次电子发射
 		if (boundary_array[k].physics_type == DIELECTRIC_SURFACE_BOUNDARY)
 		{
-			double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-			double dz = boundary_array[k].end.z - boundary_array[k].start.z;
+			double lr = boundary_array[k].end.r - boundary_array[k].start.r;
+			double lz = boundary_array[k].end.z - boundary_array[k].start.z;
 
-			if (dr > dz)
+			if (lr > lz)
 			{
-				double ins_z = dz / dr;
+				double ins_z = lz / lr;
 				i = 0;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
@@ -503,7 +349,7 @@ void  boundary_condition()
 			}
 			else
 			{
-				double ins_r = dr / dz;
+				double ins_r = lr / lz;
 				j = 0;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
@@ -528,12 +374,12 @@ void  boundary_condition()
 
 		if (boundary_array[k].physics_type == ANODE_BOUNDARY)
 		{
-			double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-			double dz = boundary_array[k].end.z - boundary_array[k].start.z;
+			double lr = boundary_array[k].end.r - boundary_array[k].start.r;
+			double lz = boundary_array[k].end.z - boundary_array[k].start.z;
 
-			if (dr > dz)
+			if (lr > lz)
 			{
-				double ins_z = dz / dr;
+				double ins_z = lz / lr;
 				i = 0;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
@@ -552,7 +398,7 @@ void  boundary_condition()
 			}
 			else
 			{
-				double ins_r = dr / dz;
+				double ins_r = lr / lz;
 				j = 0;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
@@ -573,16 +419,19 @@ void  boundary_condition()
 
 	}
 
+	updata_ion_edge();
+	updata_electron_edge();
+
 	_for(k, 0, bnd_size)
 	{
 		if (boundary_array[k].physics_type == CATHODE_BOUNDARY)
 		{
-			double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-			double dz = boundary_array[k].end.z - boundary_array[k].start.z;
+			double lr = boundary_array[k].end.r - boundary_array[k].start.r;
+			double lz = boundary_array[k].end.z - boundary_array[k].start.z;
 
-			if (dr > dz)
+			if (lr > lz)
 			{
-				double ins_z = dz / dr;
+				double ins_z = lz / lr;
 				i = 0;
 				_for(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
@@ -598,7 +447,7 @@ void  boundary_condition()
 			}
 			else
 			{
-				double ins_r = dr / dz;
+				double ins_r = lr / lz;
 				j = 0;
 				_for(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
@@ -630,12 +479,12 @@ void  boundary_condition()
 
 		if (boundary_array[k].physics_type == VACCUM_BOUNDARY)
 		{
-			double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-			double dz = boundary_array[k].end.z - boundary_array[k].start.z;
+			double lr = boundary_array[k].end.r - boundary_array[k].start.r;
+			double lz = boundary_array[k].end.z - boundary_array[k].start.z;
 
-			if (dr > dz)
+			if (lr > lz)
 			{
-				double ins_z = dz / dr;
+				double ins_z = lz / lr;
 				i = 0;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
@@ -660,7 +509,7 @@ void  boundary_condition()
 			}
 			else
 			{
-				double ins_r = dr / dz;
+				double ins_r = lr / lz;
 				j = 0;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
@@ -688,75 +537,34 @@ void  boundary_condition()
 
 
 
-		//保证阴极进入和阳极流出的电子密度相等
-		//if (boundary_array[k].physics_type == ANODE_BOUNDARY)
-		//{
-		//	double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-		//	double dz = boundary_array[k].end.z - boundary_array[k].start.z;
 
-		//	if (dr > dz)
-		//	{
-		//		double ins_z = dz / dr;
-		//		i = 0;
-		//		_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
-		//		{
-		//			//if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ni - MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne > 1e15) continue;
-		//			//if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
-		//			MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].peq = out_e_den / scale;
-		//			MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vpqz = 0.2 * 30000;
-		//			i++;
-		//		}
-		//	}
-		//	else
-		//	{
-		//		double ins_r = dr / dz;
-		//		j = 0;
-		//		_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
-		//		{
-		//			//if (MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ni - MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne > 1e15) continue;
-		//			//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
-		//			//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].peq = out_e_den;
-		//			MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].peq = out_e_den / scale;
-		//			MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vpqr = 0.2 * 30000;
-		//			j++;
-		//		}
-		//	}
-		//}
 
-		if (boundary_array[k].physics_type == INLET)
+		/*if (boundary_array[k].physics_type == INLET)
 		{
-			double dr = boundary_array[k].end.r - boundary_array[k].start.r;
-			double dz = boundary_array[k].end.z - boundary_array[k].start.z;
+			double lr = boundary_array[k].end.r - boundary_array[k].start.r;
+			double lz = boundary_array[k].end.z - boundary_array[k].start.z;
 
-			if (dr > dz)
+			if (lr > lz)
 			{
-				double ins_z = dz / dr;
+				double ins_z = lz / lr;
 				i = 0;
-				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r - scale)
+				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
-					//if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j] != 1) continue;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j].ne += inter_pla_den / scale;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) + 1][j].ni += inter_pla_den / scale;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne += inter_pla_den / scale;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ni += inter_pla_den / scale;
+					
 					i++;
 				}
 			}
 			else
 			{
-				double ins_r = dr / dz;
+				double ins_r = lr / lz;
 				j = 0;
-				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z - scale)
+				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
-					//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1] != 1) continue;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1].ne += inter_pla_den / scale;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) + 1].ni += inter_pla_den / scale;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne += inter_pla_den / scale;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ni += inter_pla_den / scale;
+
 					j++;
 				}
 			}
-		}
+		}*/
 
 	}
 }
@@ -857,10 +665,10 @@ int judge_conner(int i,int j)
 	{
 		return RIGHT + DOWN;
 	}
-	//else if (state == 0)
-	//{
-	//	return 1;
-	//}
+	else if (state == 0)
+	{
+		return btype[i][j];
+	}
 	else
 	{
 		printf("boundary condition error %d %d %d\n",state,i,j);
@@ -868,4 +676,443 @@ int judge_conner(int i,int j)
 	}
 
 	return 0;
+}
+
+void electrode_side_cell()
+{
+	register int i, j, k;
+	for (i = 0; i < nz; i++)
+	{
+		for (j = 0; j < nr; j++)
+		{
+			if (btype[i][j] == 1)
+			{
+				if (is_cathode_ngh(i, j))
+				{
+					break;
+				}
+
+				if (is_anode_ngh(i, j))
+				{
+					break;
+				}
+
+				if (is_cera_ngh(i, j))
+				{
+					break;
+				}
+			}
+		}
+	}
+}
+
+int is_cathode_ngh(int i, int j)
+{
+	if (i - 1 > 0)
+	{
+		if (ptype[i - 1][j] == CATHODE_BOUNDARY)
+		{
+			cath_cell_z[cath_num] =i;
+			cath_cell_r[cath_num] =j;
+			cath_cell_dir[cath_num] = LEFT;
+			cath_num++;
+
+			return 1;
+		}
+	}
+
+	if (i + 1 < ZMAX)
+	{
+		if (ptype[i + 1][j] == CATHODE_BOUNDARY )
+		{
+			cath_cell_z[cath_num] = i;
+			cath_cell_r[cath_num] = j;
+			cath_cell_dir[cath_num] = RIGHT;
+			cath_num++;
+
+			return 1;
+		}
+	}
+
+	if (j - 1 > 0)
+	{
+		if (ptype[i][j - 1] == CATHODE_BOUNDARY)
+		{
+			cath_cell_z[cath_num] = i;
+			cath_cell_r[cath_num] = j;
+			cath_cell_dir[cath_num] = DOWN;
+			cath_num++;
+
+			return 1;
+		}
+	}
+
+	if (i + 1 < ZMAX)
+	{
+		if (ptype[i + 1][j] == CATHODE_BOUNDARY )
+		{
+			cath_cell_z[cath_num] = i;
+			cath_cell_r[cath_num] = j;
+			cath_cell_dir[cath_num] = UP;
+			cath_num++;
+
+			return 1;
+		}
+	}
+	
+	return 0;
+}
+
+
+int is_anode_ngh(int i, int j)
+{
+	if (i - 1 > 0)
+	{
+		if (ptype[i - 1][j] == ANODE_BOUNDARY )
+		{
+			anode_cell_z[anode_num] = i;
+			anode_cell_r[anode_num] = j;
+			anode_cell_dir[anode_num] = LEFT;
+			anode_num++;
+
+			return 1;
+		}
+	}
+
+	if (i + 1 < ZMAX)
+	{
+		if (ptype[i + 1][j] == ANODE_BOUNDARY )
+		{
+			anode_cell_z[anode_num] = i;
+			anode_cell_r[anode_num] = j;
+			anode_cell_dir[anode_num] = RIGHT;
+			anode_num++;
+
+			return 1;
+		}
+	}
+
+	if (j - 1 > 0)
+	{
+		if (ptype[i][j - 1] == ANODE_BOUNDARY)
+		{
+			anode_cell_z[anode_num] = i;
+			anode_cell_r[anode_num] = j;
+			anode_cell_dir[anode_num] = DOWN;
+			anode_num++;
+
+			return 1;
+		}
+	}
+
+	if (i + 1 < ZMAX)
+	{
+		if (ptype[i + 1][j] == ANODE_BOUNDARY)
+		{
+			anode_cell_z[anode_num] = i;
+			anode_cell_r[anode_num] = j;
+			anode_cell_dir[anode_num] = UP;
+			anode_num++;
+
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+
+
+int is_cera_ngh(int i, int j)
+{
+	if (i - 1 > 0)
+	{
+		if (ptype[i - 1][j] == DIELECTRIC_SURFACE_BOUNDARY)
+		{
+			cera_cell_z[cera_num] = i;
+			cera_cell_r[cera_num] = j;
+			cera_cell_dir[cera_num] = LEFT;
+			cera_num++;
+
+			return 1;
+		}
+	}
+
+	if (i + 1 < ZMAX)
+	{
+		if (ptype[i + 1][j] == DIELECTRIC_SURFACE_BOUNDARY)
+		{
+			cera_cell_z[cera_num] = i;
+			cera_cell_r[cera_num] = j;
+			cera_cell_dir[cera_num] = RIGHT;
+			cera_num++;
+
+			return 1;
+		}
+	}
+
+	if (j - 1 > 0)
+	{
+		if (ptype[i][j - 1] == DIELECTRIC_SURFACE_BOUNDARY)
+		{
+			cera_cell_z[cera_num] = i;
+			cera_cell_r[cera_num] = j;
+			cera_cell_dir[cera_num] = DOWN;
+			cera_num++;
+
+			return 1;
+		}
+	}
+
+	if (i + 1 < ZMAX)
+	{
+		if (ptype[i + 1][j] == DIELECTRIC_SURFACE_BOUNDARY)
+		{
+			cera_cell_z[cath_num] = i;
+			cera_cell_r[cath_num] = j;
+			cera_cell_dir[cath_num] = UP;
+			cera_num++;
+
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+void updata_atom_edge()
+{
+	int i, j;
+	for (int k = 0; k < cath_num; k++)
+	{
+		i = cath_cell_z[k];
+		j = cath_cell_r[k];
+		if (atom[i][j].vz < 0 && cath_cell_dir[k] == LEFT)
+		{
+			atom[i][j].vz = -atom[i][j].vz;
+		}
+
+		if (atom[i][j].vz > 0 && cath_cell_dir[k] == RIGHT)
+		{
+			atom[i][j].vz = -atom[i][j].vz;
+		}
+		
+		if (atom[i][j].vr < 0 && cath_cell_dir[k] == DOWN)
+		{
+			atom[i][j].vr = -atom[i][j].vr;
+		}
+
+		if (atom[i][j].vr > 0 && cath_cell_dir[k] == UP)
+		{
+			atom[i][j].vr = -atom[i][j].vr;
+		}
+	}
+
+	for (int k = 0; k < anode_num; k++)
+	{
+		i = anode_cell_z[k];
+		j = anode_cell_r[k];
+		if (atom[i][j].vz < 0 && anode_cell_dir[k] == LEFT)
+		{
+			atom[i][j].vz = -atom[i][j].vz;
+		}
+
+		if (atom[i][j].vz > 0 && anode_cell_dir[k] == RIGHT)
+		{
+			atom[i][j].vz = -atom[i][j].vz;
+		}
+
+		if (atom[i][j].vr < 0 && anode_cell_dir[k] == DOWN)
+		{
+			atom[i][j].vr = -atom[i][j].vr;
+		}
+
+		if (atom[i][j].vr > 0 && anode_cell_dir[k] == UP)
+		{
+			atom[i][j].vr = -atom[i][j].vr;
+		}
+	}
+
+	for (int k = 0; k < cera_num; k++)
+	{
+		i = cera_cell_z[k];
+		j = cera_cell_r[k];
+		if (atom[i][j].vz < 0 && cera_cell_dir[k] == LEFT)
+		{
+			atom[i][j].vz = -atom[i][j].vz;
+		}
+
+		if (atom[i][j].vz > 0 && cera_cell_dir[k] == RIGHT)
+		{
+			atom[i][j].vz = -atom[i][j].vz;
+		}
+
+		if (atom[i][j].vr < 0 && cera_cell_dir[k] == DOWN)
+		{
+			atom[i][j].vr = -atom[i][j].vr;
+		}
+
+		if (atom[i][j].vr > 0 && cera_cell_dir[k] == UP)
+		{
+			atom[i][j].vr = -atom[i][j].vr;
+		}
+	}
+}
+
+void updata_ion_edge()
+{
+	int i, j;
+	for (int k = 0; k < cath_num; k++)
+	{
+		i = cath_cell_z[k];
+		j = cath_cell_r[k];
+		if (MPDT[i][j].viz < 0 && cath_cell_dir[k] == LEFT)
+		{
+			MPDT[i][j].viz = -MPDT[i][j].viz;
+		}
+
+		if (MPDT[i][j].viz > 0 && cath_cell_dir[k] == RIGHT)
+		{
+			MPDT[i][j].viz = -MPDT[i][j].viz;
+		}
+
+		if (MPDT[i][j].vir < 0 && cath_cell_dir[k] == DOWN)
+		{
+			MPDT[i][j].vir = -MPDT[i][j].vir;
+		}
+
+		if (MPDT[i][j].vir > 0 && cath_cell_dir[k] == UP)
+		{
+			MPDT[i][j].vir = -MPDT[i][j].vir;
+		}
+	}
+
+	for (int k = 0; k < anode_num; k++)
+	{
+		i = anode_cell_z[k];
+		j = anode_cell_r[k];
+		if (MPDT[i][j].viz < 0 && anode_cell_dir[k] == LEFT)
+		{
+			MPDT[i][j].viz = -MPDT[i][j].viz;
+		}
+
+		if (MPDT[i][j].viz > 0 && anode_cell_dir[k] == RIGHT)
+		{
+			MPDT[i][j].viz = -MPDT[i][j].viz;
+		}
+
+		if (MPDT[i][j].vir < 0 && anode_cell_dir[k] == DOWN)
+		{
+			MPDT[i][j].vir = -MPDT[i][j].vir;
+		}
+
+		if (MPDT[i][j].vir > 0 && anode_cell_dir[k] == UP)
+		{
+			MPDT[i][j].vir = -MPDT[i][j].vir;
+		}
+	}
+
+	for (int k = 0; k < cera_num; k++)
+	{
+		i = cera_cell_z[k];
+		j = cera_cell_r[k];
+		if (MPDT[i][j].viz < 0 && cera_cell_dir[k] == LEFT)
+		{
+			MPDT[i][j].viz = -MPDT[i][j].viz;
+		}
+
+		if (MPDT[i][j].viz > 0 && cera_cell_dir[k] == RIGHT)
+		{
+			MPDT[i][j].viz = -MPDT[i][j].viz;
+		}
+
+		if (MPDT[i][j].vir < 0 && cera_cell_dir[k] == DOWN)
+		{
+			MPDT[i][j].vir = -MPDT[i][j].vir;
+		}
+
+		if (MPDT[i][j].vir > 0 && cera_cell_dir[k] == UP)
+		{
+			MPDT[i][j].vir = -MPDT[i][j].vir;
+		}
+	}
+}
+
+void updata_electron_edge()
+{
+	int i, j;
+	for (int k = 0; k < cath_num; k++)
+	{
+		i = cath_cell_z[k];
+		j = cath_cell_r[k];
+		if (MPDT[i][j].vez < 0 && cath_cell_dir[k] == LEFT)
+		{
+			MPDT[i][j].vez = -MPDT[i][j].vez;
+		}
+
+		if (MPDT[i][j].vez > 0 && cath_cell_dir[k] == RIGHT)
+		{
+			MPDT[i][j].vez = -MPDT[i][j].vez;
+		}
+
+		if (MPDT[i][j].ver < 0 && cath_cell_dir[k] == DOWN)
+		{
+			MPDT[i][j].ver = -MPDT[i][j].ver;
+		}
+
+		if (MPDT[i][j].ver > 0 && cath_cell_dir[k] == UP)
+		{
+			MPDT[i][j].ver = -MPDT[i][j].ver;
+		}
+	}
+
+	/*for (int k = 0; k < anode_num; k++)
+	{
+		i = anode_cell_z[k];
+		j = anode_cell_r[k];
+		if (MPDT[i][j].vez < 0 && anode_cell_dir[k] == LEFT)
+		{
+			MPDT[i][j].vez = -MPDT[i][j].vez;
+		}
+
+		if (MPDT[i][j].vez > 0 && anode_cell_dir[k] == RIGHT)
+		{
+			MPDT[i][j].vez = -MPDT[i][j].vez;
+		}
+
+		if (MPDT[i][j].ver < 0 && anode_cell_dir[k] == DOWN)
+		{
+			MPDT[i][j].ver = -MPDT[i][j].ver;
+		}
+
+		if (MPDT[i][j].ver > 0 && anode_cell_dir[k] == UP)
+		{
+			MPDT[i][j].ver = -MPDT[i][j].ver;
+		}
+	}*/
+
+	for (int k = 0; k < cera_num; k++)
+	{
+		i = cera_cell_z[k];
+		j = cera_cell_r[k];
+		if (MPDT[i][j].vez < 0 && cera_cell_dir[k] == LEFT)
+		{
+			MPDT[i][j].vez = -MPDT[i][j].vez;
+		}
+
+		if (MPDT[i][j].vez > 0 && cera_cell_dir[k] == RIGHT)
+		{
+			MPDT[i][j].vez = -MPDT[i][j].vez;
+		}
+
+		if (MPDT[i][j].ver < 0 && cera_cell_dir[k] == DOWN)
+		{
+			MPDT[i][j].ver = -MPDT[i][j].ver;
+		}
+
+		if (MPDT[i][j].ver > 0 && cera_cell_dir[k] == UP)
+		{
+			MPDT[i][j].ver = -MPDT[i][j].ver;
+		}
+	}
 }

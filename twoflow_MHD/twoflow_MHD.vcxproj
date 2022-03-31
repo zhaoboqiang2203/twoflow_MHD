@@ -153,6 +153,7 @@
     <ClCompile Include="PotentialSolver.cpp" />
     <ClCompile Include="readparam.cpp" />
     <ClCompile Include="sortestcode.cpp" />
+    <ClCompile Include="species.cpp" />
     <ClCompile Include="testcode.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -120,15 +120,6 @@ struct  node
 	double sigma_Q;     /*电子离子碰撞截面*/
 	double tau_ei;      /*电子离子弛豫时间*/
 
-	double neq;       /*发射电子密度*/
-	double vnqr;
-	double vnqz;
-	double vnqtheta;
-
-	double peq;       /*发射的虚拟电子密度*/
-	double vpqr;
-	double vpqz;
-	double vpqtheta;
 
 	double angle_b_vi;
 	
@@ -169,6 +160,7 @@ extern Boundary boundary_array[BND_NUM];
 extern int nr, nz;
 extern double dr, dz, dtheta;
 extern double dt;
+extern double dat;
 extern int scale;
 extern int index;
 
@@ -181,8 +173,21 @@ extern double anode_cell;
 extern double out_e_den;
 extern int bnd_size;
 
+extern int cath_cell_r[10 * ZMAX];
+extern int cath_cell_z[10 * ZMAX];
+extern int cath_cell_dir[10 * ZMAX];
+extern int cath_num;
+
 int initial();
 void  boundary_condition();
+void electrode_side_cell();
+int is_cera_ngh(int i, int j);
+int is_anode_ngh(int i, int j);
+int is_cathode_ngh(int i, int j);
+void updata_atom_edge();
+void updata_ion_edge();
+void updata_electron_edge();
+
 void matrix_to_csv(double** a, int N, int M, int array_size, char* filename);
 void matrix_int_to_csv(int** a, int N, int M, int array_size, char* filename);
 int fill_plasma(int tr, int tz, int fill_n);
@@ -301,11 +306,13 @@ void test_sor_code();
 void outputcsv();
 void read_csv();
 void out_judge();
-void wirte_datfile();
-void read_datfile();
-bool is_read_datfile();
+void wirte_datfile(char* filename, char* data, long long datalength);
+void read_datfile(char* filename, char* data, long long datalength);
+bool is_read_datfile(char* filename);
 int parameter_read();
 void max_write();
+void out_atom();
+void atom_judge();
 
 int btype_trans(string ss);
 int dir_trans(string ss);

@@ -2,17 +2,19 @@
 #include "fluid.h"
 #include "dadi.h"
 #include "testcode.h"
+#include "atomFluid.h"
 using namespace std;
 
 int nr;
 int nz;
 double dr, dz, dtheta;
 double dt;
-
+double dat;
 int index;
 
 
 struct _particle atom[ZMAX][RMAX];
+struct _particle atom111[ZMAX][RMAX];
 
 struct node MPDT[ZMAX][RMAX];
 struct node MPDT_in[ZMAX][RMAX];
@@ -83,10 +85,11 @@ double para_p, para_i, para_d;
 int main()
 {
 	int nq;
+	char fname[200];
 	double last_current = 0;
 	nz = ZMAX;
 	nr = RMAX;
-
+	
 
 	//仿真参数定义区
 
@@ -101,6 +104,7 @@ int main()
 	dz = 0.001 / scale;
 	dtheta = PI / 180;
 	dt = dr / 1e5 / 3;
+	dat = dt * 100;
 	nq = 100;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
@@ -115,32 +119,66 @@ int main()
 	printf("inter_pla_den = %e\n", inter_pla_den);
 
 	initial();
+	atom_boundary_condition();
 	magnetic_field_initial();
 
 	//dadi initial
 	init_solve();
 
+	sprintf_s(fname, (".\\output\\MPDT\\MPDT_%d.dat"), index);
 	//判断是否存在已经仿真好的数据
-	if (is_read_datfile())
+	if (is_read_datfile(fname))
 	{
-		read_datfile();
+		read_datfile(fname, (char*)&MPDT, sizeof(MPDT));
 		potential_solve();
 	}
-	
+
+	sprintf_s(fname, (".\\output\\atom_init.dat"));
+	if (is_read_datfile(fname))
+	{
+		read_datfile(fname, (char*)&atom, sizeof(atom));
+	}
+	else
+	{
+		int tindex = index;
+		index = 1600001;
+		while (index--)
+		{
+
+			atom_flow();
+			atom_judge();
+			updata_atom_edge();
+			if (index % 10000 == 0)
+			{
+				printf("index %d\n", index);
+				out_atom();
+			}
+		}
+
+		wirte_datfile(fname, (char*)&atom, sizeof(atom));
+		index = tindex;
+	}
+	dat = dt * 10;
+
 	while (index--)
 	{
 		//printf("index %d\n", index);
 
 		//clock_t start = clock();
-		boundary_condition();
+		
 		electron_flow_v2();
+		//atom_flow();
+		boundary_condition();
+		updata_atom_edge();
 
+		
 		if (index % nq == 0)
 		{
 			printf("index %d\n", index);
 			max_write();
 			potential_solve();
 			current_caulate();
+
 			if (abs(current_I - last_current) < 0.3 * abs(current_I))
 			{
 				current_control();
@@ -156,17 +194,17 @@ int main()
 		//mag_phi();
 
 		out_judge();
-
+		//atom_judge();
 		if (index % 1000 == 0)
 		{
-			wirte_datfile();
+			sprintf_s(fname, (".\\output\\MPDT\\MPDT_%d.dat"), index);
+			wirte_datfile(fname,(char*)&MPDT,sizeof(MPDT));
 		}
 
 		if (index % 1000 == 0)
 			//if(index < 36000)
 		{
 			output();
-
 		}
 
 		//clock_t ends = clock();
@@ -181,7 +219,7 @@ void matrix_int_to_csv(int** a, int N, int M, int array_size, char* filename)
 	fstream myfile(filename, ios::out);
 	if (!myfile.is_open())
 	{
-		cout << "未成功打开文件" << endl;
+		cout << filename << "未成功打开" << endl;
 	}
 
 	for (int i = 0; i < N; i++)
@@ -202,7 +240,7 @@ void matrix_to_csv(double** a, int N, int M, int array_size, char* filename)
 	fstream myfile(filename, ios::out);
 	if (!myfile.is_open())
 	{
-		cout << "未成功打开文件" << endl;
+		cout<<  filename << "未成功打开" << endl;
 	}
 
 	for (int i = 0; i < N; i++)
@@ -224,7 +262,7 @@ void matrix_to_binary(char* a, unsigned long long array_size, char* filename)
 
 	if (!fout.is_open())
 	{
-		cout << "未成功打开文件" << endl;
+		cout << filename << "未成功打开" << endl;
 	}
 
 	fout.write((char*)a, array_size);
@@ -673,479 +711,51 @@ void out_judge()
 	if (err_flag == 1)
 	{
 		output();
+		out_atom();
 		printf("i = %d j = %d\n", i, j);
+		exit(0);
 	}
 }
 
-
-void read_csv()
+void wirte_datfile(char* filename, char* data, long long datalength)
 {
-	char fname[100];
-	string ss;
-	register int i, j;
-	fstream infile;
-
-	// 读取电子密度
-	sprintf_s(fname, (".\\output\\electron density\\electron_density_%d.csv"), index);
-
-	infile.open(fname, ios::in);
-	if (!infile.is_open())
-	{
-		cout << "未成功打开文件" << endl;
-	}
-
-	i = 0;
-	while (getline(infile, ss))
-	{
-		string number;
-		istringstream readstr(ss); //string数据流化
-		//将一行数据按'，'分割
-		for (j = 0; j < RMAX; j++)
-		{
-			getline(readstr, number, ','); //循环读取数据
-			res_out[i][j] = atof(number.c_str());
-		}
-		i++;
-	}
-	//printf("ne i = %d\n", i);
-	infile.close();
-	for (i = 0; i < ZMAX; i++)
-	{
-		for (j = 0; j < RMAX; j++)
-		{
-			if (MPDT[i][j].ne != res_out[i][j])
-			{
-				printf("MPDT[%d][%d].ne = %lf, read = %lf\n", i, j, MPDT[i][j].ne, res_out[i][j]);
-			}
-		}
-	}
-
-	// 读取电子速度
-	sprintf_s(fname, (".\\output\\electron ver\\electron_ver_%d.csv"), index);
-
-	infile.open(fname, ios::in);
-	if (!infile.is_open())
-	{
-		cout << "未成功打开文件" << endl;
-	}
-
-	i = 0;
-	while (getline(infile, ss))
-	{
-		string number;
-		istringstream readstr(ss); //string数据流化
-		//将一行数据按'，'分割
-		for (j = 0; j < RMAX; j++)
-		{
-			getline(readstr, number, ','); //循环读取数据
-			res_out[i][j] = atof(number.c_str());
-		}
-		i++;
-	}
-	infile.close();
-	for (i = 0; i < ZMAX; i++)
-	{
-		for (j = 0; j < RMAX; j++)
-		{
-			if (abs(MPDT[i][j].ver - res_out[i][j]) > 1e6)
-			{
-				printf("MPDT[%d][%d].ver = %lf, read = %lf\n", i, j, MPDT[i][j].ver, res_out[i][j]);
-			}
-		}
-	}
-
-		////输出电子速度
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].ver;
-		//	}
-		//}
-		//sprintf_s(fname, (".\\output\\electron ver\\electron_ver_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].vez;
-		//	}
-		//}
-		//sprintf_s(fname, (".\\output\\electron vez\\electron_vez_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].vetheta;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\electron vetheta\\electron_vetheta_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-
-		////输出离子密度
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].ni;
-		//	}
-		//}
-		//sprintf_s(fname, (".\\output\\ion density\\ion_density_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//// 输出离子速度
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].vir;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\ion vir\\ion_vir_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].viz;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\ion viz\\ion_viz_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].vitheta;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\ion vitheta\\ion_vitheta_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//// 输出电势分布
-
-		//sprintf_s(fname, (".\\output\\phi\\phi_%d.csv"), index);
-		//matrix_to_csv((double**)phi, ZMAX, RMAX, RMAX, fname);
-
-		////sprintf_s(fname, (".\\output\\phi\\phi1_%d.csv"), index);
-		////matrix_to_csv((double**)phi1, ZMAX, RMAX, RMAX, fname);
-
-		//sprintf_s(fname, (".\\output\\rho\\rho_%d.csv"), index);
-		//matrix_to_csv((double**)rou, ZMAX, RMAX, RMAX, fname);
-		//// 输出磁场分布
-
-		////输出电子压强分布
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].pe;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\electron pe\\electron_pe_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		////输出离子压强分布
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].pi;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\ion pi\\ion_pi_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-		//// 输出电子能量分布
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].ee / QE;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\electron ee\\electron_ee_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-		//// 输出离子能量分布
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].ei / QE;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\ion ei\\ion_ei_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-
-		////Ez分布
-		//sprintf_s(fname, (".\\output\\Ez\\Ez_%d.csv"), index);
-		//matrix_to_csv((double**)Ez, ZMAX, RMAX, RMAX, fname);
-
-		////Er分布
-		//sprintf_s(fname, (".\\output\\Er\\Er_%d.csv"), index);
-		//matrix_to_csv((double**)Er, ZMAX, RMAX, RMAX, fname);
-
-		//// 输出感生磁场分布
-		////for (int i = 0; i < ZMAX; i++)
-		////{
-		////	for (int j = 0; j < RMAX; j++)
-		////	{
-		////		res_out[i][j] = MPDT[i][j].br;
-		////	}
-		////}
-
-		////sprintf_s(fname, (".\\output\\br\\br_%d.csv"), index);
-		////matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		////for (int i = 0; i < ZMAX; i++)
-		////{
-		////	for (int j = 0; j < RMAX; j++)
-		////	{
-		////		res_out[i][j] = MPDT[i][j].btheta;
-		////	}
-		////}
-
-		////sprintf_s(fname, (".\\output\\btheta\\btheta_%d.csv"), index);
-		////matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		////for (int i = 0; i < ZMAX; i++)
-		////{
-		////	for (int j = 0; j < RMAX; j++)
-		////	{
-		////		res_out[i][j] = MPDT[i][j].bz;
-		////	}
-		////}
-
-		////sprintf_s(fname, (".\\output\\bz\\bz_%d.csv"), index);
-		////matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//sprintf_s(fname, (".\\output\\btheta\\btheta_%d.csv"), index);
-		//matrix_to_csv((double**)btheta, ZMAX, RMAX, RMAX, fname);
-
-		////电子离子碰撞频率
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].mu_ie;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\mu_ie\\mu_ie_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		////电流密度r方向
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE / dt;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\Jr\\Jr_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		////电流密度z方向
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = (MPDT[i][j].ni * MPDT[i][j].viz - MPDT[i][j].ne * MPDT[i][j].vez) * QE / dt;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\Jz\\Jz_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		////电子向离子转移能量
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].delta_ei;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\delta_ei\\delta_ei_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		////电子离子碰撞截面
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].sigma_Q;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\sigma\\sigma_Q_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		////多余电荷密度
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].peq;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\peq\\peq_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].neq;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\neq\\neq_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].vnqr;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\vnqr\\vnqr_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].vnqz;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\vnqz\\vnqz_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].vnqtheta;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\vnqtheta\\vnqtheta_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].vpqr;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\vpqr\\vpqr_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].vpqz;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\vpqz\\vpqz_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].vpqtheta;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\vpqtheta\\vpqtheta_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-
-
-		//for (int i = 0; i < ZMAX; i++)
-		//{
-		//	for (int j = 0; j < RMAX; j++)
-		//	{
-		//		res_out[i][j] = MPDT[i][j].angle_b_vi;
-		//	}
-		//}
-
-		//sprintf_s(fname, (".\\output\\angle\\angle_%d.csv"), index);
-		//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
-
-
-	}
-
-void wirte_datfile()
-{
-	char fname[100];
 	ofstream fout;
-	sprintf_s(fname, (".\\output\\MPDT\\MPDT_%d.dat"), index);
-	fout.open(fname, ofstream::binary);
+	//sprintf_s(fname, (".\\output\\MPDT\\MPDT_%d.dat"), index);
+	fout.open(filename, ofstream::binary);
 	if (!fout.is_open())
 	{
-		cout << fname << "文件未能打开" << endl;
+		cout << filename << "文件未能打开" << endl;
 	}
-	fout.write((char*)&MPDT, sizeof(MPDT));
+	fout.write(data, datalength);
 	fout.close();
 }
 
-void read_datfile()
+void read_datfile(char* filename,char* data, long long datalength)
 {
-	char fname[100];
 	ifstream fin;
-	sprintf_s(fname, (".\\output\\MPDT\\MPDT_%d.dat"), index);
+	//sprintf_s(fname, (".\\output\\MPDT\\MPDT_%d.dat"), index);
 
-	fin.open(fname, ifstream::binary);
+	fin.open(filename, ifstream::binary);
 	if (!fin.is_open())
 	{
-		cout << fname << "文件未能打开" << endl;
+		cout << filename << "文件未能打开" << endl;
 		return;
 	}
-	fin.read((char*)&MPDT, sizeof(MPDT));
+	fin.read(data, datalength);
 	fin.close();
 
 }
 
-bool is_read_datfile()
+bool is_read_datfile(char* filename)
 {
-	char fname[100];
+	//char fname[100];
 	ifstream fin;
-	sprintf_s(fname, (".\\output\\MPDT\\MPDT_%d.dat"), index);
+	//sprintf_s(fname, (".\\output\\MPDT\\MPDT_%d.dat"), index);
 
-	fin.open(fname, ifstream::binary);
+	fin.open(filename, ifstream::binary);
 	if (!fin.is_open())
 	{
-		cout << fname << "文件未能打开" << endl;
+		cout << filename << "文件未能打开" << endl;
 		return false;
 	}
 	fin.close();
@@ -1189,4 +799,83 @@ void max_write()
 	myfile << index << "," << max_phi << "," << current_I << endl;
 
 	myfile.close();
+}
+
+
+void out_atom()
+{
+	// 输出原子密度
+	char fname[100];
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			res_out[i][j] = atom[i][j].den;
+		}
+	}
+	sprintf_s(fname, (".\\output\\atom density\\atom_density_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	//输出原子速度
+
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			res_out[i][j] = atom[i][j].vr;
+		}
+	}
+	sprintf_s(fname, (".\\output\\atom ver\\atom_ver_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			res_out[i][j] = atom[i][j].vz;
+		}
+	}
+	sprintf_s(fname, (".\\output\\atom vez\\atom_vez_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			res_out[i][j] = atom[i][j].vtheta;
+		}
+	}
+
+	sprintf_s(fname, (".\\output\\atom vetheta\\atom_vetheta_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	return;
+}
+
+void atom_judge()
+{
+	register int i, j;
+	int err_flag = 0;
+	for (i = 0; i < ZMAX; i++)
+	{
+		for (j = 0; j < RMAX; j++)
+		{
+			if (atom[i][j].den != atom[i][j].den)
+			{
+				err_flag = 1;
+				break;
+			}
+		}
+
+		if (err_flag == 1)
+		{
+			break;
+		}
+	}
+
+	if (err_flag == 1)
+	{
+		out_atom();
+		printf("i = %d j = %d\n", i, j);
+		exit(0);
+	}
 }

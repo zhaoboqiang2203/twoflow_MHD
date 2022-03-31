@@ -2,9 +2,9 @@
 	"index": 140001,
 	"cathod current": 1000,
 	"EPS_PLA": 1e8,
-	"Kp": 5e16,
-	"Ki": 1e12,
-	"Kd": 5e15,
+	"Kp": 5e18,
+	"Ki": 0,
+	"Kd": 1e17,
 	"particle": [
 		{
 			"REL_MASS": 40
@@ -19,12 +19,12 @@
 			"radius": 0.076
 		}
 	],
-	"boundary num": 14,
+	"boundary num": 16,
 	"boundary": [
 		{
 			"physics_type": "CYLINDRICAL_AXIS",
 			"start.r": 0,
-			"start.z": 76,
+			"start.z": 0,
 			"end.r": 0,
 			"end.z": 500,
 			"bnd_dir": "Z_DIR",
@@ -113,13 +113,30 @@
 		},
 		{
 			"physics_type": "CATHODE_BOUNDARY",
-			"start.r": 0,
+			"start.r": 3,
 			"start.z": 76,
 			"end.r": 6.4,
 			"end.z": 76,
 			"bnd_dir": "R_DIR",
 			"boundary_type": "LEFT"
+		},
+		{
+			"physics_type": "CATHODE_BOUNDARY",
+			"start.r": 3,
+			"start.z": 0,
+			"end.r": 3,
+			"end.z": 76,
+			"bnd_dir": "Z_DIR",
+			"boundary_type": "UP"
+		},
+		{
+			"physics_type": "INLET",
+			"start.r": 0,
+			"start.z": 0,
+			"end.r": 3,
+			"end.z": 0,
+			"bnd_dir": "R_DIR",
+			"boundary_type": "LEFT"
 		}
-
 	]
 }

@@ -240,6 +240,15 @@ void init_solve()
 				}
 				
 			}
+			else if (btype[i][j] == 210)
+			{
+				a_x1geom[i][j] = 0.0;
+				b_x1geom[i][j] = 0.0;
+				c_x1geom[i][j] = 0.0;
+				a_x2geom[i][j] = 0.0;
+				b_x2geom[i][j] = 0.0;
+				c_x2geom[i][j] = 0.0;
+			}
 			else if(ptype[i][j] == CATHODE_BOUNDARY || ptype[i][j] == INLET)
 			{
 				if (i == 0)

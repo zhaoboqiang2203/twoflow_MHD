@@ -132,13 +132,19 @@ void atom_flow()
 			else if (btype[i][j] == DOWN && ptype[i][j] == CYLINDRICAL_AXIS)
 			{
 				Qz = arti_atom_vis(atom[i + 1][j], atom[i][j], atom[i - 1][j]);
-				Qr = arti_atom_vis(atom[i][j + 2], atom[i][j + 1], atom[i][j]);
+				
+				Uq[i][j].f[0] = Uq_bar2[i][j].f[0] + Qz.f[0] / 4 * (atom[i + 1][j].den - 2 * atom[i][j].den + atom[i - 1][j].den);
+				Uq[i][j].f[1] = Uq_bar2[i][j].f[1] + Qz.f[1] / 4 * (atom[i + 1][j].vr - 2 * atom[i][j].vr + atom[i - 1][j].vr);
+				Uq[i][j].f[2] = Uq_bar2[i][j].f[2] + Qz.f[2] / 4 * (atom[i + 1][j].vtheta - 2 * atom[i][j].vtheta + atom[i - 1][j].vtheta);
+				Uq[i][j].f[3] = Uq_bar2[i][j].f[3] + Qz.f[3] / 4 * (atom[i + 1][j].vz - 2 * atom[i][j].vz + atom[i - 1][j].vz);
+				Uq[i][j].f[4] = Uq_bar2[i][j].f[4] + Qz.f[4] / 4 * (atom[i + 1][j].eng - 2 * atom[i][j].eng + atom[i - 1][j].eng);
 
-				Uq[i][j].f[0] = Uq_bar2[i][j].f[0] + Qr.f[0] / 2 * (atom[i][j + 1].den - 2 * atom[i][j].den + atom[i][j - 1].den);
-				Uq[i][j].f[1] = Uq_bar2[i][j].f[1] + Qr.f[1] / 2 * (atom[i][j + 1].vr - 2 * atom[i][j].vr + atom[i][j - 1].vr);
-				Uq[i][j].f[2] = Uq_bar2[i][j].f[2] + Qr.f[2] / 2 * (atom[i][j + 1].vtheta - 2 * atom[i][j].vtheta + atom[i][j - 1].vtheta);
-				Uq[i][j].f[3] = Uq_bar2[i][j].f[3] + Qr.f[3] / 2 * (atom[i][j + 1].vz - 2 * atom[i][j].vz + atom[i][j - 1].vz) ;
-				Uq[i][j].f[4] = Uq_bar2[i][j].f[4] + Qr.f[4] / 2 * (atom[i][j + 1].eng - 2 * atom[i][j].eng + atom[i][j - 1].eng) ;
+
+				//Uq[i][j].f[0] = Uq_bar2[i][j].f[0] + Qr.f[0] / 2 * (atom[i][j + 1].den - 2 * atom[i][j].den + atom[i][j - 1].den);
+				//Uq[i][j].f[1] = Uq_bar2[i][j].f[1] + Qr.f[1] / 2 * (atom[i][j + 1].vr - 2 * atom[i][j].vr + atom[i][j - 1].vr);
+				//Uq[i][j].f[2] = Uq_bar2[i][j].f[2] + Qr.f[2] / 2 * (atom[i][j + 1].vtheta - 2 * atom[i][j].vtheta + atom[i][j - 1].vtheta);
+				//Uq[i][j].f[3] = Uq_bar2[i][j].f[3] + Qr.f[3] / 2 * (atom[i][j + 1].vz - 2 * atom[i][j].vz + atom[i][j - 1].vz) ;
+				//Uq[i][j].f[4] = Uq_bar2[i][j].f[4] + Qr.f[4] / 2 * (atom[i][j + 1].eng - 2 * atom[i][j].eng + atom[i][j - 1].eng) ;
 
 			}
 			else 
@@ -265,7 +271,7 @@ struct _AF cal_atom_s(struct _AF uij)
 struct _AF arti_atom_vis(struct _particle np, struct  _particle n, struct  _particle nn)
 {
 	struct _AF Q;
-	double eta = 0.03;
+	double eta = 0.3;
 
 	for (int k = 0; k < 5; k++)
 	{
@@ -291,11 +297,15 @@ void atom_boundary_condition()
 {
 	register int i, j, k;
 
-	double pin = 400;
+	double pin = 0;
 	double flow_rate = 0.1;
 	int ncell = 0;
 	double scell = 0;
 	double atomden = 0;
+	double vin = 150;
+
+	pin = vin * (MI * atomden) / (gamma - 1);
+
 	_for(k, 0, bnd_size)
 	{
 		if (boundary_array[k].physics_type == INLET)
@@ -344,8 +354,8 @@ void atom_boundary_condition()
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
 					atom[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].den = atomden;
-					atom[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vz = (gamma - 1) * pin / (MI * atomden);
-					atom[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].eng = 0.6 * sqr(atom[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vz);
+					atom[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vz = vin;
+					atom[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].eng = 0.6 * sqr(vin);
 					i++;
 				}
 			}
@@ -356,8 +366,8 @@ void atom_boundary_condition()
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
 					atom[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].den = atomden;
-					atom[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vr = (gamma - 1) * pin / (MI * atomden);
-					atom[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].eng = 0.6 * sqr((gamma - 1) * pin / (MI * atomden));
+					atom[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vr = vin;
+					atom[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].eng = 0.6 * sqr(vin);
 					j++;
 				}
 			}

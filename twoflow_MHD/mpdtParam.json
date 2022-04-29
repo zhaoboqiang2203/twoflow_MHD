@@ -5,9 +5,11 @@
 	"Kp": 5e18,
 	"Ki": 0,
 	"Kd": 1e17,
+  "ATOM_SIM": 0,
 	"particle": [
 		{
-			"REL_MASS": 40
+			"REL_MASS": 40,
+			"IONIZATION_ENERGY": 15.755
 		}
 	],
 	"magnetic coil": [
@@ -19,6 +21,22 @@
 			"radius": 0.076
 		}
 	],
+	"ionization area": [
+		{
+			"zmin": 1,
+			"zmax": 100,
+			"rmin": 2,
+			"rmax": 150
+		}
+	],
+
+	"current surface": [
+		{
+			"pos_z": 200,
+			"pos_r": 100
+		}
+	],
+
 	"boundary num": 16,
 	"boundary": [
 		{

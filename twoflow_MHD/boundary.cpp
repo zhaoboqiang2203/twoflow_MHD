@@ -217,7 +217,7 @@ int initial()
 
 			if (btype[i][j] == 1)
 			{
-				atom[i][j].den = bg_den;
+				atom[i][j].den = 0*bg_den;
 				//atom[i][j].eng = 1e-3 / (MI * bg_den);
 			}
 			else
@@ -519,11 +519,11 @@ void  boundary_condition()
 					//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ni /= 2;
 					//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne /= 2;
 					//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ni /= 2;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne = bg_den / scale;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne = 0;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ver = 0;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vetheta = 0;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vez = 0;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ni = bg_den / scale;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ni = 0;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vir = 0;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vitheta = 0;
 					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].viz = 0;

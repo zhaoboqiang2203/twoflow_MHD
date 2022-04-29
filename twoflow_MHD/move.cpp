@@ -52,6 +52,14 @@ double i_half[ZMAX][RMAX];
 double i_hrho[ZMAX][RMAX], i_htheta[ZMAX][RMAX], i_hz[ZMAX][RMAX], i_h2[ZMAX][RMAX];
 double i_srho[ZMAX][RMAX], i_stheta[ZMAX][RMAX], i_sz[ZMAX][RMAX];
 
+int cur_pos_r;
+int cur_pos_z;
+
+int ion_area_rmin;
+int ion_area_rmaxn;
+int ion_area_zmin;
+int ion_area_zmax;
+
 void move()
 {
 	double urho, utheta, uz;
@@ -224,55 +232,45 @@ void ionization_collisions(int i, int j)
 		return;
 	}
 
-	double p = 1 - exp( -nn * sqrt(2 * nee ) * 1e-20 * dt);
-	MPDT[i][j].mu_ie = p;
-	if (MPDT[i][j].ee * ME - 15.755 * QE * p > 1e-25)
+	double  ndot = MPDT[i][j].ne * ME * MPDT[i][j].ee * 0.16 / (Ionization_Energy * QE);
+
+	if (ndot > nn)
 	{
-		//MPDT[i][j].ni += nn * p;
-		//MPDT[i][j].ne += nn * p;
-
-		//MPDT[i][j].ee -= 15.755 * QE * p;
-		teu2 = 15.755 * QE * p;
-		tur = sqr(MPDT[i][j].ver);
-		tutheta = sqr(MPDT[i][j].vetheta);
-		tuz = sqr(MPDT[i][j].vez);
-
-		tu2 = tuz + tutheta + tuz;
-
-		MPDT[i][j].ver -= sqrt(2 * tur / tu2 * teu2 / ME);
-		MPDT[i][j].vetheta -= sqrt(2 * tutheta / tu2 * teu2 / ME);
-		MPDT[i][j].vez -= sqrt(2 * tuz / tu2 * teu2 / ME);
-
-
-		tden = nn * p;
-		MPDT[i][j].ver = MPDT[i][j].ver * MPDT[i][j].ne / (MPDT[i][j].ne + tden);
-		MPDT[i][j].vetheta = MPDT[i][j].vetheta * MPDT[i][j].ne / (MPDT[i][j].ne + tden);
-		MPDT[i][j].vez = MPDT[i][j].vez * MPDT[i][j].ne / (MPDT[i][j].ne + tden);
-
-		MPDT[i][j].vir = MPDT[i][j].vir * MPDT[i][j].ni / (MPDT[i][j].ni + tden);
-		MPDT[i][j].vitheta = MPDT[i][j].vitheta * MPDT[i][j].ni / (MPDT[i][j].ni + tden);
-		MPDT[i][j].viz = MPDT[i][j].viz * MPDT[i][j].ni / (MPDT[i][j].ni + tden);
-
-		
-		
-		//atom[i][j].den -= tden;
-		//if (atom[i][j].den < 0)
-		//{
-		//	tden = atom[i][j].den;
-		//	atom[i][j].den = 0;
-		//	
-		//}
-		MPDT[i][j].ni += tden;
-		MPDT[i][j].ne += tden;
-		
-
-		
-
-		//MPDT[i][j].pe -= MPDT[i][j].ne * tep1 * (gamma - 1);
-		MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne * ME) + 0.5 * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
-		//printf("ee pre = %e,after = %e\n", nee, MPDT[i][j].ee);
-		MPDT[i][j].ei = MPDT[i][j].pi / (gamma - 1) / (MPDT[i][j].ni * MI) + 0.5 * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
+		ndot = nn;
 	}
+	
+	tur = 0.4 * MPDT[i][j].ver;
+	tutheta = 0.4 * MPDT[i][j].vetheta;
+	tuz = 0.4 * MPDT[i][j].vez;
+
+
+	MPDT[i][j].ver -= tur;
+	MPDT[i][j].vetheta -= tutheta;
+	MPDT[i][j].vez -= tuz;
+
+	tden = ndot;
+	MPDT[i][j].ver = MPDT[i][j].ver * MPDT[i][j].ne / (MPDT[i][j].ne + tden);
+	MPDT[i][j].vetheta = MPDT[i][j].vetheta * MPDT[i][j].ne / (MPDT[i][j].ne + tden);
+	MPDT[i][j].vez = MPDT[i][j].vez * MPDT[i][j].ne / (MPDT[i][j].ne + tden);
+
+	MPDT[i][j].vir = MPDT[i][j].vir * MPDT[i][j].ni / (MPDT[i][j].ni + tden);
+	MPDT[i][j].vitheta = MPDT[i][j].vitheta * MPDT[i][j].ni / (MPDT[i][j].ni + tden);
+	MPDT[i][j].viz = MPDT[i][j].viz * MPDT[i][j].ni / (MPDT[i][j].ni + tden);
+
+		
+		
+
+	MPDT[i][j].ni += tden;
+	MPDT[i][j].ne += tden;
+		
+
+		
+
+	//MPDT[i][j].pe -= MPDT[i][j].ne * tep1 * (gamma - 1);
+	MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne * ME) + 0.5 * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);
+	//printf("ee pre = %e,after = %e\n", nee, MPDT[i][j].ee);
+	MPDT[i][j].ei = MPDT[i][j].pi / (gamma - 1) / (MPDT[i][j].ni * MI) + 0.5 * (MPDT[i][j].vir * MPDT[i][j].vir + MPDT[i][j].vitheta * MPDT[i][j].vitheta + MPDT[i][j].viz * MPDT[i][j].viz);
+
 
 	/*if (MPDT[i][j].ee > 15.755 * QE)
 	{
@@ -313,7 +311,8 @@ void ionization_collisions(int i, int j)
 void coulomb_collision(int i, int j)
 {
 	double ur, utheta, uz;
-	double ur1, utheta1, uz1;
+	double ur2, utheta2, uz2;
+	double upre, upre1, upre2;
 	double pre_ee, pre_ei;
 	double ep;
 	double ne = 0;
@@ -335,31 +334,22 @@ void coulomb_collision(int i, int j)
 	utheta = (MPDT[i][j].vetheta * ne * ME + MPDT[i][j].vitheta * MPDT[i][j].ni * MI) / (ne * ME + MPDT[i][j].ni * MI);
 	uz = (MPDT[i][j].vez * ne * ME + MPDT[i][j].viz * MPDT[i][j].ni * MI) / (ne * ME + MPDT[i][j].ni * MI);
 
-	//ep = pre_ee + pre_ei - 0.5 * (ME + MI) * (sqr(ur) + sqr(utheta) + sqr(uz));
+	ur2 = sqr(ur);
+	utheta2 = sqr(utheta);
+	uz2 = sqr(uz);
 
-	//if (ep < 0)
-	//{
-	//	ep = 0;
-	//}
-	//
+	upre2 = ur2 + utheta2 + uz2;
+	upre = sqrt(upre2);
 
-	//MPDT[i][j].pe = ne * ep * (gamma - 1);
+	if (upre > 40000)
+	{
+		upre1 = upre / pow((upre / 40000.0), 0.66);
+		ur = upre1 * ur / upre;
+		utheta = upre1 * utheta / upre;
+		uz = upre1 * uz / upre;
+	}
 
 
-	//if (MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne * ME) > 0.5 * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez))
-	//{
-	//	printf("PE = % lf\n", MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne) / QE);
-	//	printf("ee = % lf\n", 0.5 * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez) * ME / QE);
-	//}
-	//ur1 = sqrt((sqr(ur) + sqr(utheta) + sqr(uz)) / 3.0);
-
-	//MPDT[i][j].vir = ur + 0.01 * (ur1 - ur);
-	//MPDT[i][j].vitheta = utheta + 0.01 * (ur1 - utheta);
-	//MPDT[i][j].viz = uz + 0.01 * (ur1 - uz);
-
-	//MPDT[i][j].ver = MPDT[i][j].vir;
-	//MPDT[i][j].vetheta = MPDT[i][j].vitheta;
-	//MPDT[i][j].vez = MPDT[i][j].viz;
 
 	MPDT[i][j].vir = ur;
 	MPDT[i][j].vitheta = utheta;
@@ -368,8 +358,7 @@ void coulomb_collision(int i, int j)
 	MPDT[i][j].ver = ur;
 	MPDT[i][j].vetheta = utheta;
 	MPDT[i][j].vez = uz;
-	//
-	//MPDT[i][j].ee += ep;
+
 
 
 	MPDT[i][j].ee = MPDT[i][j].pe / (gamma - 1) / (MPDT[i][j].ne * ME) + 0.5 * (MPDT[i][j].ver * MPDT[i][j].ver + MPDT[i][j].vetheta * MPDT[i][j].vetheta + MPDT[i][j].vez * MPDT[i][j].vez);

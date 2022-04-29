@@ -283,10 +283,16 @@ extern double coil_W;//线圈宽度（内外径差值）
 extern double coil_L;//线圈厚度
 
 extern double REL_MASS;             //相对原子质量
+extern double Ionization_Energy;
 extern double MI;		            // kg, electron mass
 extern double EPS_PLA;				//相对电导率
 
 extern double para_p, para_i, para_d;
+
+extern int is_atom_sim; // 是否进行原子仿真标志位
+
+extern int cur_pos_r;
+extern int cur_pos_z;
 
 /// <summary>
 /// move.cpp 函数声明

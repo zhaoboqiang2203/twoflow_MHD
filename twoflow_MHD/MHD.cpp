@@ -78,9 +78,12 @@ double cathode_I;
 double current_I;
 double last_I;
 double REL_MASS;             //相对原子质量
+double Ionization_Energy;
 double MI;		            // kg, electron mass
 double EPS_PLA;				//相对电导率
 double para_p, para_i, para_d;
+
+int is_atom_sim;
 
 int main()
 {
@@ -133,32 +136,40 @@ int main()
 		potential_solve();
 	}
 
-	sprintf_s(fname, (".\\output\\atom_init.dat"));
-	if (is_read_datfile(fname))
+	//判断是否进行流体仿真
+	if(is_atom_sim) 
 	{
-		read_datfile(fname, (char*)&atom, sizeof(atom));
+		sprintf_s(fname, (".\\output\\atom_init.dat"));
+		if (is_read_datfile(fname))
+		{
+			read_datfile(fname, (char*)&atom, sizeof(atom));
+		}
+		else
+		{
+			int tindex = index;
+			index = 300001;
+			while (index--)
+			{
+
+				atom_flow();
+				atom_judge();
+				updata_atom_edge();
+				if (index % 10000 == 0)
+				{
+					printf("index %d\n", index);
+					out_atom();
+				}
+			}
+
+			wirte_datfile(fname, (char*)&atom, sizeof(atom));
+			index = tindex;
+		}
+		dat = dt * 10; 
 	}
 	else
 	{
-		int tindex = index;
-		index = 1600001;
-		while (index--)
-		{
 
-			atom_flow();
-			atom_judge();
-			updata_atom_edge();
-			if (index % 10000 == 0)
-			{
-				printf("index %d\n", index);
-				out_atom();
-			}
-		}
-
-		wirte_datfile(fname, (char*)&atom, sizeof(atom));
-		index = tindex;
 	}
-	dat = dt * 10;
 
 	while (index--)
 	{

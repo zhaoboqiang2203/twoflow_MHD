@@ -39,8 +39,11 @@ int parameter_read()
 	index = root["index"].asInt();
 	cathode_I = root["cathod current"].asInt();
 	REL_MASS = root["particle"][0]["REL_MASS"].asDouble();             //相对原子质量
+	Ionization_Energy = root["particle"][0]["IONIZATION_ENERGY"].asDouble();           //原子电离能
 	EPS_PLA = root["EPS_PLA"].asDouble();
 	MI = REL_MASS * AMU;		        // kg, electron mass
+
+	is_atom_sim = root["particle"].asInt();
 
 #ifdef BOUNDARY_DEBUG
 	std::cout << root << std::endl;
@@ -91,6 +94,14 @@ int parameter_read()
 	pid.Ki = root["Ki"].asDouble();
 	pid.Kd = root["Kd"].asDouble();
 	pid.integral = 0;
+
+	root["ionization area"][0]["rmin"].asInt();
+	root["ionization area"][0]["rmax"].asInt();
+	root["ionization area"][0]["zmin"].asInt();
+	root["ionization area"][0]["zmax"].asInt();
+
+	root["current surface"][0]["pos_z"].asInt();
+	root["current surface"][0]["pos_r"].asInt();
 
 	ifs.close();
 	return EXIT_SUCCESS;

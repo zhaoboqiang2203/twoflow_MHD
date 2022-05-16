@@ -142,6 +142,7 @@ void magnetic_field_initial()
     while (wth < weith)
     {
         a = coil_R + wth;
+        lth = -length;
         while (lth < length)
         {
             for (int i = 0; i < nz; i++)

@@ -892,6 +892,7 @@ void potential_solve()
 
 			rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / (EPS_0 * EPS_PLA);
 			rou[i][j] = (MPDT[i][j].ni - MPDT[i][j].ne);
+			phi[i][j] = 0;
 			//rho[i][j] = -(MPDT[i][j].peq - MPDT[i][j].neq) * QE / (EPS_0 * EPS_PLA);
 			//rou[i][j] = (MPDT[i][j].peq - MPDT[i][j].neq);
 		}

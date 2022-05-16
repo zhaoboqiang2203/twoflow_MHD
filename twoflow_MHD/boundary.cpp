@@ -180,8 +180,8 @@ int initial()
 		{
 			if (btype[i][j] != 0 && btype[i][j] != 110 && btype[i][j] != 210)
 			{
-				MPDT[i][j].ne = bg_den * 0.01;
-				MPDT[i][j].ni = bg_den * 0.01;
+				MPDT[i][j].ne = bg_den * 1e-5;
+				MPDT[i][j].ni = bg_den * 1e-5;
 			}
 			else
 			{
@@ -488,22 +488,17 @@ void  boundary_condition()
 				i = 0;
 				_feq(j, boundary_array[k].start.r, boundary_array[k].end.r)
 				{
-					//if (MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne < 1e4) continue;
-					//if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j] != 1) continue;
-					//MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ne /= 2;
-					//MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ni /= 2;
-					//MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne /= 2;
-					//MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ni /= 2;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne = 0;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ver = 0;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vetheta = 0;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vez = 0;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ni = 0;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vir = 0;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vitheta = 0;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].viz = 0;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ee = 0;
-					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ei = 0;
+					if (btype[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j] != 1) continue;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ne = MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ne;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ver = MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ver;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vetheta = MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].vetheta;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vez = MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].vez;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ni = MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ni;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vir = MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].vir;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].vitheta = MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].vitheta;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].viz = MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].viz;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ee = MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ee;
+					MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z))][j].ei = MPDT[(int)(boundary_array[k].start.z + ceil(i * ins_z)) - 1][j].ei;
 					i++;
 				}
 			}
@@ -513,22 +508,17 @@ void  boundary_condition()
 				j = 0;
 				_feq(i, boundary_array[k].start.z, boundary_array[k].end.z)
 				{
-					//if (MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne < 1e4) continue;
-					//if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
-					//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne /= 2;
-					//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ni /= 2;
-					//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne /= 2;
-					//MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ni /= 2;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne = 0;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ver = 0;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vetheta = 0;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vez = 0;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ni = 0;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vir = 0;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vitheta = 0;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].viz = 0;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ee = 0;
-					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ei = 0;
+					if (btype[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1] != 1) continue;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ne = MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ne;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ver = MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ver;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vetheta = MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].vetheta;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vez = MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].vez;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ni = MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ni;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vir = MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].vir;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].vitheta = MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].vitheta;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].viz = MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].viz;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ee = MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ee;
+					MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r))].ei = MPDT[i][(int)(boundary_array[k].start.r + ceil(j * ins_r)) - 1].ei;
 					j++;
 				}
 			}

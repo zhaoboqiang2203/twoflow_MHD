@@ -56,7 +56,7 @@ int cur_pos_r;
 int cur_pos_z;
 
 int ion_area_rmin;
-int ion_area_rmaxn;
+int ion_area_rmax;
 int ion_area_zmin;
 int ion_area_zmax;
 
@@ -79,7 +79,7 @@ void move()
 			//	printf("ptype[i][j] = %d\n", ptype[i][j]);
 			//}
 			if ((ptype[i][j] & VACCUM_BOUNDARY) != 0) continue;
-			if (MPDT[i][j].ne == 0 || MPDT[i][j].ni == 0) continue;
+			if (abs(MPDT[i][j].ne - MPDT[i][j].ni) < 1e5) continue;
 			if ((ptype[i][j] & ANODE_BOUNDARY) != 0 || (ptype[i][j] & CATHODE_BOUNDARY) != 0 ) continue;
 
 			if (sqr(app_Br[i][j]) + sqr(app_Bz[i][j]) == 0)
@@ -212,8 +212,15 @@ void ionization_collisions(int i, int j)
 	double tuz;
 
 	double tu2, teu2;
+
+
+	if (i < ion_area_zmin || i > ion_area_zmax || j < ion_area_rmin || j > ion_area_rmax)
+	{
+		return;
+	}
 	//double nn = (1e21 - MPDT[i][j].ne - MPDT[i][j].neq + MPDT[i][j].peq);
-	double nn = (atom[i][j].den - MPDT[i][j].ni);
+	//double nn = (atom[i][j].den - MPDT[i][j].ni);
+	double nn = (1e23 - MPDT[i][j].ni);
 	double tden = 0;
 	if (nn < 0)
 	{
@@ -475,22 +482,22 @@ void current_caulate()
 	int start_z = 0, end_z = 0, pos_r = 0;
 	register int i, j;
 
-	pos_r = 15;
+	pos_r = cur_pos_r;
 	start_z = 0;
-	end_z = 160;
+	end_z = cur_pos_z;
 
-	pos_z = 160;
+	pos_z = cur_pos_z;
 	start_r = 0;
-	end_r = 15;
+	end_r = cur_pos_r;
 
 	current_I = 0;
 
-	//j = pos_r;
+	j = pos_r;
 
-	//for (i = start_z; i < end_z; i++)
-	//{
-	//	current_I += (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE * dr * 2 * PI * j * dz;
-	//}
+	for (i = start_z; i < end_z; i++)
+	{
+		current_I += (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE * dr * 2 * PI * j * dz;
+	}
 	i = pos_z;
 
 	for (j = start_r; j < end_r; j++)

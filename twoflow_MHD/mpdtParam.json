@@ -5,7 +5,8 @@
 	"Kp": 5e18,
 	"Ki": 0,
 	"Kd": 1e17,
-  "ATOM_SIM": 0,
+	"ATOM_SIM": 0,
+	"max speed": 1e6,
 	"particle": [
 		{
 			"REL_MASS": 40,
@@ -23,17 +24,17 @@
 	],
 	"ionization area": [
 		{
-			"zmin": 1,
-			"zmax": 100,
-			"rmin": 2,
-			"rmax": 150
+			"zmin": 43,
+			"zmax": 50,
+			"rmin": 0,
+			"rmax": 30
 		}
 	],
 
 	"current surface": [
 		{
-			"pos_z": 200,
-			"pos_r": 100
+			"pos_z": 160,
+			"pos_r": 15
 		}
 	],
 

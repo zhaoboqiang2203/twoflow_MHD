@@ -291,8 +291,17 @@ extern double para_p, para_i, para_d;
 
 extern int is_atom_sim; // 是否进行原子仿真标志位
 
+extern int ion_area_rmin;
+extern int ion_area_rmax;
+extern int ion_area_zmin;
+extern int ion_area_zmax;
+
 extern int cur_pos_r;
 extern int cur_pos_z;
+
+
+extern double max_speed;
+
 
 /// <summary>
 /// move.cpp 函数声明

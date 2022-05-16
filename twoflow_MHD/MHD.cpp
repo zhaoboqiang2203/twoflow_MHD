@@ -85,6 +85,8 @@ double para_p, para_i, para_d;
 
 int is_atom_sim;
 
+double max_speed;
+
 int main()
 {
 	int nq;
@@ -106,12 +108,12 @@ int main()
 	dr = 0.001 / scale;
 	dz = 0.001 / scale;
 	dtheta = PI / 180;
-	dt = dr / 1e5 / 3;
+	dt = dr / max_speed / 3.0;
 	dat = dt * 100;
 	nq = 100;
 	//根据背景压强，通气流量，电流密度计算
 	bg_den = 1e-3 / (K * 300);
-	inter_e_den = cathode_I * 1.1e19;
+	inter_e_den = cathode_I * 1.1e18;
 	inter_pla_den = 0.04  / 40 * NA / 360 / 20 * 1e9;
 
 
@@ -136,7 +138,7 @@ int main()
 		potential_solve();
 	}
 
-	//判断是否进行流体仿真
+	//判断是否进行原子流体仿真
 	if(is_atom_sim) 
 	{
 		sprintf_s(fname, (".\\output\\atom_init.dat"));
@@ -193,6 +195,7 @@ int main()
 			if (abs(current_I - last_current) < 0.3 * abs(current_I))
 			{
 				current_control();
+				printf("inter_e_den = %e\n", inter_e_den);
 			}
 			last_current = current_I;
 			//current_control();

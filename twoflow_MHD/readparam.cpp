@@ -43,7 +43,8 @@ int parameter_read()
 	EPS_PLA = root["EPS_PLA"].asDouble();
 	MI = REL_MASS * AMU;		        // kg, electron mass
 
-	is_atom_sim = root["particle"].asInt();
+	is_atom_sim = root["ATOM_SIM"].asInt();
+	max_speed = root["max speed"].asDouble();
 
 #ifdef BOUNDARY_DEBUG
 	std::cout << root << std::endl;
@@ -95,13 +96,21 @@ int parameter_read()
 	pid.Kd = root["Kd"].asDouble();
 	pid.integral = 0;
 
-	root["ionization area"][0]["rmin"].asInt();
-	root["ionization area"][0]["rmax"].asInt();
-	root["ionization area"][0]["zmin"].asInt();
-	root["ionization area"][0]["zmax"].asInt();
 
-	root["current surface"][0]["pos_z"].asInt();
-	root["current surface"][0]["pos_r"].asInt();
+	ion_area_rmin = root["ionization area"][0]["rmin"].asInt();
+	ion_area_rmax = root["ionization area"][0]["rmax"].asInt();
+	ion_area_zmin = root["ionization area"][0]["zmin"].asInt();
+	ion_area_zmax = root["ionization area"][0]["zmax"].asInt();
+
+	cur_pos_z = root["current surface"][0]["pos_z"].asInt();
+	cur_pos_r = root["current surface"][0]["pos_r"].asInt();
+
+	printf("cur_pos_r = %d\n", cur_pos_r);
+	printf("cur_pos_z = %d\n", cur_pos_z);
+	printf("ion_area_rmin = %d\n", ion_area_rmin);
+	printf("ion_area_rmax = %d\n", ion_area_rmax);
+	printf("ion_area_zmin = %d\n", ion_area_zmin);
+	printf("ion_area_zmax = %d\n", ion_area_zmax);
 
 	ifs.close();
 	return EXIT_SUCCESS;

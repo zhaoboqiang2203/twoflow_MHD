@@ -12,9 +12,10 @@
 #include <string>
 #include <sstream>
 
+#include "omp.h"
 using namespace std;
 
-//#define DADI_DEBUG
+#define DADI_DEBUG
 //#define FLUID_DEBUG
 //#define BOUNDARY_DEBUG
 

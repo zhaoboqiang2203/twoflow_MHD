@@ -492,12 +492,12 @@ void current_caulate()
 
 	current_I = 0;
 
-	j = pos_r;
+	//j = pos_r;
 
-	for (i = start_z; i < end_z; i++)
-	{
-		current_I += (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE * dr * 2 * PI * j * dz;
-	}
+	//for (i = start_z; i < end_z; i++)
+	//{
+	//	current_I += (MPDT[i][j].ni * MPDT[i][j].vir - MPDT[i][j].ne * MPDT[i][j].ver) * QE * dr * 2 * PI * j * dz;
+	//}
 	i = pos_z;
 
 	for (j = start_r; j < end_r; j++)

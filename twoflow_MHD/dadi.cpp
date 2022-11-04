@@ -65,6 +65,9 @@ double del_t0;
 //double** epsi;
 /*  The size of the system */
 
+
+double rst[ZMAX], red[ZMAX];
+double zst[RMAX], zed[RMAX];
 #ifndef MAX
 #define MAX(x, y)       (((x) > (y)) ? (x) : (y))
 #endif
@@ -357,6 +360,60 @@ void init_solve()
 		}
 	}
 
+
+	for (i = 0; i < ZMAX; i++)
+	{
+		rst[i] = -1;
+		red[i] = -1;
+		for (j = 1; j < RMAX - 1; j++)
+		{
+			if ((btype[i][j] != 0 && btype[i][j] != 110) && (btype[i][j - 1] == 0 || btype[i][j - 1] == 110))
+				//if ((btype[i][j] != 0) && (btype[i][j - 1] == 0))
+			{
+				rst[i] = j;
+			}
+			if ((btype[i][j] != 0 && btype[i][j] != 110) && (btype[i][j + 1] == 0 || btype[i][j + 1] == 110))
+				//if ((btype[i][j] != 0) && (btype[i][j + 1] == 0))
+			{
+				red[i] = j;
+			}
+		}
+		if (rst[i] == -1)
+		{
+			rst[i] = 0;
+		}
+		if (red[i] == -1)
+		{
+			red[i] = RMAX - 1;
+		}
+	}
+
+	for (j = 0; j < RMAX; j++)
+	{
+		zst[j] = -1;
+		zed[j] = -1;
+		for (i = 1; i < ZMAX - 1; i++)
+		{
+			if ((btype[i][j] != 0 && btype[i][j] != 110) && (btype[i - 1][j] == 0 || btype[i - 1][j] == 110))
+				//if ((btype[i][j] != 0) && (btype[i - 1][j] == 0 ))
+			{
+				zst[j] = i;
+			}
+			if ((btype[i][j] != 0 && btype[i][j] != 110) && (btype[i + 1][j] == 0 || btype[i + 1][j] == 110))
+				//if ((btype[i][j] != 0) && (btype[i + 1][j] == 0 ))
+			{
+				zed[j] = i;
+			}
+		}
+		if (zst[j] == -1)
+		{
+			zst[j] = 0;
+		}
+		if (zed[j] == -1)
+		{
+			zed[j] = ZMAX - 1;
+		}
+	}
 	
 #ifdef DADI_DEBUG
 
@@ -873,6 +930,299 @@ void potential_boundary()
 	}
 }
 
+/*¸üÐÂ*/
+void adi_v2(double uadi[ZMAX][RMAX], double s[ZMAX][RMAX], double del_t)
+{
+	register int i, j;
+	double dth;
+
+
+	dth = .5 * del_t;
+
+	/***************************************/
+	/* Do z pass.  Set up variables for    */
+	/* tridiagonal inversion along z.      */
+
+//#pragma omp parallel num_threads(RMAX) private(i,j)
+	for (j = 0; j < RMAX; j++)
+	{
+		//j = omp_get_thread_num();
+		int ist = zst[j];
+		int ied = zed[j] + 1;
+		int inum = ied - ist;
+
+		for (i = 0; i < inum; i++)
+		{
+			a_x1[i] = -dth * a_x1geom[ist + i][j];
+			b_x1[i] = 1 - dth * b_x1geom[ist + i][j];
+			c_x1[i] = -dth * c_x1geom[ist + i][j];
+		}
+
+		/*  handle the boundary conditions, neumann and dirichlet */
+		for (i = 0; i < inum; i++)
+			if (b_x2geom[ist + i][j] != 0)  //non-dirichlet
+				r_x1[i] = uadi[ist + i][j] + dth * (-s[ist + i][j]
+					+ ((j > 0) ? a_x2geom[ist + i][j] * uadi[ist + i][j - 1] : 0)
+					+ b_x2geom[ist + i][j] * uadi[ist + i][j]
+					+ ((j < RMAX) ? c_x2geom[ist + i][j] * uadi[ist + i][j + 1] : 0));
+			else
+				r_x1[i] = uadi[ist + i][j];  // metal sets the potential here.
+
+	  /* Solve tridiagonal system. */
+		tridag(a_x1, b_x1, c_x1, r_x1, v_x1, gam_x1, inum);
+
+		/* Copy solution into ustar. */
+		for (i = 0; i < inum; i++) ustar[ist + i][j] = v_x1[i];
+	}
+
+	/***************************************/
+	/* Do y pass.  Set up variables for    */
+	/* tridiagonal inversion along y     */
+//#pragma omp parallel num_threads(ZMAX) private(i,j)
+	for (i = 0; i < ZMAX; i++)
+	{
+		int jst = rst[i];
+		int jed = red[i] + 1;
+		int jnum = jed - jst;
+		if (jnum < 0)
+		{
+			printf("i = %d, j = %d\n", i, j);
+			printf("jst = %d\n", jst);
+			printf("jed = %d\n", jed);
+			printf("jnum = %d\n", jnum);
+		}
+		//i = omp_get_thread_num();
+		//printf("hello from thread %d in %d CPUs\n", omp_get_thread_num(), omp_get_num_threads());
+		for (j = 0; j < jnum; j++)
+		{
+			a_x2[j] = -dth * a_x2geom[i][jst + j];
+			b_x2[j] = 1 - dth * b_x2geom[i][jst + j];
+			c_x2[j] = -dth * c_x2geom[i][jst + j];
+		}
+
+		/*  handle the boundary conditions, dirichlet or neumann */
+
+		 /*  The following code handles some special cases like corners*/
+		for (j = 0; j < jnum; j++)
+			if (b_x2geom[i][jst + j] != 0)  //non-dirichlet
+				r_x2[j] = ustar[i][jst + j] + dth * (-s[i][jst + j]
+					+ ((i > 0) ? a_x1geom[i][jst + j] * ustar[i - 1][jst + j] : 0)
+					+ b_x1geom[i][jst + j] * ustar[i][jst + j]
+					+ ((i < ZMAX) ? c_x1geom[i][jst + j] * ustar[i + 1][jst + j] : 0));
+			else
+				r_x2[j] = ustar[i][jst + j];  // metal sets the potential here.
+
+	  /* Solve tridiagonal system. */
+		tridag(a_x2, b_x2, c_x2, r_x2, v_x2, gam_x2, jnum);
+
+		/* Copy solution into ustar. */
+		for (j = 0; j < jnum; j++) uadi[i][jst + j] = v_x2[j];
+
+	}
+}
+int solve_v2(double u_in[ZMAX][RMAX], double s[ZMAX][RMAX], int itermax, double tol_test)
+{
+	register int i, j;
+	int iter, ndiscard;
+	static double del_t = 0.0;
+	double del_td = 0, tptop = 0, tpbot = 0, ratio = 0;
+	double rnorm = 0, rsum = 0, res = 0, errchk = 0, dxdxutrm = 0, dydyutrm = 0;
+
+	rnorm = rsum = 0.0;
+	for (i = 0; i < ZMAX; i++)
+		for (j = 0; j < RMAX; j++) {
+
+			/* Residual normalization.  */
+			// dirichlet conditions don't add to rnorm
+			rnorm += ((b_x2geom[i][j] == 0) ? 0 : s[i][j] * s[i][j]);
+
+			/*  copy u_in to u for working purposes.  */
+			u[i][j] = (double)u_in[i][j];
+
+			//calculate an initial estimate of the residual
+		/* Use the residual as the absolute error and if it is bigger
+		   than the stored maximum absolute error, record new maximum
+		   absolute error and location.  */
+
+			if (i > 0 && j > 0 && i < ZMAX && j < RMAX) {
+				dxdxutrm = a_x1geom[i][j] * u_in[i - 1][j] + b_x1geom[i][j] * u_in[i][j] + c_x1geom[i][j] * u_in[i + 1][j];
+				dydyutrm = a_x2geom[i][j] * u_in[i][j - 1] + b_x2geom[i][j] * u_in[i][j] + c_x2geom[i][j] * u_in[i][j + 1];
+			}
+
+			/* only include points which are not in structures. */
+			errchk = ((b_x2geom[i][j] == 0) ? 0 : dxdxutrm + dydyutrm - s[i][j]);
+
+			/* Residual sums. */
+			rsum += errchk * errchk;
+		}
+
+	// If rnorm is zero, we must deal with it...
+	if (rnorm == 0.0) {
+
+		// check dirichlet conditions
+		for (i = 0; i < ZMAX; i++) for (j = 0; j < RMAX; j++)
+		{
+			rnorm += sqr(((i > 0 && b_x2geom[i - 1][j] != 0) ? c_x1geom[i - 1][j] * u[i][j] : 0));
+			// check right
+			rnorm += sqr(((i < (ZMAX - 1) && b_x2geom[i + 1][j] != 0) ? a_x1geom[i + 1][j] * u[i][j] : 0));
+			// check up
+			rnorm += sqr(((j > 0 && b_x2geom[i][j - 1] != 0) ? c_x2geom[i][j - 1] * u[i][j] : 0));
+			// check right
+			rnorm += sqr(((j < (RMAX - 1) && b_x2geom[i][j + 1] != 0) ? c_x2geom[i][j + 1] * u[i][j] : 0));
+
+		}
+
+		if (rnorm == 0) { //still zero, we don't need to iterate
+			for (i = 0; i < ZMAX; i++) for (j = 0; j < RMAX; j++) u_in[i][j] = 0;
+			return 0;
+		}
+	}
+	rnorm = sqrt(rnorm);
+	res = sqrt(rsum) / rnorm;
+#ifdef DADI_DEBUG
+	printf("dadi: res = %g\n", res);
+	printf("dadi: rnorm= %g\n", rnorm);
+#endif
+
+	if (res < tol_test) return 0;  // no need to iterate
+
+	/*************************************************/
+	if (del_t == 0.0) del_t = del_t0; else del_t /= 4;
+	del_td = 2.0 * del_t;
+	ndiscard = 0;
+
+	/********************/
+	/* Begin iteration. */
+
+	for (iter = 0; iter < itermax; iter++)
+	{
+		/*************************************************/
+		/* Copy u into the work array and storage array. */
+
+		for (i = 0; i < ZMAX; i++)
+			for (j = 0; j < RMAX; j++) uwork[i][j] = ustor[i][j] = u[i][j];
+
+		/************************************/
+		/* Two advances of u via ADI at del_t. */
+
+		adi_v2(u, s, del_t);
+		adi_v2(u, s, del_t);
+
+		/*****************************************/
+		/* One advance of uwork via ADI at 2*del_t. */
+
+		adi_v2(uwork, s, del_td);
+
+		/*******************************************************/
+		/* Calculate test parameter and normalized error.
+		   For Dirichlet BCs, no need to worry about boundary
+		   points since u,uwork, and ustor should be the same. */
+
+		tptop = tpbot = rsum = 0.0;
+
+		for (i = 1; i < ZMAX; i++)
+			for (j = 1; j < RMAX; j++)
+			{
+				/* Test paramter sums. */
+				tptop += (u[i][j] - uwork[i][j]) * (u[i][j] - uwork[i][j]);
+				tpbot += (u[i][j] - ustor[i][j]) * (u[i][j] - ustor[i][j]);
+
+				/* Residual terms. */
+
+				dxdxutrm = a_x1geom[i][j] * u[i - 1][j] + b_x1geom[i][j] * u[i][j] + c_x1geom[i][j] * u[i + 1][j];
+				dydyutrm = a_x2geom[i][j] * u[i][j - 1] + b_x2geom[i][j] * u[i][j] + c_x2geom[i][j] * u[i][j + 1];
+
+				/* Use the residual as the absolute error and if it is bigger
+				   than the stored maximum absolute error, record new maximum
+				   absolute error and location.  */
+				   /* only include points which are not in structures. */
+				errchk = ((b_x2geom[i][j] == 0) ? 0 : dxdxutrm + dydyutrm - s[i][j]);
+
+				/* Residual sums. */
+				rsum += errchk * errchk;
+			}
+
+		/* Calculate normalized residual. */
+		res = sqrt(rsum) / rnorm;
+#ifdef DADI_DEBUG
+		//printf("dadi: iter= %d, res = %lg del_t=%le\n", iter, res,del_t);
+		printf("dadi: iter= %d, res = %g del_t=%e\n", iter, res, del_t);
+#endif // DADI_DEBUG
+		/* If the residual is less than the tolerance, SUCCESS! */
+		if ((res < tol_test) && (iter))
+		{
+#ifdef DADI_DEBUG
+			printf("dadi: iter=%d\n", iter);
+#endif// DADI_DEBUG
+			for (i = 0; i < ZMAX; i++)
+				for (j = 0; j < RMAX; j++)
+					u_in[i][j] = (double)u[i][j];
+
+			return(0);
+		}
+
+		/* Determine ratio used to find the time step change.  If tpbot
+		   is zero but tptop is finite, consider this a case of a large
+		   ratio and act accordingly.  DWH does about the same thing
+		   except he does NOT discard the solution if tpbot=0. */
+
+		if (tpbot > 0.0) ratio = tptop / tpbot;
+		if (tpbot == 0.0) ratio = 1.0;
+#ifndef NO_STEP_ADJUST    
+		/* Get next time step. */
+		if (ratio < 0.02) del_t *= 8.0;
+		if (ratio >= 0.02 && ratio < 0.05) del_t *= 4.0;
+		if (ratio >= 0.05 && ratio < 0.10) del_t *= 2.0;
+		if (ratio >= 0.10 && ratio < 0.30) del_t *= 0.80;
+		if (ratio >= 0.30 && ratio < 0.40) del_t *= 0.50;
+		if (ratio >= 0.40 && ratio < 0.60) del_t *= 0.25;
+		for (i = 0; i < ZMAX; i++)
+			for (j = 0; j < RMAX; j++)
+				u_in[i][j] = (double)u[i][j];
+#endif   
+
+		/* Ratio is too large. */
+		if (ratio >= 0.60)
+		{
+			ndiscard++;
+			iter--;
+#ifdef DADI_DEBUG
+			//  printf("ndiscard= %d, iter=%d step=%lf\n", ndiscard, iter,del_t); 
+			printf("ndiscard= %d, iter=%d step=%f\n", ndiscard, iter, del_t);
+#endif //DADI_DEBUG
+
+			/* Check if too many discards. */
+			if (ndiscard > 20)
+			{
+				for (i = 0; i < ZMAX; i++)
+					for (j = 0; j < RMAX; j++)
+						u_in[i][j] = (double)u[i][j];
+				del_t = del_t0;
+				//		  if(solve(u_in,s,itermax,tol_test))
+				printf("Poisson solve FAILURE: dadi: iter= %d, ndiscard>20\n", iter);
+				return 1;
+			}
+			/* Discard by replacing u with what we started with. */
+			for (i = 0; i < ZMAX; i++)
+				for (j = 0; j < RMAX; j++) u[i][j] = ustor[i][j];
+
+			/* Reduce del_t. */
+			del_t /= 8.0;
+			//del_t = del_t0;
+		}
+		del_td = 2 * del_t;
+	}
+	/* Fail if used up the maximum iterations. */
+
+	printf("Poisson solve FAILURE: dadi:  iter>= %d\n", itermax);
+
+	for (i = 0; i < ZMAX; i++)
+		for (j = 0; j < RMAX; j++)
+			u_in[i][j] = (double)u[i][j];
+
+	return(2);
+}
+
 void potential_solve()
 {
 	for (int i = 0; i < ZMAX; i++)
@@ -893,12 +1243,13 @@ void potential_solve()
 			rho[i][j] = -(MPDT[i][j].ni - MPDT[i][j].ne) * QE / (EPS_0 * EPS_PLA);
 			rou[i][j] = (MPDT[i][j].ni - MPDT[i][j].ne);
 			phi[i][j] = 0;
+			phi1[i][j] = 0;
 			//rho[i][j] = -(MPDT[i][j].peq - MPDT[i][j].neq) * QE / (EPS_0 * EPS_PLA);
 			//rou[i][j] = (MPDT[i][j].peq - MPDT[i][j].neq);
 		}
 	}
 	solve(phi, rho, 50, 0.01);
-
+	solve_v2(phi1, rho, 50, 0.01);
 	max_phi = 0;
 	for (int i = 0; i < ZMAX; i++)
 	{

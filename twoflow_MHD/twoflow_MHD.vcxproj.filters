@@ -63,6 +63,9 @@
     <ClCompile Include="species.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="fluid_openmp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MHD.h">

@@ -24,8 +24,8 @@
 	],
 	"ionization area": [
 		{
-			"zmin": 160,
-			"zmax": 170,
+			"zmin": 43,
+			"zmax": 50,
 			"rmin": 0,
 			"rmax": 30
 		}

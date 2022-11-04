@@ -177,9 +177,18 @@ int main()
 	{
 		//printf("index %d\n", index);
 
-		//clock_t start = clock();
+		/*clock_t start = clock();*/
 		
 		electron_flow_v2();
+
+		//clock_t ends = clock();
+		//cout << "Running Time : " << (double)(ends - start) / CLOCKS_PER_SEC << endl;
+
+		//electron_flow_openmp();
+
+		//clock_t ends1 = clock();
+		//cout << "Running Time1 : " << (double)(ends1 - ends) / CLOCKS_PER_SEC << endl;
+
 		//atom_flow();
 		boundary_condition();
 		updata_atom_edge();
@@ -529,17 +538,17 @@ void output()
 	//sprintf_s(fname, (".\\output\\delta_ei\\delta_ei_%d.csv"), index);
 	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
-	////电子离子碰撞截面
-	//for (int i = 0; i < ZMAX; i++)
-	//{
-	//	for (int j = 0; j < RMAX; j++)
-	//	{
-	//		res_out[i][j] = MPDT[i][j].sigma_Q;
-	//	}
-	//}
+	//电子离子碰撞截面
+	for (int i = 0; i < ZMAX; i++)
+	{
+		for (int j = 0; j < RMAX; j++)
+		{
+			res_out[i][j] = phi[i][j] - phi1[i][j];
+		}
+	}
 
-	//sprintf_s(fname, (".\\output\\sigma\\sigma_Q_%d.csv"), index);
-	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	sprintf_s(fname, (".\\output\\sigma\\sigma_Q_%d.csv"), index);
+	matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
 
 	////多余电荷密度
 	//for (int i = 0; i < ZMAX; i++)
@@ -642,8 +651,8 @@ void output()
 	//	}
 	//}
 
-	//sprintf_s(fname, (".\\output\\angle\\angle_%d.csv"), index);
-	//matrix_to_csv((double**)res_out, ZMAX, RMAX, RMAX, fname);
+	sprintf_s(fname, (".\\output\\angle\\angle_%d.csv"), index);
+	matrix_to_csv((double**)phi1, ZMAX, RMAX, RMAX, fname);
 
 
 }
